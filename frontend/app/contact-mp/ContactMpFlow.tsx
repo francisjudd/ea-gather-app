@@ -170,6 +170,8 @@ function Field({
   required = false,
   placeholder,
   autoComplete,
+  min,
+  error,
 }: {
   label: string
   name: keyof Draft
@@ -179,6 +181,8 @@ function Field({
   required?: boolean
   placeholder?: string
   autoComplete?: string
+  min?: number
+  error?: string
 }) {
   return (
     <label className="field" htmlFor={name}>
@@ -189,10 +193,13 @@ function Field({
         type={type}
         value={value}
         required={required}
+        min={min}
         placeholder={placeholder}
         autoComplete={autoComplete}
+        aria-invalid={error ? true : undefined}
         onChange={(event) => onChange(name, event.target.value)}
       />
+      {error && <span className="field-error" role="alert">{error}</span>}
     </label>
   )
 }
@@ -205,6 +212,7 @@ export default function ContactMpFlow({ step }: { step: string }) {
   const [loaded, setLoaded] = useState(false)
   const [storageError, setStorageError] = useState('')
   const [editingMp, setEditingMp] = useState(false)
+  const [attendanceError, setAttendanceError] = useState('')
 
   useEffect(() => {
     const timeout = window.setTimeout(() => {
@@ -254,6 +262,16 @@ export default function ContactMpFlow({ step }: { step: string }) {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+    // Refuse to advance if the optional church attendance is a negative number.
+    if (currentStep.slug === 'church-details') {
+      const attendance = draft.attendance.trim()
+      const numeric = attendance === '' ? null : Number(attendance)
+      if (numeric !== null && (Number.isNaN(numeric) || numeric < 0)) {
+        setAttendanceError('Attendance can’t be a negative number — enter the average number of people at your services (0 or more).')
+        return
+      }
+      setAttendanceError('')
+    }
     const nextSlug = flowSteps[currentIndex + 1]?.slug
     if (nextSlug) navigateTo(nextSlug)
   }
@@ -430,7 +448,7 @@ export default function ContactMpFlow({ step }: { step: string }) {
                 <div className="form-grid">
                   <Field label="Church name" name="churchName" value={draft.churchName} onChange={onChange} placeholder="e.g. St Mark’s Church" required />
                   <Field label="Denomination or network" name="denomination" value={draft.denomination} onChange={onChange} placeholder="e.g. Church of England" />
-                  <Field label="Approx. weekly attendance" name="attendance" value={draft.attendance} onChange={onChange} type="number" placeholder="e.g. 180" />
+                  <Field label="Approx. weekly attendance" name="attendance" value={draft.attendance} onChange={onChange} type="number" placeholder="e.g. 180" min={0} error={attendanceError} />
                   <Field label="Church address" name="churchAddress" value={draft.churchAddress} onChange={onChange} placeholder="Street, town and postcode" autoComplete="street-address" required />
                 </div>
                 <div className="section-rule"><span>ABOUT YOU</span></div>
