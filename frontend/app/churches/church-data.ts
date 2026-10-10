@@ -190,9 +190,14 @@ export async function getChurchById(id: string): Promise<ChurchProfile | undefin
 }
 
 export async function getChurchIds(): Promise<string[]> {
+  return (await getChurchLinks()).map((church) => church.id)
+}
+
+/** Id and name of every church, for the sitemaps. */
+export async function getChurchLinks(): Promise<{ id: string; name: string }[]> {
   try {
     const churches = await api.listChurches({ limit: 5000 })
-    return churches.map((church) => church.id)
+    return churches.map(({ id, name }) => ({ id, name }))
   } catch {
     return []
   }

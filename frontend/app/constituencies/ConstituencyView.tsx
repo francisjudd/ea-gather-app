@@ -246,7 +246,9 @@ export default function ConstituencyView({ detail }: { detail: ConstituencyDetai
 
       <footer className={churches.footer}>
         <ChurchMark />
-        <span>© Evangelical Alliance</span>
+        <span>
+          <Link href="/sitemap">Sitemap</Link> · © Evangelical Alliance
+        </span>
       </footer>
     </div>
   )

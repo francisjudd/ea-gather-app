@@ -91,7 +91,9 @@ export default function ConstituencyIndex({ constituencies }: { constituencies: 
 
       <footer className={churches.footer}>
         <BrandLockup size="sm" />
-        <span>© Evangelical Alliance</span>
+        <span>
+          <Link href="/sitemap">Sitemap</Link> · © Evangelical Alliance
+        </span>
       </footer>
     </div>
   )

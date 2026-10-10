@@ -227,7 +227,7 @@ export default function AdminReview() {
 
       <footer className="site-footer">
         <span>MORE THAN SUNDAY · CHURCH ACTION</span>
-        <span>Admin review · <Link href="/churches">View directory</Link></span>
+        <span>Admin review · <Link href="/churches">View directory</Link> · <Link href="/sitemap">Sitemap</Link></span>
         <div className="site-footer-legal">
           The Evangelical Alliance. A company limited by guarantee registered in England and Wales No. 123448.
           Registered Charity No England and Wales: 212325, Scotland: SC040576. Registered office: 176 Copenhagen Street, London, N1 0ST.

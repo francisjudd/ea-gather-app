@@ -745,6 +745,12 @@
   font-size: 11px;
 }
 
+.footer a {
+  color: var(--color-link);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 .visuallyHidden {
   position: absolute;
   width: 1px;

@@ -1,13 +1,13 @@
 'use client'
 
 import { useEffect, useMemo, useState, useSyncExternalStore, type FormEvent } from 'react'
-import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import EmailButton from '@/components/messaging/EmailButton'
 import GmailButton from '@/components/messaging/GmailButton'
 import { isMailtoTooLong, buildLetterMailto, renderLetterFallback, type LetterInput } from '@/lib/messaging'
 import type { components } from '@/lib/api/schema'
 import FullNav from '../../components/FullNavigation'
+import SiteFooter from '../../components/SiteFooter'
 import { activities, toLetterInput, type Draft } from '@/lib/messaging/draft'
 
 import { flowSteps, type StepSlug } from './steps'
@@ -591,14 +591,7 @@ export default function ContactMpFlow({ step }: { step: string }) {
           )}
         </section>
       </div>
-      <footer className="site-footer">
-        <span>MORE THAN SUNDAY · CHURCH ACTION</span>
-        <span>Questions? <a href="mailto:advocacy@eauk.org">Contact the advocacy team</a></span>
-        <div className="site-footer-legal">
-          The Evangelical Alliance. A company limited by guarantee registered in England and Wales No. 123448.
-          Registered Charity No England and Wales: 212325, Scotland: SC040576. Registered office: 176 Copenhagen Street, London, N1 0ST.
-        </div>
-      </footer>
+      <SiteFooter />
     </main>
   )
 }

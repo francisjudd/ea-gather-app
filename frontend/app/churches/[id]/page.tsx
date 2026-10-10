@@ -340,7 +340,7 @@ const points: string[] = items.map(({ label, figure, text }) => `${figure} ${lab
       <footer className={styles.footer}>
         <span className={styles.kicker}>More Than Sunday · Church action</span>
         <span>
-          Questions? <a href="mailto:advocacy@eauk.org">Contact the advocacy team</a>
+          Questions? <a href="mailto:advocacy@eauk.org">Contact the advocacy team</a> · <Link href="/sitemap">Sitemap</Link>
         </span>
         <div className={styles.footerLegal}>
           The Evangelical Alliance. A company limited by guarantee registered in England and Wales No. 123448.

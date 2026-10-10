@@ -7,7 +7,7 @@ import FullNav from '../../components/FullNavigation'
 import BrandLockup from '../../components/BrandLockup'
 import { distanceMiles, formatDistance, type LatLng } from '../../lib/geo'
 import { slugifyConstituency } from '@/lib/constituencies/slug'
-import type { FeaturedService } from '@/lib/constituencies/featured'
+import type { FeaturedGroup, FeaturedService } from '@/lib/constituencies/featured'
 import type { ConstituencyDetail, ConstituencyService, ConstituencySummary } from '@/lib/constituencies/types'
 import churches from '../churches/churches.module.css'
 import c from '../constituencies/constituency.module.css'
@@ -53,12 +53,37 @@ function PinIcon() {
   )
 }
 
+function FeaturedCard({ service }: { service: FeaturedService }) {
+  return (
+    <li className={styles.card}>
+      <span className={styles.cardTop}>
+        <span className={styles.pill}>{service.category}</span>
+      </span>
+      <strong className={styles.cardName}>{service.name}</strong>
+      <span className={styles.cardAddress}>
+        <PinIcon />
+        <span>{service.address ?? service.postcode ?? 'Address not listed'}</span>
+      </span>
+      <span className={`${styles.cardLinks} ${styles.cardLinksSplit}`}>
+        <Link href={`/constituencies/${service.constituencySlug}`} title={service.constituencyName}>
+          {service.constituencyName}
+        </Link>
+        {service.website && (
+          <a href={service.website} rel="noopener noreferrer" target="_blank">
+            View site <ExternalIcon />
+          </a>
+        )}
+      </span>
+    </li>
+  )
+}
+
 export default function ServiceSearch({
   constituencies,
-  featured,
+  featuredGroups,
 }: {
   constituencies: ConstituencySummary[]
-  featured: FeaturedService[]
+  featuredGroups: FeaturedGroup[]
 }) {
   const [query, setQuery] = useState('')
   const [open, setOpen] = useState(false)
@@ -213,34 +238,38 @@ export default function ServiceSearch({
       </section>
 
       <main className={`${c.container} ${styles.resultsMain}`}>
-        {!results && featured.length > 0 && (
+        {!results && featuredGroups.length > 0 && (
           <section className={styles.results} aria-labelledby="featured-title">
-            <h2 id="featured-title" className={styles.resultsTitle}>Examples from the directory</h2>
+            <h2 id="featured-title" className={styles.resultsTitle}>Top community outreach programmes</h2>
             <p className={styles.resultsNote}>
-              Search above to see what is near you. These are some of the services we list across the UK.
+              Search above to see what is near you. These are highlights from some of the places with the most
+              listings, in England, Wales, Scotland and Northern Ireland.
             </p>
-            <ul className={styles.grid}>
-              {featured.map((service) => (
-                <li key={service.id} className={styles.card}>
-                  <span className={styles.cardTop}>
-                    <span className={styles.pill}>{service.category}</span>
+
+            {featuredGroups.map((group) => (
+              <div key={group.city} className={styles.group}>
+                <h3 className={styles.groupTitle}>
+                  {group.city}
+                  <span className={styles.groupMeta}>
+                    {group.nation} · {group.totalCount.toLocaleString('en-GB')} services listed
                   </span>
-                  <strong className={styles.cardName}>{service.name}</strong>
-                  <span className={styles.cardAddress}>
-                    <PinIcon />
-                    <span>{service.address ?? service.postcode ?? 'Address not listed'}</span>
-                  </span>
-                  <span className={`${styles.cardLinks} ${styles.cardLinksSplit}`}>
-                    <Link href={`/constituencies/${service.constituencySlug}`} title={service.constituencyName}>
-                      {service.constituencyName}
-                    </Link>
-                    {service.website && <a href={service.website} rel="noopener noreferrer" target="_blank">
-                      View site <ExternalIcon />
-                    </a>}
-                  </span>
-                </li>
-              ))}
-            </ul>
+                </h3>
+                <ul className={styles.grid}>
+                  {group.services.map((service) => (
+                    <FeaturedCard key={service.id} service={service} />
+                  ))}
+                </ul>
+                <p className={styles.groupLinks}>
+                  Browse by constituency:{' '}
+                  {group.constituencies.map((item, index) => (
+                    <span key={item.slug}>
+                      {index > 0 && ', '}
+                      <Link href={`/constituencies/${item.slug}`}>{item.name}</Link>
+                    </span>
+                  ))}
+                </p>
+              </div>
+            ))}
           </section>
         )}
 
@@ -288,7 +317,9 @@ export default function ServiceSearch({
 
       <footer className={churches.footer}>
         <BrandLockup size="sm" />
-        <span>© Evangelical Alliance</span>
+        <span>
+          <Link href="/sitemap">Sitemap</Link> · © Evangelical Alliance
+        </span>
       </footer>
     </div>
   )
