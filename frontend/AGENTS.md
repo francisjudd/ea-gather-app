@@ -53,9 +53,9 @@ body text (use `--color-link` = feature-dark instead).
 - **Do not place the logo on a background of the brand colour palette** (navy,
   teal, lime, feature-dark) or on a dark/cluttered background. The white version
   goes on white; the blue version goes on dark.
-- The app uses a text-based lockup (`.brand-name` / `.brandLockup`) as a stand-in
-  for the logo artwork. Keep it lowercase to match the logo. The three circles
-  (`.brandDots`) must use the brand teal `#449AAE` and lime `#DCDA60` — never
+- The app renders the real logo artwork from `public/ea-logo.svg` via the shared
+  `components/BrandLockup.tsx` component. Keep it lowercase to match the logo.
+  The three circles use the brand teal `#449AAE` and lime `#DCDA60` — never
   substitute other teal/lime shades.
 
 ### Graphic elements (pp.45–49)

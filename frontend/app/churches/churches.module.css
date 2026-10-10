@@ -17,50 +17,6 @@
   background: #fff;
 }
 
-.brandLink {
-  display: inline-flex;
-  color: inherit;
-  text-decoration: none;
-}
-
-.brandLockup {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-}
-
-.brandName {
-  color: #24305f;
-  font-size: 19px;
-  letter-spacing: -0.055em;
-}
-
-.brandName strong {
-  font-weight: 700;
-}
-
-.brandDots {
-  display: inline-flex;
-  align-items: center;
-  margin-left: -4px;
-}
-
-.brandDots i {
-  width: 21px;
-  height: 21px;
-  margin-left: -5px;
-  border-radius: 50%;
-  background: #24305f;
-}
-
-.brandDots i:nth-child(2) {
-  background: #449aae; /* brand teal */
-}
-
-.brandDots i:nth-child(3) {
-  background: #dcda60; /* brand lime */
-}
-
 .headerCaption {
   color: #5e6470;
   font-size: 13px;
@@ -789,15 +745,6 @@
   font-size: 11px;
 }
 
-.footer .brandName {
-  font-size: 14px;
-}
-
-.footer .brandDots i {
-  width: 16px;
-  height: 16px;
-}
-
 .visuallyHidden {
   position: absolute;
   width: 1px;
@@ -809,7 +756,6 @@
 }
 
 .page button:focus-visible,
-.brandLink:focus-visible,
 .aboutNote a:focus-visible {
   outline: 3px solid #449aae;
   outline-offset: 3px;
@@ -819,15 +765,6 @@
   .header {
     min-height: 64px;
     padding: 0 18px;
-  }
-
-  .brandName {
-    font-size: 15px;
-  }
-
-  .brandDots i {
-    width: 17px;
-    height: 17px;
   }
 
   .headerCaption {

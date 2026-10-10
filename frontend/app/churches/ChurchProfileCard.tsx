@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { initiativeLabels } from '../../lib/initiatives'
 import { dayLabels, parseChurchHours } from '../../lib/churchHours'
 import { formatDistance } from '../../lib/geo'
@@ -42,9 +43,11 @@ export default function ChurchProfileCard({ church }: { church: Church }) {
 
   return (
     <article className={styles.profileCard} aria-label={`${church.name} profile`}>
+      <Link href={`/churches/${church.id}`} className={styles.profileLink} style={{textDecoration: "none"}}>
       <div className={styles.profileHeader}>
         <div>
-          <h3>{church.name}</h3>
+          
+            <h3>{church.name}</h3>
           <p className={styles.profileMeta}>
             {church.denomination}
             <span className={styles.profileMetaDot} aria-hidden="true">·</span>
@@ -87,6 +90,7 @@ export default function ChurchProfileCard({ church }: { church: Church }) {
           ))}
         </ul>
       </div>
+      </Link>
     </article>
   )
 }

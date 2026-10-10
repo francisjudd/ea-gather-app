@@ -1,8 +1,7 @@
 'use client'
 
 import { useEffect, useState, type FormEvent } from 'react'
-import Link from 'next/link'
-import SiteNav from '../../components/SiteNav'
+import FullNav from '../../components/FullNavigation'
 import BrandLockup from '../../components/BrandLockup'
 import styles from './demand.module.css'
 
@@ -23,19 +22,6 @@ type DashboardResponse = {
   dioceses: Diocese[]
   results: ParishDashboard[]
   error?: string
-}
-
-function ChurchMark() {
-  return (
-    <span className={styles.brandLockup}>
-      <span className={styles.brandName}>evangelical <strong>alliance</strong></span>
-      <span className={styles.brandDots} aria-hidden="true">
-        <i />
-        <i />
-        <i />
-      </span>
-    </span>
-  )
 }
 
 function SearchIcon() {
@@ -121,12 +107,7 @@ export default function DemandSide() {
 
   return (
     <div className={styles.page}>
-      <header className={styles.header}>
-        <Link className={styles.brandLink} href="/" aria-label="Evangelical Alliance home">
-          <BrandLockup />
-        </Link>
-        <SiteNav />
-      </header>
+      <FullNav />
 
       <main className={styles.main}>
         <section className={styles.searchSection} aria-labelledby="page-title">
@@ -237,7 +218,7 @@ export default function DemandSide() {
       </main>
 
       <footer className={styles.footer}>
-        <ChurchMark />
+        <BrandLockup size="sm" />
         <span>© Evangelical Alliance</span>
       </footer>
     </div>

@@ -1,8 +1,7 @@
 'use client'
 
 import { useMemo, useState, type FormEvent } from 'react'
-import Link from 'next/link'
-import SiteNav from '../../components/SiteNav'
+import FullNav from '../../components/FullNavigation'
 import BrandLockup from '../../components/BrandLockup'
 import MapView from './MapView'
 import ChurchProfileCard from './ChurchProfileCard'
@@ -10,7 +9,7 @@ import { initiativeTypes } from '../../lib/initiatives'
 import { dayKeys, dayShortLabels, parseChurchHours, type DayKey } from '../../lib/churchHours'
 import { distanceMiles, formatDistance, type LatLng } from '../../lib/geo'
 import styles from './churches.module.css'
-import { ChurchMark, PinIcon, SearchIcon } from './icons'
+import { PinIcon, SearchIcon } from './icons'
 
 type Church = {
   id: string
@@ -334,12 +333,7 @@ export default function ChurchFinder() {
 
   return (
     <div className={styles.page}>
-      <header className={styles.header}>
-        <Link className={styles.brandLink} href="/" aria-label="Evangelical Alliance home">
-          <BrandLockup />
-        </Link>
-        <SiteNav />
-      </header>
+      <FullNav />
 
       <main className={styles.main}>
         <section className={styles.searchSection} aria-labelledby="page-title">
@@ -602,7 +596,7 @@ export default function ChurchFinder() {
       </main>
 
       <footer className={styles.footer}>
-        <ChurchMark />
+        <BrandLockup size="sm" />
         <span>© Evangelical Alliance</span>
       </footer>
     </div>

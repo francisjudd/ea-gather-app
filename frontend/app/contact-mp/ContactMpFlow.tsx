@@ -5,10 +5,10 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import EmailButton from '@/components/messaging/EmailButton'
 import GmailButton from '@/components/messaging/GmailButton'
-import { isMailtoTooLong, buildLetterMailto, renderLetterFallback } from '@/lib/messaging'
+import { isMailtoTooLong, buildLetterMailto, renderLetterFallback, type LetterInput } from '@/lib/messaging'
+import FullNav from '../../components/FullNavigation'
 import { activities, toLetterInput, type Draft } from '@/lib/messaging/draft'
-import SiteNav from '../../components/SiteNav'
-import BrandLockup from '../../components/BrandLockup'
+
 import { flowSteps, type StepSlug } from './steps'
 
 const storageKey = 'ea-contact-mp-draft-v1'
@@ -245,14 +245,7 @@ export default function ContactMpFlow({ step }: { step: string }) {
 
   return (
     <main className="app-shell">
-      <header className="site-header">
-        <Link className="brand-lockup" href="/" aria-label="Evangelical Alliance home">
-          <BrandLockup />
-        </Link>
-        <div className="site-actions">
-          <SiteNav />
-        </div>
-      </header>
+      <FullNav />
 
       <div className="flow-layout">
         <aside className="flow-sidebar" aria-label="Form progress">
