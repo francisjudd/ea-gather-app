@@ -104,6 +104,34 @@ Set `DATABASE_URL` and `ADMIN_TOKEN` in the Vercel project's environment
 variables. On Vercel, use the transaction pooler (port `6543`) for
 `DATABASE_URL`, which suits serverless functions.
 
+## UTM tracking parameter
+
+The email to an MP (built in `frontend/lib/messaging/`) includes a link to the
+church's constituency page, for example:
+
+```text
+https://<site>/constituencies/putney?utm_campaign=mp_outreach
+```
+
+**Purpose:** to measure how effective these emails are. Visits to a
+constituency page with `utm_campaign=mp_outreach` show how many MPs' offices
+(or others they forward the email to) follow the link from a letter, and which
+constituencies they come from. It is the only signal we get back from an email
+sent from the church's own account.
+
+- The parameter is defined once, as `LETTER_LINK_PARAMS` in
+  `frontend/lib/messaging/draft.ts`. Analytics tools that read UTM parameters
+  pick up `utm_campaign` automatically. The constituency page can also read it
+  to fire an event or show a banner or modal to visitors arriving from a letter.
+- There is deliberately only one parameter. The link is pasted into a
+  plain-text email, so it should stay short and contain no `&`.
+- Do not change the value once letters are being sent: analytics would treat it
+  as a different campaign.
+- Never put personal details (names, emails, postcodes) in the link. If letters
+  ever need telling apart, use a random opaque code that the backend records.
+- The site address in the link is the browser's origin, so only letters created
+  on the production site carry the production address.
+
 ## Common commands
 
 | Command | Purpose |
