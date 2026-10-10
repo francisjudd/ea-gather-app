@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import EmailButton from '@/components/messaging/EmailButton'
 import GmailButton from '@/components/messaging/GmailButton'
 import { isMailtoTooLong, buildLetterMailto, renderLetterFallback, type LetterInput } from '@/lib/messaging'
+import type { components } from '@/lib/api/schema'
 import FullNav from '../../components/FullNavigation'
 import { activities, toLetterInput, type Draft } from '@/lib/messaging/draft'
 
@@ -17,6 +18,7 @@ const defaultDraft: Draft = {
   mpName: '',
   mpParty: '',
   mpEmail: '',
+  mpConstituency: '',
   churchName: '',
   denomination: '',
   attendance: '',
@@ -32,10 +34,20 @@ const defaultDraft: Draft = {
   sendMethod: '',
 }
 
-const demoMp = {
-  name: 'Sarah Whitfield',
-  party: 'Labour',
-  email: 'sarah.whitfield.mp@parliament.uk',
+type MpLookupResult = components['schemas']['Mp']
+
+async function fetchMp(postcode: string): Promise<{ mp: MpLookupResult } | { error: string; status: number }> {
+  try {
+    const response = await fetch(`/openapi/mp/lookup?postcode=${encodeURIComponent(postcode.trim())}`)
+    if (response.ok) return { mp: await response.json() as MpLookupResult }
+    const body: unknown = await response.json().catch(() => null)
+    const detail = body && typeof body === 'object' && 'detail' in body && typeof body.detail === 'string'
+      ? body.detail
+      : 'We couldn’t look up your MP right now.'
+    return { error: detail, status: response.status }
+  } catch {
+    return { error: 'We couldn’t reach the MP lookup service. Check your connection and try again.', status: 0 }
+  }
 }
 
 function readDraft(value: string): Draft {
@@ -54,6 +66,7 @@ function readDraft(value: string): Draft {
     mpName: stringValue('mpName'),
     mpParty: stringValue('mpParty'),
     mpEmail: stringValue('mpEmail'),
+    mpConstituency: stringValue('mpConstituency'),
     churchName: stringValue('churchName'),
     denomination: stringValue('denomination'),
     attendance: stringValue('attendance'),
@@ -128,6 +141,9 @@ export default function ContactMpFlow({ step }: { step: string }) {
   const [loaded, setLoaded] = useState(false)
   const [storageError, setStorageError] = useState('')
   const [editingMp, setEditingMp] = useState(false)
+  const [findingMp, setFindingMp] = useState(false)
+  const [postcodeError, setPostcodeError] = useState('')
+  const [mpLookupError, setMpLookupError] = useState('')
   const [attendanceError, setAttendanceError] = useState('')
 
   useEffect(() => {
@@ -170,7 +186,7 @@ export default function ContactMpFlow({ step }: { step: string }) {
   const emailBody = letter.body
   const emailSubject = letter.subjects[0]
   const mailtoTooLong = isMailtoTooLong(buildLetterMailto(letterInput, emailSubject, emailBody))
-  const isDemoPostcode = draft.postcode.replace(/\s/g, '').toUpperCase() === 'DN13LN'
+  const hasMpResult = Boolean(draft.mpConstituency)
 
   if (!currentStep) return null
 
@@ -195,14 +211,39 @@ export default function ContactMpFlow({ step }: { step: string }) {
     if (nextSlug) navigateTo(nextSlug)
   }
 
-  const handleFindMp = () => {
-    setDraft((previous) => ({
-      ...previous,
-      mpName: isDemoPostcode ? demoMp.name : previous.mpName,
-      mpParty: isDemoPostcode ? demoMp.party : previous.mpParty,
-      mpEmail: isDemoPostcode ? demoMp.email : previous.mpEmail,
-    }))
-    navigateTo('mp-lookup')
+  const handleFindMp = async () => {
+    setFindingMp(true)
+    setPostcodeError('')
+    setMpLookupError('')
+    const result = await fetchMp(draft.postcode)
+    setFindingMp(false)
+
+    if ('mp' in result) {
+      const next: Draft = {
+        ...draft,
+        postcode: result.mp.postcode,
+        mpName: result.mp.name,
+        mpParty: result.mp.party ?? '',
+        mpEmail: result.mp.email ?? '',
+        mpConstituency: result.mp.constituency,
+      }
+      setDraft(next)
+      // Each step is its own page, so save now rather than racing the
+      // debounced save against navigation.
+      try {
+        window.localStorage.setItem(storageKey, JSON.stringify(next))
+      } catch {
+        // The debounced save reports storage problems.
+      }
+      navigateTo('mp-lookup')
+      return
+    }
+
+    // Stay on this step: an invalid postcode is shown on the field; any other
+    // failure offers entering the MP's details by hand.
+    setDraft((previous) => ({ ...previous, mpConstituency: '' }))
+    if (result.status === 422) setPostcodeError(result.error)
+    else setMpLookupError(result.error)
   }
 
   const handleSent = () => {
@@ -283,7 +324,7 @@ export default function ContactMpFlow({ step }: { step: string }) {
             <>
               <h2 className="ea-underline" id="step-title">Let’s start with your church postcode.</h2>
               <p className="step-description">We’ll use this to find your constituency and the MP who represents your church’s area.</p>
-              <form className="step-form" onSubmit={(event) => { event.preventDefault(); handleFindMp() }}>
+              <form className="step-form" onSubmit={(event) => { event.preventDefault(); void handleFindMp() }}>
                 <Field
                   label="Church postcode"
                   name="postcode"
@@ -292,9 +333,18 @@ export default function ContactMpFlow({ step }: { step: string }) {
                   placeholder="e.g. DN1 3LN"
                   autoComplete="postal-code"
                   required
+                  error={postcodeError}
                 />
                 <div className="privacy-note"><span aria-hidden="true">⌖</span> Your postcode is only used to identify your MP.</div>
-                <button className="button button-primary" type="submit">Find my MP <span aria-hidden="true">→</span></button>
+                {mpLookupError && (
+                  <p className="storage-alert" role="alert">
+                    {mpLookupError}{' '}
+                    <button className="button button-text" type="button" onClick={() => navigateTo('mp-lookup')}>Enter your MP’s details yourself →</button>
+                  </p>
+                )}
+                <button className="button button-primary" type="submit" disabled={findingMp}>
+                  {findingMp ? 'Finding your MP…' : <>Find my MP <span aria-hidden="true">→</span></>}
+                </button>
               </form>
               <div className="benefit-row">
                 <span><b aria-hidden="true">◷</b> Takes about 5 minutes</span>
@@ -308,27 +358,27 @@ export default function ContactMpFlow({ step }: { step: string }) {
             <>
               <h2 className="ea-underline" id="step-title">Is this your MP?</h2>
               <p className="step-description">Check the details before we build your letter.</p>
-              {isDemoPostcode && !editingMp ? (
+              {hasMpResult && !editingMp ? (
                 <>
                   <article className="mp-card">
                     <div className="mp-avatar" aria-hidden="true">{draft.mpName.split(' ').map((part) => part[0]).join('').slice(0, 2) || 'MP'}</div>
                     <div>
                       <p className="result-label">YOUR CONSTITUENCY</p>
-                      <h3>Doncaster Central</h3>
-                      <p className="mp-name">{draft.mpName} <span>· {draft.mpParty}</span></p>
-                      <a className="text-link" href={`mailto:${draft.mpEmail}`}>{draft.mpEmail}</a>
+                      <h3>{draft.mpConstituency}</h3>
+                      <p className="mp-name">{draft.mpName}{draft.mpParty && <span> · {draft.mpParty}</span>}</p>
+                      {draft.mpEmail && <a className="text-link" href={`mailto:${draft.mpEmail}`}>{draft.mpEmail}</a>}
                     </div>
                   </article>
-                  <p className="demo-disclaimer">Demo result from the mock-up for DN1 3LN. A live Parliament postcode lookup is not connected yet — please check these details before sending.</p>
+                  <p className="demo-disclaimer">Found from your postcode ({draft.postcode}). Please check these details before sending.</p>
                 </>
               ) : (
                 <div className="lookup-empty">
                   <span className="empty-icon" aria-hidden="true">⌖</span>
                   <h3>Check your MP’s details</h3>
-                  <p>A live postcode lookup is not connected yet. Enter the correct MP details below to continue.</p>
+                  <p>Enter the correct MP details below to continue.</p>
                 </div>
               )}
-              {(editingMp || !isDemoPostcode) && (
+              {(editingMp || !hasMpResult || !draft.mpEmail) && (
                 <div className="mp-edit-grid">
                   <Field label="MP name" name="mpName" value={draft.mpName} onChange={onChange} required />
                   <Field label="Party" name="mpParty" value={draft.mpParty} onChange={onChange} />
@@ -338,7 +388,7 @@ export default function ContactMpFlow({ step }: { step: string }) {
               <div className="action-row action-row-split">
                 <button className="button button-quiet" type="button" onClick={() => navigateTo('intro')}>← Back</button>
                 <div className="action-row">
-                  {isDemoPostcode && <button className="button button-text" type="button" onClick={() => setEditingMp((value) => !value)}>{editingMp ? 'Use demo details' : 'This isn’t right — let me edit'}</button>}
+                  {hasMpResult && <button className="button button-text" type="button" onClick={() => setEditingMp((value) => !value)}>{editingMp ? 'Done editing' : 'This isn’t right — let me edit'}</button>}
                   <button className="button button-primary" type="button" disabled={!draft.mpName.trim() || !draft.mpEmail.trim()} onClick={() => navigateTo('church-details')}>Yes, that’s my MP <span aria-hidden="true">→</span></button>
                 </div>
               </div>
