@@ -7,6 +7,7 @@ const emptyDraft: Draft = {
   mpName: '',
   mpParty: '',
   mpEmail: '',
+  mpConstituency: '',
   churchName: '',
   denomination: '',
   attendance: '',

@@ -8,6 +8,7 @@ export type Draft = {
   mpName: string
   mpParty: string
   mpEmail: string
+  mpConstituency: string
   churchName: string
   denomination: string
   attendance: string
@@ -65,7 +66,7 @@ export function toLetterInput(draft: Draft): LetterInput {
       display_name: mpName ? `${mpName} MP` : 'there',
       first_name: mpName.split(/\s+/)[0] || null,
       email: draft.mpEmail.trim(),
-      constituency: '',
+      constituency: draft.mpConstituency.trim(),
     },
     activities: activities
       .filter((activity) => draft.selectedActivities.includes(activity.id))

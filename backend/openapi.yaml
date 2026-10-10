@@ -1,7 +1,626 @@
 openapi: 3.1.0
 info:
-  title: EA Gathering API
+  title: Evangelical Alliance Gather API
   version: 0.1.0
-  description: Replace this starter contract with the backend OpenAPI specification.
-paths: {}
-components: {}
+paths:
+  /openapi/churches:
+    get:
+      summary: List Churches
+      operationId: list_churches_openapi_churches_get
+      parameters:
+      - name: q
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            maxLength: 200
+          - type: 'null'
+          description: Text match on name, address or constituency
+          title: Q
+        description: Text match on name, address or constituency
+      - name: letter
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            pattern: ^[A-Za-z]$
+          - type: 'null'
+          description: First letter of the church name
+          title: Letter
+        description: First letter of the church name
+      - name: initiatives
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Comma-separated initiative ids; churches must offer all
+          title: Initiatives
+        description: Comma-separated initiative ids; churches must offer all
+      - name: lat
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: number
+            maximum: 90
+            minimum: -90
+          - type: 'null'
+          title: Lat
+      - name: lng
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: number
+            maximum: 180
+            minimum: -180
+          - type: 'null'
+          title: Lng
+      - name: radius
+        in: query
+        required: false
+        schema:
+          type: number
+          maximum: 500
+          exclusiveMinimum: 0
+          description: Miles from lat/lng
+          default: 15
+          title: Radius
+        description: Miles from lat/lng
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 5000
+          minimum: 1
+          default: 5000
+          title: Limit
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Church'
+                title: Response List Churches Openapi Churches Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      summary: Submit Church
+      description: Submit a church for review. It appears in the directory only after
+        an admin approves it.
+      operationId: submit_church_openapi_churches_post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChurchSubmissionIn'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChurchSubmission'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /openapi/churches/{church_id}:
+    get:
+      summary: Get Church
+      operationId: get_church_openapi_churches__church_id__get
+      parameters:
+      - name: church_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Church Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Church'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /openapi/initiatives:
+    get:
+      summary: List Initiatives
+      operationId: list_initiatives_openapi_initiatives_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Initiative'
+                type: array
+                title: Response List Initiatives Openapi Initiatives Get
+  /openapi/geocode:
+    get:
+      summary: Geocode Query
+      operationId: geocode_query_openapi_geocode_get
+      parameters:
+      - name: q
+        in: query
+        required: true
+        schema:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Postcode, postcode area or place name
+          title: Q
+        description: Postcode, postcode area or place name
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GeocodeResult'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /openapi/mp/lookup:
+    get:
+      summary: Lookup Mp
+      operationId: lookup_mp_openapi_mp_lookup_get
+      parameters:
+      - name: postcode
+        in: query
+        required: true
+        schema:
+          type: string
+          minLength: 5
+          maxLength: 10
+          title: Postcode
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Mp'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /openapi/admin/submissions:
+    get:
+      summary: List Submissions
+      operationId: list_submissions_openapi_admin_submissions_get
+      parameters:
+      - name: status
+        in: query
+        required: false
+        schema:
+          enum:
+          - pending
+          - approved
+          - rejected
+          type: string
+          default: pending
+          title: Status
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ChurchSubmission'
+                title: Response List Submissions Openapi Admin Submissions Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /openapi/admin/submissions/{submission_id}:
+    patch:
+      summary: Update Submission
+      operationId: update_submission_openapi_admin_submissions__submission_id__patch
+      parameters:
+      - name: submission_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Submission Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmissionUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChurchSubmission'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /openapi/:
+    get:
+      summary: Root
+      operationId: root_openapi__get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /openapi:
+    get:
+      summary: Root
+      operationId: root_openapi_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /:
+    get:
+      summary: Root
+      operationId: root__get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+components:
+  schemas:
+    Church:
+      properties:
+        id:
+          type: string
+          title: Id
+        name:
+          type: string
+          title: Name
+        address:
+          type: string
+          title: Address
+        place:
+          type: string
+          title: Place
+        postcode:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Postcode
+        lat:
+          type: number
+          title: Lat
+        lng:
+          type: number
+          title: Lng
+        denomination:
+          type: string
+          title: Denomination
+        operatingHours:
+          type: string
+          title: Operatinghours
+        verified:
+          type: boolean
+          title: Verified
+        initiatives:
+          items:
+            type: string
+          type: array
+          title: Initiatives
+        website:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Website
+        phone:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Phone
+        constituency:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Constituency
+        distanceMiles:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Distancemiles
+      type: object
+      required:
+      - id
+      - name
+      - address
+      - place
+      - postcode
+      - lat
+      - lng
+      - denomination
+      - operatingHours
+      - verified
+      - initiatives
+      - website
+      - phone
+      - constituency
+      title: Church
+    ChurchSubmission:
+      properties:
+        id:
+          type: string
+          title: Id
+        name:
+          type: string
+          title: Name
+        denomination:
+          type: string
+          title: Denomination
+        address:
+          type: string
+          title: Address
+        place:
+          type: string
+          title: Place
+        postcode:
+          type: string
+          title: Postcode
+        operatingHours:
+          type: string
+          title: Operatinghours
+        contactName:
+          type: string
+          title: Contactname
+        contactEmail:
+          type: string
+          title: Contactemail
+        initiatives:
+          items:
+            type: string
+          type: array
+          title: Initiatives
+        status:
+          type: string
+          enum:
+          - pending
+          - approved
+          - rejected
+          title: Status
+        submittedAt:
+          type: string
+          format: date-time
+          title: Submittedat
+      type: object
+      required:
+      - id
+      - name
+      - denomination
+      - address
+      - place
+      - postcode
+      - operatingHours
+      - contactName
+      - contactEmail
+      - initiatives
+      - status
+      - submittedAt
+      title: ChurchSubmission
+    ChurchSubmissionIn:
+      properties:
+        name:
+          type: string
+          maxLength: 200
+          minLength: 1
+          title: Name
+        denomination:
+          type: string
+          maxLength: 200
+          title: Denomination
+          default: ''
+        address:
+          type: string
+          maxLength: 500
+          minLength: 1
+          title: Address
+        place:
+          type: string
+          maxLength: 200
+          title: Place
+          default: ''
+        postcode:
+          type: string
+          maxLength: 10
+          title: Postcode
+          default: ''
+        operatingHours:
+          type: string
+          maxLength: 500
+          title: Operatinghours
+          default: ''
+        contactName:
+          type: string
+          maxLength: 200
+          minLength: 1
+          title: Contactname
+        contactEmail:
+          type: string
+          format: email
+          title: Contactemail
+        initiatives:
+          items:
+            type: string
+          type: array
+          maxItems: 50
+          title: Initiatives
+      type: object
+      required:
+      - name
+      - address
+      - contactName
+      - contactEmail
+      title: ChurchSubmissionIn
+    GeocodeResult:
+      properties:
+        lat:
+          type: number
+          title: Lat
+        lng:
+          type: number
+          title: Lng
+      type: object
+      required:
+      - lat
+      - lng
+      title: GeocodeResult
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    Initiative:
+      properties:
+        id:
+          type: string
+          title: Id
+        label:
+          type: string
+          title: Label
+      type: object
+      required:
+      - id
+      - label
+      title: Initiative
+    Mp:
+      properties:
+        name:
+          type: string
+          title: Name
+        party:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Party
+        email:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Email
+        constituency:
+          type: string
+          title: Constituency
+        postcode:
+          type: string
+          title: Postcode
+      type: object
+      required:
+      - name
+      - party
+      - email
+      - constituency
+      - postcode
+      title: Mp
+    SubmissionUpdate:
+      properties:
+        status:
+          anyOf:
+          - type: string
+            enum:
+            - pending
+            - approved
+            - rejected
+          - type: 'null'
+          title: Status
+        initiatives:
+          anyOf:
+          - items:
+              type: string
+            type: array
+            maxItems: 50
+          - type: 'null'
+          title: Initiatives
+      type: object
+      title: SubmissionUpdate
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
