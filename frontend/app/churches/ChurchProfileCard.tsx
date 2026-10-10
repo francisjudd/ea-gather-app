@@ -1,4 +1,6 @@
 import { initiativeLabels } from '../../lib/initiatives'
+import { dayLabels, parseChurchHours } from '../../lib/churchHours'
+import { formatDistance } from '../../lib/geo'
 import styles from './churches.module.css'
 
 type Church = {
@@ -12,6 +14,7 @@ type Church = {
   operatingHours: string
   verified: boolean
   initiatives: string[]
+  distanceMiles?: number
 }
 
 function VerifiedBadge() {
@@ -35,6 +38,8 @@ function ClockIcon() {
 }
 
 export default function ChurchProfileCard({ church }: { church: Church }) {
+  const hours = parseChurchHours(church.operatingHours)
+
   return (
     <article className={styles.profileCard} aria-label={`${church.name} profile`}>
       <div className={styles.profileHeader}>
@@ -46,14 +51,32 @@ export default function ChurchProfileCard({ church }: { church: Church }) {
             {church.place}
           </p>
         </div>
-        {church.verified && <VerifiedBadge />}
+        <div className={styles.profileBadges}>
+          {church.distanceMiles != null && (
+            <span className={styles.distanceBadge} aria-label={`${church.distanceMiles.toFixed(1)} miles away`}>
+              {formatDistance(church.distanceMiles)} away
+            </span>
+          )}
+          {church.verified && <VerifiedBadge />}
+        </div>
       </div>
 
       <p className={styles.profileAddress}>{church.address}</p>
 
       <div className={styles.profileHours}>
         <ClockIcon />
-        <span>{church.operatingHours}</span>
+        <div className={styles.profileHoursList}>
+          {hours.length > 0 ? (
+            hours.map((entry) => (
+              <span key={entry.day} className={styles.profileHoursRow}>
+                <strong>{dayLabels[entry.day]}</strong>
+                <span>{entry.times}</span>
+              </span>
+            ))
+          ) : (
+            <span>{church.operatingHours}</span>
+          )}
+        </div>
       </div>
 
       <div className={styles.profileSection}>

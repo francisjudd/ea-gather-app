@@ -14,5 +14,8 @@
   },
   "engines": {
     "node": ">=22.13.0"
+  },
+  "dependencies": {
+    "mustache": "^4.2.0"
   }
 }

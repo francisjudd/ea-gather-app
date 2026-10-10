@@ -224,6 +224,73 @@
   font-size: 13px;
 }
 
+.locationBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+  margin-top: 12px;
+  padding: 10px 12px;
+  border: 1px solid #cfdcdc;
+  border-radius: 5px;
+  background: #f0f6f6;
+}
+
+.locationBarLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #2b5e7f;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.locationBarLabel svg {
+  width: 15px;
+  height: 15px;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.radiusField {
+  display: inline-flex;
+}
+
+.radiusSelect {
+  min-height: 32px;
+  padding: 0 9px;
+  border: 1px solid #b9c8cc;
+  border-radius: 5px;
+  background: #fff;
+  color: #383937;
+  font: inherit;
+  font-size: 13px;
+}
+
+.locationBarCount {
+  color: #5e6470;
+  font-size: 12px;
+}
+
+.locationClear {
+  margin-left: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #2b5e7f;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.locationClear:hover {
+  color: #24305f;
+}
+
 .viewToolbar {
   min-height: 47px;
   display: flex;
@@ -493,6 +560,22 @@
   font-size: 25px;
 }
 
+.rowMeta {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.rowDistance {
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: #eef4f6;
+  color: #2b5e7f;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
 .churchNote {
   margin: -4px 18px 15px 41px;
   color: #69717b;
@@ -573,7 +656,7 @@
 
 .profileHours {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 8px;
   margin-top: 10px;
   color: #547d88;
@@ -584,10 +667,47 @@
   width: 16px;
   height: 16px;
   flex: 0 0 auto;
+  margin-top: 2px;
   stroke: currentColor;
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-width: 1.8;
+}
+
+.profileHoursList {
+  display: grid;
+  gap: 3px;
+}
+
+.profileHoursRow {
+  display: flex;
+  gap: 8px;
+}
+
+.profileHoursRow strong {
+  min-width: 70px;
+  color: #2b5e7f;
+}
+
+.profileBadges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.distanceBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex: 0 0 auto;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: #eaf2f3;
+  color: #2b5e7f;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
 }
 
 .profileSection {

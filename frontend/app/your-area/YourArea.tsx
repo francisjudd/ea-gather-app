@@ -210,7 +210,7 @@ export default function YourArea() {
               </ul>
               <div className="action-row">
                 <Link className="button button-primary" href={mpHref}>Use this to write to your MP <span aria-hidden="true">→</span></Link>
-                <a className="button button-quiet" href={`mailto:${activeArea.mpEmail}`}>Email {activeArea.mpName} directly</a>
+                <a className="button button-quiet" style={{color: "white"}} href={`mailto:${activeArea.mpEmail}`}>Email {activeArea.mpName} directly</a>
               </div>
               <p className={styles.letterNote}>
                 These figures are drawn from a small sample so you can see how the numbers read. They are

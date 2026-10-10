@@ -6,6 +6,8 @@ import SiteNav from '../../components/SiteNav'
 import MapView from './MapView'
 import ChurchProfileCard from './ChurchProfileCard'
 import { initiativeTypes } from '../../lib/initiatives'
+import { dayKeys, dayShortLabels, parseChurchHours, type DayKey } from '../../lib/churchHours'
+import { distanceMiles, formatDistance, type LatLng } from '../../lib/geo'
 import styles from './churches.module.css'
 
 type Church = {
@@ -20,6 +22,10 @@ type Church = {
   verified: boolean
   initiatives: string[]
 }
+
+type ScoredChurch = Church & { distanceMiles?: number }
+
+const DEFAULT_RADIUS_MILES = 15
 
 const churches: Church[] = [
   {
@@ -177,33 +183,113 @@ function PinIcon() {
   )
 }
 
+// --- Local geocoding for the sample directory -------------------------------
+// The preview has no geocoder API, so we resolve a searched postcode / place
+// to a coordinate using the sample entries themselves. This keeps "near me"
+// and "near a postcode" working without an external API.
+
+const FULL_POSTCODE = /^[A-Z]{1,2}\d[A-Z\d]?\s?\d[A-Z]{2}$/i
+const POSTCODE_AREA = /^[A-Z]{1,2}\d[A-Z]?$/i
+const OUTWARD_CODE = /([A-Z]{1,2}\d[A-Z]?)\s?\d[A-Z]{2}/i
+
+function outwardCode(address: string): string {
+  return address.match(OUTWARD_CODE)?.[1]?.toLocaleUpperCase('en-GB') ?? ''
+}
+
+function average(center: LatLng, points: Church[]): LatLng {
+  const total = points.reduce(
+    (sum, point) => ({ lat: sum.lat + point.lat, lng: sum.lng + point.lng }),
+    { lat: 0, lng: 0 },
+  )
+  return { lat: total.lat / points.length, lng: total.lng / points.length }
+}
+
+/**
+ * Resolve a loose query (full postcode, postcode area, or place name) to a
+ * coordinate so the directory can return distance-sorted results. Returns null
+ * when the query is not a location.
+ */
+function resolveCenter(query: string): LatLng | null {
+  const normalized = query.trim().toLocaleUpperCase('en-GB')
+  if (!normalized) return null
+
+  // Full postcode, e.g. "M3 7BB" -> use that church's coordinates.
+  const full = normalized.match(FULL_POSTCODE)
+  if (full) {
+    const exact = churches.find((church) => church.address.toLocaleUpperCase('en-GB').includes(full[0]))
+    if (exact) return { lat: exact.lat, lng: exact.lng }
+  }
+
+  // Postcode area, e.g. "M3" -> average of churches in that area.
+  const area = normalized.match(POSTCODE_AREA)
+  if (area) {
+    const inArea = churches.filter((church) => outwardCode(church.address).startsWith(area[1]))
+    if (inArea.length > 0) return average({ lat: 0, lng: 0 }, inArea)
+  }
+
+  // Place name, e.g. "Stockport" -> average of churches there.
+  const inPlace = churches.filter((church) => church.place.toLocaleUpperCase('en-GB') === normalized)
+  if (inPlace.length > 0) return average({ lat: 0, lng: 0 }, inPlace)
+
+  return null
+}
+
 export default function ChurchFinder() {
   const [query, setQuery] = useState('')
   const [submittedQuery, setSubmittedQuery] = useState('')
   const [view, setView] = useState<'map' | 'list'>('map')
   const [letter, setLetter] = useState('All')
   const [selectedInitiatives, setSelectedInitiatives] = useState<string[]>([])
+  const [selectedDays, setSelectedDays] = useState<DayKey[]>([])
   const [selectedChurch, setSelectedChurch] = useState('')
   const [locationMessage, setLocationMessage] = useState('')
+  const [myCoords, setMyCoords] = useState<LatLng | null>(null)
+  const [radius, setRadius] = useState(DEFAULT_RADIUS_MILES)
 
-  const filteredChurches = useMemo(() => {
+  const activeCenter = useMemo<LatLng | null>(
+    () => myCoords ?? resolveCenter(submittedQuery),
+    [myCoords, submittedQuery],
+  )
+
+  const filteredChurches = useMemo<ScoredChurch[]>(() => {
     const normalizedQuery = submittedQuery.trim().toLocaleLowerCase('en-GB')
-    return churches.filter((church) => {
+    const daySet = new Set(selectedDays)
+    const initiativeSet = selectedInitiatives
+
+    const base: Church[] = churches.filter((church) => {
       const matchesQuery = !normalizedQuery
         || `${church.name} ${church.address} ${church.place}`.toLocaleLowerCase('en-GB').includes(normalizedQuery)
       const initial = church.name.match(/[a-z]/i)?.[0]?.toLocaleUpperCase('en-GB')
       const matchesLetter = letter === 'All' || initial === letter
-      const matchesInitiatives = selectedInitiatives.length === 0
-        || selectedInitiatives.every((initiative) => church.initiatives.includes(initiative))
-      return matchesQuery && matchesLetter && matchesInitiatives
+      const matchesInitiatives = initiativeSet.length === 0
+        || initiativeSet.every((initiative) => church.initiatives.includes(initiative))
+      const matchesDays = daySet.size === 0
+        || parseChurchHours(church.operatingHours).some((entry) => daySet.has(entry.day))
+      return matchesQuery && matchesLetter && matchesInitiatives && matchesDays
     })
-  }, [letter, selectedInitiatives, submittedQuery])
+
+    // When a search center is known (browser location or a postcode/place query)
+    // return nearest-first results within the chosen radius.
+    if (activeCenter) {
+      return base
+        .map((church) => ({
+          ...church,
+          distanceMiles: distanceMiles(activeCenter, { lat: church.lat, lng: church.lng }),
+        }))
+        .filter((church) => (church.distanceMiles ?? 0) <= radius)
+        .sort((a, b) => (a.distanceMiles ?? 0) - (b.distanceMiles ?? 0))
+    }
+
+    return base
+  }, [letter, selectedInitiatives, selectedDays, submittedQuery, activeCenter, radius])
 
   function submitSearch(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     setSubmittedQuery(query.trim())
+    setMyCoords(null)
     setSelectedChurch('')
     setLocationMessage('')
+    if (view === 'map' && resolveCenter(query)) setView('list')
   }
 
   function viewAllChurches() {
@@ -211,6 +297,8 @@ export default function ChurchFinder() {
     setSubmittedQuery('')
     setLetter('All')
     setSelectedInitiatives([])
+    setSelectedDays([])
+    setMyCoords(null)
     setSelectedChurch('')
     setView('list')
   }
@@ -224,6 +312,15 @@ export default function ChurchFinder() {
     setSelectedChurch('')
   }
 
+  function toggleDay(day: DayKey) {
+    setSelectedDays((previous) =>
+      previous.includes(day)
+        ? previous.filter((item) => item !== day)
+        : [...previous, day],
+    )
+    setSelectedChurch('')
+  }
+
   function useCurrentLocation() {
     setLocationMessage('')
     if (!navigator.geolocation) {
@@ -232,7 +329,14 @@ export default function ChurchFinder() {
     }
 
     navigator.geolocation.getCurrentPosition(
-      () => setLocationMessage('Your location was detected. Location-based church results are not available in this preview.'),
+      (position) => {
+        setMyCoords({ lat: position.coords.latitude, lng: position.coords.longitude })
+        setSubmittedQuery('')
+        setQuery('')
+        setSelectedChurch('')
+        setView('list')
+        setLocationMessage(`Showing churches within ${radius} miles of your location, nearest first.`)
+      },
       (error) => {
         const message = error.code === error.PERMISSION_DENIED
           ? 'Location access was not allowed. You can still search by church name, postcode or place.'
@@ -241,6 +345,14 @@ export default function ChurchFinder() {
       },
       { timeout: 10000, maximumAge: 60000 },
     )
+  }
+
+  function clearLocation() {
+    setMyCoords(null)
+    setSubmittedQuery('')
+    setQuery('')
+    setSelectedChurch('')
+    setLocationMessage('')
   }
 
   function chooseLetter(nextLetter: string) {
@@ -289,6 +401,38 @@ export default function ChurchFinder() {
               Or view all Evangelical Alliance member churches
             </button>
           </div>
+
+          {activeCenter && (
+            <div className={styles.locationBar} role="group" aria-label="Location search options">
+              <span className={styles.locationBarLabel}>
+                <PinIcon />
+                {myCoords ? 'Near you' : `Near ${submittedQuery.toLowerCase()}`}{': '}
+              </span>
+              <label className={styles.radiusField} htmlFor="radius-select">
+                <span className={styles.visuallyHidden}>Search radius</span>
+                <select
+                  id="radius-select"
+                  className={styles.radiusSelect}
+                  value={radius}
+                  onChange={(event) => setRadius(Number(event.target.value))}
+                >
+                  <option value="5">within 5 miles</option>
+                  <option value="10">within 10 miles</option>
+                  <option value="15">within 15 miles</option>
+                  <option value="25">within 25 miles</option>
+                  <option value="50">within 50 miles</option>
+                </select>
+              </label>
+              <span className={styles.locationBarCount}>
+                {filteredChurches.length} found
+              </span>
+              {myCoords && (
+                <button className={styles.locationClear} type="button" onClick={clearLocation}>
+                  Clear location
+                </button>
+              )}
+            </div>
+          )}
           {locationMessage && <p className={styles.locationMessage} role="status">{locationMessage}</p>}
 
           <div className={styles.facetPanel}>
@@ -312,6 +456,33 @@ export default function ChurchFinder() {
                     onClick={() => toggleInitiative(initiative.id)}
                   >
                     {initiative.label}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+
+          <div className={styles.facetPanel}>
+            <div className={styles.facetHeader}>
+              <span className={styles.facetLabel}>When they&rsquo;re open:</span>
+              {selectedDays.length > 0 && (
+                <button className={styles.facetClear} type="button" onClick={() => setSelectedDays([])}>
+                  Clear filters
+                </button>
+              )}
+            </div>
+            <div className={styles.facetChips} role="group" aria-label="Filter churches by opening day">
+              {dayKeys.map((day) => {
+                const active = selectedDays.includes(day)
+                return (
+                  <button
+                    key={day}
+                    className={`${styles.facetChip} ${active ? styles.facetChipActive : ''}`}
+                    type="button"
+                    aria-pressed={active}
+                    onClick={() => toggleDay(day)}
+                  >
+                    {dayShortLabels[day]}
                   </button>
                 )
               })}
@@ -358,11 +529,16 @@ export default function ChurchFinder() {
               selectedChurch={selectedChurch}
               onSelectChurch={setSelectedChurch}
             />
-            {selectedChurch && (
-              <div className={styles.profilePanel}>
-                <ChurchProfileCard church={churches.find((church) => church.id === selectedChurch)!} />
-              </div>
-            )}
+            {selectedChurch && (() => {
+              const cardChurch = churches.find((church) => church.id === selectedChurch)
+              if (!cardChurch) return null
+              const distanceMiles = filteredChurches.find((church) => church.id === selectedChurch)?.distanceMiles
+              return (
+                <div className={styles.profilePanel}>
+                  <ChurchProfileCard church={{ ...cardChurch, distanceMiles }} />
+                </div>
+              )
+            })()}
           </>
         ) : (
           <section className={styles.listPanel} aria-label="Church directory list">
@@ -403,7 +579,14 @@ export default function ChurchFinder() {
                         {church.address}
                       </span>
                     </span>
-                    <span className={styles.rowChevron} aria-hidden="true">›</span>
+                    <span className={styles.rowMeta}>
+                      {church.distanceMiles != null && (
+                        <span className={styles.rowDistance} aria-label={`${church.distanceMiles.toFixed(1)} miles away`}>
+                          {formatDistance(church.distanceMiles)}
+                        </span>
+                      )}
+                      <span className={styles.rowChevron} aria-hidden="true">›</span>
+                    </span>
                   </button>
                   {selectedChurch === church.id && (
                     <div className={styles.profileInline}>
@@ -414,7 +597,8 @@ export default function ChurchFinder() {
               ))}
               {filteredChurches.length === 0 && (
                 <li className={styles.emptyList}>
-                  No sample churches match your search. Try another name, postcode, place or initiative.
+                  No sample churches match your search. Try another name, postcode or place, widen the
+                  radius, or clear the opening-day and initiative filters.
                 </li>
               )}
             </ul>
