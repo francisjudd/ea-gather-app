@@ -5,7 +5,7 @@
 // prefix); in development next.config.ts does the same. This module is the single
 // place that knows the URL shapes, so components never build URLs by hand.
 
-import type { components, paths } from './schema'
+import type { components } from './schema'
 
 type Church = components['schemas']['Church']
 type ChurchSubmission = components['schemas']['ChurchSubmission']
