@@ -318,7 +318,7 @@ export default function ChurchFinder() {
               </button>
             </div>
             <span className={styles.resultCount} aria-live="polite">
-              {filteredChurches.length} sample {filteredChurches.length === 1 ? 'church' : 'churches'}
+              {filteredChurches.length} {filteredChurches.length === 1 ? 'church' : 'churches'}
             </span>
           </div>
         </section>
@@ -398,14 +398,11 @@ export default function ChurchFinder() {
               ))}
               {filteredChurches.length === 0 && (
                 <li className={styles.emptyList}>
-                  No sample churches match your search. Try another name, postcode or place, widen the
+                  No churches match your search. Try another name, postcode or place, widen the
                   radius, or clear the opening-day and initiative filters.
                 </li>
               )}
             </ul>
-            <p className={styles.previewNote}>
-              This preview uses a small sample of directory entries; it is not the full church directory.
-            </p>
           </section>
         )}
 

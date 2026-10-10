@@ -74,7 +74,7 @@ export default function YourArea() {
       chooseArea(match.constituency)
     } else {
       setQueryMessage(
-        `We don't have sample data for “${query.trim()}” yet. Choose a sample area below.`,
+        `We don't have data for “${query.trim()}” yet. Choose an area below.`,
       )
     }
   }
