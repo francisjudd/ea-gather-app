@@ -1,0 +1,136 @@
+'use client'
+
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { setOptions, importLibrary } from '@googlemaps/js-api-loader'
+import styles from './churches.module.css'
+
+type Church = {
+  id: string
+  name: string
+  address: string
+  place: string
+  lat: number
+  lng: number
+}
+
+const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
+
+let optionsSet = false
+
+export default function MapView({
+  churches,
+  selectedChurch,
+  onSelectChurch,
+}: {
+  churches: Church[]
+  selectedChurch: string
+  onSelectChurch: (id: string) => void
+}) {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const mapRef = useRef<google.maps.Map | null>(null)
+  const mapsLibRef = useRef<google.maps.MapsLibrary | null>(null)
+  const markerLibRef = useRef<google.maps.MarkerLibrary | null>(null)
+  const coreLibRef = useRef<google.maps.CoreLibrary | null>(null)
+  const markersRef = useRef<google.maps.Marker[]>([])
+  const [error, setError] = useState('')
+
+  const renderMarkers = useCallback(
+    (
+      maps: google.maps.MapsLibrary,
+      marker: google.maps.MarkerLibrary,
+      core: google.maps.CoreLibrary,
+      map: google.maps.Map,
+      items: Church[],
+    ) => {
+      markersRef.current.forEach((marker) => marker.setMap(null))
+      markersRef.current = []
+
+      const bounds = new core.LatLngBounds()
+      items.forEach((church) => {
+        const position = { lat: church.lat, lng: church.lng }
+        const markerInstance = new marker.Marker({
+          position,
+          map,
+          title: church.name,
+        })
+        markerInstance.addListener('click', () => {
+          onSelectChurch(church.id)
+        })
+        markersRef.current.push(markerInstance)
+        bounds.extend(position)
+      })
+
+      if (items.length > 0) {
+        map.fitBounds(bounds)
+      }
+    },
+    [onSelectChurch],
+  )
+
+  useEffect(() => {
+    if (!containerRef.current) return
+
+    let cancelled = false
+
+    if (!optionsSet) {
+      setOptions({ key: apiKey, v: 'weekly' })
+      optionsSet = true
+    }
+
+    Promise.all([importLibrary('maps'), importLibrary('marker'), importLibrary('core')])
+      .then(([maps, marker, core]) => {
+        if (cancelled || !containerRef.current) return
+        mapsLibRef.current = maps
+        markerLibRef.current = marker
+        coreLibRef.current = core
+        const map = new maps.Map(containerRef.current, {
+          center: { lat: 54.0, lng: -2.5 },
+          zoom: 6,
+          mapTypeControl: false,
+          streetViewControl: false,
+        })
+        mapRef.current = map
+        renderMarkers(maps, marker, core, map, churches)
+      })
+      .catch(() => {
+        if (!cancelled) setError('Google Maps could not be loaded. Check your API key and billing.')
+      })
+
+    return () => {
+      cancelled = true
+      markersRef.current.forEach((marker) => marker.setMap(null))
+      markersRef.current = []
+      mapRef.current = null
+      mapsLibRef.current = null
+      markerLibRef.current = null
+      coreLibRef.current = null
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    const map = mapRef.current
+    const maps = mapsLibRef.current
+    const marker = markerLibRef.current
+    const core = coreLibRef.current
+    if (!map || !maps || !marker || !core) return
+    renderMarkers(maps, marker, core, map, churches)
+  }, [churches, selectedChurch, renderMarkers])
+
+  if (!apiKey) {
+    return (
+      <div className={styles.mapPanel}>
+        <div className={styles.mapError}>
+          Google Maps is not configured. Add NEXT_PUBLIC_GOOGLE_MAPS_API_KEY to your .env file.
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className={styles.mapPanel}>
+      <div ref={containerRef} className={styles.mapCanvas} />
+      {error && <div className={styles.mapError}>{error}</div>}
+    </div>
+  )
+}

@@ -271,7 +271,83 @@
   font-size: 12px;
 }
 
+.facetPanel {
+  margin-top: 14px;
+  padding: 13px 14px 15px;
+  border: 1px solid #e0e6e8;
+  border-radius: 5px;
+  background: #f5fafb;
+}
+
+.facetHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.facetLabel {
+  color: #24305f;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.facetClear {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #547d88;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.facetClear:hover {
+  color: #24305f;
+}
+
+.facetChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.facetChip {
+  min-height: 30px;
+  padding: 0 11px;
+  border: 1px solid #d4dade;
+  border-radius: 999px;
+  background: #fff;
+  color: #383937;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.facetChip:hover {
+  border-color: #449aae;
+  color: #24305f;
+}
+
+.facetChipActive {
+  border-color: #24305f;
+  background: #24305f;
+  color: #fff;
+  font-weight: 700;
+}
+
+.facetChipActive:hover {
+  border-color: #24305f;
+  color: #fff;
+}
+
 .mapPanel {
+  position: relative;
   overflow: hidden;
   border: 1px solid #dce3e4;
   border-radius: 4px;
@@ -283,172 +359,19 @@
   height: clamp(360px, 50vw, 570px);
   min-height: 350px;
   overflow: hidden;
-  background-color: #e8f1ef;
-  background-image:
-    radial-gradient(ellipse at 12% 28%, rgb(255 255 255 / 48%) 0 4%, transparent 4.5%),
-    radial-gradient(ellipse at 84% 68%, rgb(255 255 255 / 50%) 0 5%, transparent 5.5%),
-    linear-gradient(148deg, transparent 0 61%, rgb(202 221 211 / 42%) 61.2% 62%, transparent 62.2%),
-    linear-gradient(32deg, transparent 0 33%, rgb(207 222 211 / 45%) 33.2% 34%, transparent 34.2%);
 }
 
-.mapArtwork {
-  position: absolute;
-  inset: -2%;
-  width: 104%;
-  height: 104%;
-}
-
-.waterway {
-  fill: none;
-  stroke: #c4dce1;
-  stroke-width: 18;
-  opacity: 0.62;
-}
-
-.roadMajor {
-  fill: none;
-  stroke: #fffdf5;
-  stroke-width: 8;
-  opacity: 0.88;
-}
-
-.roadMinor {
-  fill: none;
-  stroke: #fffdf7;
-  stroke-width: 3;
-  opacity: 0.86;
-}
-
-.landmass {
-  fill: #d8e6d7;
-  stroke: #b7cdbb;
-  stroke-width: 2;
-}
-
-.mapArtwork text {
-  fill: #899992;
-  font-family: var(--font-sans);
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 2px;
-}
-
-.mapLabel {
-  position: absolute;
-  z-index: 1;
-  color: #687872;
-  font-size: 11px;
-  text-shadow: 0 1px 2px #fff;
-}
-
-.labelEdinburgh {
-  top: 17%;
-  left: 52%;
-}
-
-.labelManchester {
-  top: 38%;
-  left: 41%;
-}
-
-.labelCardiff {
-  top: 68%;
-  left: 32%;
-}
-
-.labelLondon {
-  top: 76%;
-  left: 60%;
-}
-
-.mapPin {
-  position: absolute;
-  z-index: 2;
-  width: 33px;
-  height: 33px;
-  display: grid;
-  place-items: center;
-  padding: 0;
-  transform: translate(-50%, -50%);
-  border: 2px solid #fff;
-  border-radius: 50% 50% 50% 2px;
-  background: #24305f;
-  box-shadow: 0 2px 7px rgb(36 48 95 / 30%);
-  color: #fff;
-  cursor: pointer;
-  rotate: -45deg;
-  transition: scale 120ms ease, background-color 120ms ease;
-}
-
-.mapPin:hover,
-.mapPinSelected {
-  z-index: 3;
-  scale: 1.15;
-  background: #2b5e7f;
-}
-
-.mapPin svg {
-  width: 16px;
-  height: 16px;
-  rotate: 45deg;
-  stroke: currentColor;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-width: 1.9;
-}
-
-.mapAttribution {
-  position: absolute;
-  right: 10px;
-  bottom: 9px;
-  padding: 4px 7px;
-  border-radius: 3px;
-  background: rgb(255 255 255 / 82%);
-  color: #68717b;
-  font-size: 10px;
-}
-
-.mapPopup {
-  position: absolute;
-  z-index: 4;
-  top: 18px;
-  left: 18px;
-  width: min(300px, calc(100% - 36px));
-  display: grid;
-  gap: 6px;
-  padding: 15px 36px 15px 15px;
-  border: 1px solid #dce5e8;
-  border-radius: 7px;
-  background: white;
-  box-shadow: 0 8px 25px rgb(36 48 95 / 14%);
-  color: #5e6470;
-  font-size: 12px;
-  line-height: 1.45;
-}
-
-.mapPopup strong {
-  color: #24305f;
-  font-size: 14px;
-}
-
-.popupClose {
-  position: absolute;
-  top: 4px;
-  right: 8px;
-  border: 0;
-  background: transparent;
-  color: #5e6470;
-  cursor: pointer;
-  font-size: 24px;
-}
-
-.emptyMap {
+.mapError {
   position: absolute;
   inset: 0;
   display: grid;
   place-items: center;
-  color: #383937;
-  font-size: 15px;
+  padding: 24px;
+  background: #f5fafb;
+  color: #5e6470;
+  font-size: 14px;
+  line-height: 1.5;
+  text-align: center;
 }
 
 .mapNote {
@@ -555,6 +478,132 @@
   margin: -4px 18px 15px 41px;
   color: #69717b;
   font-size: 13px;
+}
+
+.profileInline {
+  padding: 0 18px 18px 41px;
+}
+
+.profilePanel {
+  margin-top: 14px;
+}
+
+.profileCard {
+  padding: 20px 22px;
+  border: 1px solid #e0e6e8;
+  border-radius: 6px;
+  background: #fff;
+}
+
+.profileHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.profileHeader h3 {
+  margin: 0;
+  color: #24305f;
+  font-size: 18px;
+  letter-spacing: -0.02em;
+}
+
+.profileMeta {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 5px 0 0;
+  color: #69717b;
+  font-size: 13px;
+}
+
+.profileMetaDot {
+  color: #b3bcc2;
+}
+
+.verifiedBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex: 0 0 auto;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: #eef4f6;
+  color: #2b5e7f;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.verifiedBadge svg {
+  width: 13px;
+  height: 13px;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+
+.profileAddress {
+  margin: 12px 0 0;
+  color: #383937;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.profileHours {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  color: #547d88;
+  font-size: 13px;
+}
+
+.profileHours svg {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.profileSection {
+  margin-top: 15px;
+  padding-top: 14px;
+  border-top: 1px solid #e8ecee;
+}
+
+.profileSectionLabel {
+  display: block;
+  margin-bottom: 9px;
+  color: #5e6470;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.profileInitiatives {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.profileInitiatives li {
+  padding: 5px 10px;
+  border: 1px solid #d4dade;
+  border-radius: 999px;
+  background: #f5fafb;
+  color: #383937;
+  font-size: 12px;
+  line-height: 1.2;
 }
 
 .emptyList {
@@ -694,16 +743,6 @@
     min-height: 340px;
   }
 
-  .mapPin {
-    width: 29px;
-    height: 29px;
-  }
-
-  .mapPin svg {
-    width: 14px;
-    height: 14px;
-  }
-
   .churchRow {
     padding-inline: 13px;
   }
@@ -720,6 +759,22 @@
     margin-left: 36px;
   }
 
+  .profileInline {
+    padding-inline: 13px;
+  }
+
+  .profileCard {
+    padding: 16px;
+  }
+
+  .profileHeader h3 {
+    font-size: 16px;
+  }
+
+  .facetPanel {
+    padding: 11px 12px 13px;
+  }
+
   .footer {
     min-height: 60px;
     padding-inline: 16px;
@@ -730,8 +785,3 @@
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .mapPin {
-    transition: none;
-  }
-}

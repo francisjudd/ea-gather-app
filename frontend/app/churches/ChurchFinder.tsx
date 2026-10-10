@@ -2,6 +2,8 @@
 
 import { useMemo, useState, type FormEvent } from 'react'
 import Link from 'next/link'
+import MapView from './MapView'
+import ChurchProfileCard from './ChurchProfileCard'
 import styles from './churches.module.css'
 
 type Church = {
@@ -9,8 +11,32 @@ type Church = {
   name: string
   address: string
   place: string
-  mapPosition: { left: string; top: string }
+  lat: number
+  lng: number
+  denomination: string
+  operatingHours: string
+  verified: boolean
+  initiatives: string[]
 }
+
+const initiativeTypes = [
+  { id: 'food-bank', label: 'Food bank or food pantry' },
+  { id: 'warm-space', label: 'Warm space / community lounge' },
+  { id: 'debt-advice', label: 'Debt advice & financial wellbeing' },
+  { id: 'clothing-bank', label: 'Clothing or baby bank' },
+  { id: 'family-groups', label: 'Parent / toddler & family groups' },
+  { id: 'youth', label: 'Youth clubs or mentoring' },
+  { id: 'holiday-clubs', label: 'Holiday clubs / school-holiday meals' },
+  { id: 'schools', label: 'Schools work or chaplaincy' },
+  { id: 'older-people', label: "Older people's lunches & visits" },
+  { id: 'mental-health', label: 'Mental health support groups' },
+  { id: 'esol', label: 'ESOL classes / refugee support' },
+  { id: 'recovery', label: 'Recovery / addiction support' },
+  { id: 'prison', label: 'Prison visiting or chaplaincy' },
+  { id: 'street-pastors', label: 'Street pastors or homelessness outreach' },
+  { id: 'community-groups', label: 'Hosting community groups in our building' },
+  { id: 'eco-church', label: 'Environmental / Eco Church work' },
+] as const
 
 const churches: Church[] = [
   {
@@ -18,70 +44,120 @@ const churches: Church[] = [
     name: '!Audacious Church',
     address: '!Audacious Church, Trinity Way, Salford, M3 7BB',
     place: 'Salford',
-    mapPosition: { left: '48%', top: '37%' },
+    lat: 53.483,
+    lng: -2.292,
+    denomination: 'Independent',
+    operatingHours: 'Sun 9am, 11am & 6pm',
+    verified: true,
+    initiatives: ['food-bank', 'warm-space', 'youth', 'community-groups', 'eco-church'],
   },
   {
     id: 'audacious-cardiff',
     name: '!Audacious Church - Cardiff',
     address: 'Majestic Hotel, Bute Terrace, Cardiff, CF10 2FL',
     place: 'Cardiff',
-    mapPosition: { left: '38%', top: '67%' },
+    lat: 51.475,
+    lng: -3.166,
+    denomination: 'Independent',
+    operatingHours: 'Sun 10am & 6pm',
+    verified: true,
+    initiatives: ['food-bank', 'family-groups', 'youth', 'holiday-clubs'],
   },
   {
     id: 'audacious-chester',
     name: '!Audacious Church - Chester',
     address: '4 Sovereign Way, Chester, CH1 4QN',
     place: 'Chester',
-    mapPosition: { left: '42%', top: '45%' },
+    lat: 53.19,
+    lng: -2.891,
+    denomination: 'Independent',
+    operatingHours: 'Sun 10:30am',
+    verified: false,
+    initiatives: ['warm-space', 'debt-advice', 'community-groups'],
   },
   {
     id: 'audacious-bury',
     name: '!Audacious Church - North Manchester',
     address: 'Vue Cinema Bury, The Rock, Bury, Lancashire, BL9 0YB',
     place: 'Bury',
-    mapPosition: { left: '50%', top: '35%' },
+    lat: 53.593,
+    lng: -2.298,
+    denomination: 'Independent',
+    operatingHours: 'Sun 10am & 5pm',
+    verified: true,
+    initiatives: ['food-bank', 'clothing-bank', 'youth', 'street-pastors'],
   },
   {
     id: 'audacious-sheffield',
     name: '!Audacious Church - Sheffield',
     address: 'Sandman Signature Sheffield Quays Hotel, Victoria Quays, Sheffield, S4 7YA',
     place: 'Sheffield',
-    mapPosition: { left: '57%', top: '43%' },
+    lat: 53.384,
+    lng: -1.47,
+    denomination: 'Independent',
+    operatingHours: 'Sun 10:30am & 6pm',
+    verified: false,
+    initiatives: ['food-bank', 'warm-space', 'mental-health', 'recovery'],
   },
   {
     id: 'audacious-stockport',
     name: '!Audacious Church - South Manchester',
     address: 'Seashell Trust, Stanley Road, Cheadle, Stockport, SK8 6RQ',
     place: 'Stockport',
-    mapPosition: { left: '49%', top: '39%' },
+    lat: 53.395,
+    lng: -2.213,
+    denomination: 'Independent',
+    operatingHours: 'Sun 10am',
+    verified: true,
+    initiatives: ['family-groups', 'schools', 'older-people', 'eco-church'],
   },
   {
     id: 'three-counties',
     name: '3 Counties Vineyard',
     address: 'Haslemere Locality Office, Linchmere Road, Haslemere, Surrey, GU27 3QW',
     place: 'Haslemere',
-    mapPosition: { left: '58%', top: '77%' },
+    lat: 51.088,
+    lng: -0.708,
+    denomination: 'Vineyard',
+    operatingHours: 'Sun 10:30am',
+    verified: true,
+    initiatives: ['community-groups', 'family-groups', 'esol'],
   },
   {
     id: '360-life',
     name: '360 Life Church',
     address: 'Cale Green Life Centre, 71 Adswood Road, Davenport, Stockport, SK3 8HR',
     place: 'Stockport',
-    mapPosition: { left: '50%', top: '40%' },
+    lat: 53.4,
+    lng: -2.16,
+    denomination: 'Independent',
+    operatingHours: 'Sun 10:30am',
+    verified: false,
+    initiatives: ['food-bank', 'debt-advice', 'youth', 'holiday-clubs'],
   },
   {
     id: '3c-community',
     name: '3c Community Church',
     address: 'Stockport, Greater Manchester',
     place: 'Stockport',
-    mapPosition: { left: '50%', top: '38%' },
+    lat: 53.41,
+    lng: -2.157,
+    denomination: 'Independent',
+    operatingHours: 'Sun 10am',
+    verified: false,
+    initiatives: ['warm-space', 'community-groups', 'older-people'],
   },
   {
     id: 'abbey-chapel',
     name: 'Abbey Chapel',
     address: 'United Kingdom',
     place: 'United Kingdom',
-    mapPosition: { left: '55%', top: '51%' },
+    lat: 52.5,
+    lng: -1.5,
+    denomination: 'Independent',
+    operatingHours: 'Sun 11am',
+    verified: true,
+    initiatives: ['food-bank', 'clothing-bank', 'prison', 'street-pastors'],
   },
 ]
 
@@ -123,6 +199,7 @@ export default function ChurchFinder() {
   const [submittedQuery, setSubmittedQuery] = useState('')
   const [view, setView] = useState<'map' | 'list'>('map')
   const [letter, setLetter] = useState('All')
+  const [selectedInitiatives, setSelectedInitiatives] = useState<string[]>([])
   const [selectedChurch, setSelectedChurch] = useState('')
   const [locationMessage, setLocationMessage] = useState('')
 
@@ -132,9 +209,12 @@ export default function ChurchFinder() {
       const matchesQuery = !normalizedQuery
         || `${church.name} ${church.address} ${church.place}`.toLocaleLowerCase('en-GB').includes(normalizedQuery)
       const initial = church.name.match(/[a-z]/i)?.[0]?.toLocaleUpperCase('en-GB')
-      return matchesQuery && (letter === 'All' || initial === letter)
+      const matchesLetter = letter === 'All' || initial === letter
+      const matchesInitiatives = selectedInitiatives.length === 0
+        || selectedInitiatives.every((initiative) => church.initiatives.includes(initiative))
+      return matchesQuery && matchesLetter && matchesInitiatives
     })
-  }, [letter, submittedQuery])
+  }, [letter, selectedInitiatives, submittedQuery])
 
   function submitSearch(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -147,8 +227,18 @@ export default function ChurchFinder() {
     setQuery('')
     setSubmittedQuery('')
     setLetter('All')
+    setSelectedInitiatives([])
     setSelectedChurch('')
     setView('list')
+  }
+
+  function toggleInitiative(id: string) {
+    setSelectedInitiatives((previous) =>
+      previous.includes(id)
+        ? previous.filter((item) => item !== id)
+        : [...previous, id],
+    )
+    setSelectedChurch('')
   }
 
   function useCurrentLocation() {
@@ -218,6 +308,33 @@ export default function ChurchFinder() {
           </div>
           {locationMessage && <p className={styles.locationMessage} role="status">{locationMessage}</p>}
 
+          <div className={styles.facetPanel}>
+            <div className={styles.facetHeader}>
+              <span className={styles.facetLabel}>What they do:</span>
+              {selectedInitiatives.length > 0 && (
+                <button className={styles.facetClear} type="button" onClick={() => setSelectedInitiatives([])}>
+                  Clear filters
+                </button>
+              )}
+            </div>
+            <div className={styles.facetChips} role="group" aria-label="Filter churches by community initiative">
+              {initiativeTypes.map((initiative) => {
+                const active = selectedInitiatives.includes(initiative.id)
+                return (
+                  <button
+                    key={initiative.id}
+                    className={`${styles.facetChip} ${active ? styles.facetChipActive : ''}`}
+                    type="button"
+                    aria-pressed={active}
+                    onClick={() => toggleInitiative(initiative.id)}
+                  >
+                    {initiative.label}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+
           <div className={styles.viewToolbar}>
             <span className={styles.viewLabel}>View:</span>
             <div className={styles.viewSwitch} role="group" aria-label="Display churches as a map or a list">
@@ -252,62 +369,18 @@ export default function ChurchFinder() {
         </section>
 
         {view === 'map' ? (
-          <section className={styles.mapPanel} aria-label="Map preview of example church locations">
-            <div className={styles.mapCanvas}>
-              <svg className={styles.mapArtwork} viewBox="0 0 1100 560" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-                <path className={styles.waterway} d="M-30 356C119 313 172 388 287 350s170-100 287-47 185 55 270 9 146-111 301-74" />
-                <path className={styles.roadMajor} d="M63 494C240 426 288 340 442 329s205 65 321 28 209-147 386-159" />
-                <path className={styles.roadMajor} d="M246 580c84-114 116-188 117-298S316 113 345-10" />
-                <path className={styles.roadMinor} d="M-40 201c205 36 248 155 398 164s174-69 307-77 226 66 474 7" />
-                <path className={styles.roadMinor} d="M431 608c-3-126 70-167 93-260s-14-196 70-372" />
-                <path className={styles.roadMinor} d="M769 590c-76-118-78-192-29-281s169-120 204-324" />
-                <path className={styles.landmass} d="m563 72 25-18 25 6 11 18 24 7 10 25-9 21 10 18-8 26 18 28-8 20 14 21-8 21 14 25-7 28 17 20-8 22 10 28-12 23 6 21-18 24 7 25-20 18-1 30-18 17-2 28-25 23 4 29-23 24-1 30-19 12-8 34-22 5-19-23 3-31-20-13 10-30-18-18 14-23-20-22 15-20-4-28 18-21-7-26 19-22-12-23 20-19-5-27 17-20-15-22 9-23-20-20 8-20-22-23 13-21-10-23 22-16-11-20 24-18-10-17 23-16-5-25 25-19-7-25 31-18 3-21 26-12 8-24 25-9 6-22Z" />
-                <path className={styles.landmass} d="m414 202 25-12 21 9 9 21-11 18-19 4-20-13Z" />
-                <path className={styles.landmass} d="m359 47 13-14 18 8 2 21-13 13-16-8Z" />
-                <path className={styles.landmass} d="m642 427 14-3 8 11-6 13-13-2-7-10Z" />
-                <text x="735" y="136">SCOTLAND</text>
-                <text x="672" y="277">ENGLAND</text>
-                <text x="313" y="253">WALES</text>
-                <text x="843" y="354">NORTH SEA</text>
-                <text x="121" y="358">IRISH SEA</text>
-              </svg>
-              <span className={`${styles.mapLabel} ${styles.labelEdinburgh}`}>Edinburgh</span>
-              <span className={`${styles.mapLabel} ${styles.labelManchester}`}>Manchester</span>
-              <span className={`${styles.mapLabel} ${styles.labelCardiff}`}>Cardiff</span>
-              <span className={`${styles.mapLabel} ${styles.labelLondon}`}>London</span>
-              {filteredChurches.map((church) => (
-                <button
-                  key={church.id}
-                  className={`${styles.mapPin} ${selectedChurch === church.id ? styles.mapPinSelected : ''}`}
-                  style={{ left: church.mapPosition.left, top: church.mapPosition.top }}
-                  type="button"
-                  aria-label={`Show ${church.name} in ${church.place}`}
-                  title={`${church.name} — ${church.place}`}
-                  onClick={() => setSelectedChurch(selectedChurch === church.id ? '' : church.id)}
-                >
-                  <PinIcon />
-                </button>
-              ))}
-              <span className={styles.mapAttribution}>Illustrative map preview</span>
-              {selectedChurch && (
-                <div className={styles.mapPopup}>
-                  <button
-                    className={styles.popupClose}
-                    type="button"
-                    aria-label="Close church details"
-                    onClick={() => setSelectedChurch('')}
-                  >
-                    ×
-                  </button>
-                  <strong>{churches.find((church) => church.id === selectedChurch)?.name}</strong>
-                  <span>{churches.find((church) => church.id === selectedChurch)?.address}</span>
-                </div>
-              )}
-              {filteredChurches.length === 0 && (
-                <div className={styles.emptyMap}>No sample churches match that search.</div>
-              )}
-            </div>
-          </section>
+          <>
+            <MapView
+              churches={filteredChurches}
+              selectedChurch={selectedChurch}
+              onSelectChurch={setSelectedChurch}
+            />
+            {selectedChurch && (
+              <div className={styles.profilePanel}>
+                <ChurchProfileCard church={churches.find((church) => church.id === selectedChurch)!} />
+              </div>
+            )}
+          </>
         ) : (
           <section className={styles.listPanel} aria-label="Church directory list">
             <div className={styles.alphabet} role="group" aria-label="Filter churches by first letter">
@@ -350,15 +423,15 @@ export default function ChurchFinder() {
                     <span className={styles.rowChevron} aria-hidden="true">›</span>
                   </button>
                   {selectedChurch === church.id && (
-                    <p className={styles.churchNote}>
-                      This church is included in the Evangelical Alliance directory.
-                    </p>
+                    <div className={styles.profileInline}>
+                      <ChurchProfileCard church={church} />
+                    </div>
                   )}
                 </li>
               ))}
               {filteredChurches.length === 0 && (
                 <li className={styles.emptyList}>
-                  No sample churches match your search. Try another name, postcode or place.
+                  No sample churches match your search. Try another name, postcode, place or initiative.
                 </li>
               )}
             </ul>
@@ -370,8 +443,8 @@ export default function ChurchFinder() {
 
         {view === 'map' && (
           <p className={styles.mapNote}>
-            Map pins show illustrative sample locations. The addresses shown are where the churches meet,
-            and not necessarily the correspondence address.
+            The addresses shown on this map are where the churches meet, and not necessarily the
+            correspondence address. Please contact the individual churches for the correspondence address.
           </p>
         )}
 
