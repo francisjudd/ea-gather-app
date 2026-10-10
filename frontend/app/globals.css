@@ -586,7 +586,7 @@ a {
 .demo-disclaimer {
   margin: 12px 0 23px;
   padding-left: 12px;
-  border-left: 3px solid var(--ea-lime);
+  border-left: 3px solid var(--ea-teal); /* teal on light; lime is for dark backgrounds only */
 }
 
 .lookup-empty {
