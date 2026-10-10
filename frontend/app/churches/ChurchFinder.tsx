@@ -2,8 +2,7 @@
 
 import { useMemo, useState, type FormEvent } from 'react'
 import Link from 'next/link'
-import SiteNav from '../../components/SiteNav'
-import BrandLockup from '../../components/BrandLockup'
+import FullNav from '../../components/FullNavigation'
 import MapView from './MapView'
 import ChurchProfileCard from './ChurchProfileCard'
 import { initiativeTypes } from '../../lib/initiatives'
@@ -364,12 +363,7 @@ export default function ChurchFinder() {
 
   return (
     <div className={styles.page}>
-      <header className={styles.header}>
-        <Link className={styles.brandLink} href="/" aria-label="Evangelical Alliance home">
-          <BrandLockup />
-        </Link>
-        <SiteNav />
-      </header>
+      <FullNav />
 
       <main className={styles.main}>
         <section className={styles.searchSection} aria-labelledby="page-title">
