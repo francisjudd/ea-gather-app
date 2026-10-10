@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
-import ContactMpFlow, { flowSteps } from '../ContactMpFlow'
+import ContactMpFlow from '../ContactMpFlow'
+import { flowSteps } from '../steps'
 
 export default async function ContactMpStepPage({
   params,

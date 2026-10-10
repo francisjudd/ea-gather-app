@@ -1,0 +1,737 @@
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  color: var(--ea-dark-grey);
+}
+
+.header {
+  min-height: 76px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 0 max(28px, calc((100vw - 1180px) / 2));
+  border-bottom: 1px solid #e4e6e8;
+  background: #fff;
+}
+
+.brandLink {
+  display: inline-flex;
+  color: inherit;
+  text-decoration: none;
+}
+
+.brandLockup {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.brandName {
+  color: #24305f;
+  font-size: 19px;
+  letter-spacing: -0.055em;
+}
+
+.brandName strong {
+  font-weight: 700;
+}
+
+.brandDots {
+  display: inline-flex;
+  align-items: center;
+  margin-left: -4px;
+}
+
+.brandDots i {
+  width: 21px;
+  height: 21px;
+  margin-left: -5px;
+  border-radius: 50%;
+  background: #24305f;
+}
+
+.brandDots i:nth-child(2) {
+  background: #168ea2;
+}
+
+.brandDots i:nth-child(3) {
+  background: #d7d74b;
+}
+
+.headerCaption {
+  color: #5e6470;
+  font-size: 13px;
+}
+
+.main {
+  width: min(1180px, calc(100% - 48px));
+  flex: 1;
+  margin: 35px auto 52px;
+}
+
+.searchSection {
+  margin-bottom: 18px;
+}
+
+.eyebrow {
+  margin: 0 0 7px;
+  color: #547d88;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.searchSection h1 {
+  margin: 0 0 20px;
+  color: #24305f;
+  font-size: clamp(28px, 4vw, 36px);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.15;
+}
+
+.searchForm {
+  min-height: 52px;
+  display: flex;
+  overflow: hidden;
+  border: 1px solid #d4dade;
+  border-radius: 7px;
+  background: #f9f9f8;
+  box-shadow: 0 1px 2px rgb(36 48 95 / 7%);
+}
+
+.searchForm:focus-within {
+  border-color: #2b5e7f;
+  box-shadow: 0 0 0 3px rgb(43 94 127 / 14%);
+}
+
+.searchForm input {
+  width: 100%;
+  min-width: 0;
+  min-height: 50px;
+  padding: 0 14px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #383937;
+  font: inherit;
+  font-size: 15px;
+}
+
+.searchForm input::placeholder {
+  color: #777d82;
+  opacity: 1;
+}
+
+.searchForm input::-webkit-search-cancel-button {
+  cursor: pointer;
+}
+
+.searchButton {
+  min-width: 52px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 17px;
+  border: 0;
+  background: #24305f;
+  color: #fff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.searchButton:hover {
+  background: #1a2349;
+}
+
+.searchButton svg,
+.locationButton svg,
+.viewSwitch svg,
+.address svg {
+  width: 19px;
+  height: 19px;
+  flex: 0 0 auto;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.searchLinks {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 9px 22px;
+  padding-top: 11px;
+}
+
+.locationButton,
+.viewAllLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #547d88;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  text-align: left;
+  text-decoration: none;
+}
+
+.locationButton svg {
+  width: 15px;
+  height: 15px;
+}
+
+.locationButton:hover,
+.viewAllLink:hover {
+  color: #24305f;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.locationMessage {
+  margin: 10px 0 0;
+  color: #5e6470;
+  font-size: 13px;
+}
+
+.viewToolbar {
+  min-height: 47px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin-top: 12px;
+}
+
+.viewLabel {
+  color: #5e6470;
+  font-size: 13px;
+}
+
+.viewSwitch {
+  display: inline-flex;
+  overflow: hidden;
+  border: 1px solid #dce2e5;
+  border-radius: 7px;
+}
+
+.viewSwitch button {
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 13px;
+  border: 0;
+  background: white;
+  color: #383937;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+}
+
+.viewSwitch button + button {
+  border-left: 1px solid #dce2e5;
+}
+
+.viewSwitch svg {
+  width: 16px;
+  height: 16px;
+}
+
+.viewSwitch button:last-child svg {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.viewSwitch .viewActive {
+  background: #24305f;
+  color: white;
+  font-weight: 700;
+}
+
+.viewSwitch .viewActive + button {
+  border-left-color: #24305f;
+}
+
+.resultCount {
+  margin-left: auto;
+  color: #69717b;
+  font-size: 12px;
+}
+
+.mapPanel {
+  overflow: hidden;
+  border: 1px solid #dce3e4;
+  border-radius: 4px;
+  background: #e7f0ee;
+}
+
+.mapCanvas {
+  position: relative;
+  height: clamp(360px, 50vw, 570px);
+  min-height: 350px;
+  overflow: hidden;
+  background-color: #e8f1ef;
+  background-image:
+    radial-gradient(ellipse at 12% 28%, rgb(255 255 255 / 48%) 0 4%, transparent 4.5%),
+    radial-gradient(ellipse at 84% 68%, rgb(255 255 255 / 50%) 0 5%, transparent 5.5%),
+    linear-gradient(148deg, transparent 0 61%, rgb(202 221 211 / 42%) 61.2% 62%, transparent 62.2%),
+    linear-gradient(32deg, transparent 0 33%, rgb(207 222 211 / 45%) 33.2% 34%, transparent 34.2%);
+}
+
+.mapArtwork {
+  position: absolute;
+  inset: -2%;
+  width: 104%;
+  height: 104%;
+}
+
+.waterway {
+  fill: none;
+  stroke: #c4dce1;
+  stroke-width: 18;
+  opacity: 0.62;
+}
+
+.roadMajor {
+  fill: none;
+  stroke: #fffdf5;
+  stroke-width: 8;
+  opacity: 0.88;
+}
+
+.roadMinor {
+  fill: none;
+  stroke: #fffdf7;
+  stroke-width: 3;
+  opacity: 0.86;
+}
+
+.landmass {
+  fill: #d8e6d7;
+  stroke: #b7cdbb;
+  stroke-width: 2;
+}
+
+.mapArtwork text {
+  fill: #899992;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.mapLabel {
+  position: absolute;
+  z-index: 1;
+  color: #687872;
+  font-size: 11px;
+  text-shadow: 0 1px 2px #fff;
+}
+
+.labelEdinburgh {
+  top: 17%;
+  left: 52%;
+}
+
+.labelManchester {
+  top: 38%;
+  left: 41%;
+}
+
+.labelCardiff {
+  top: 68%;
+  left: 32%;
+}
+
+.labelLondon {
+  top: 76%;
+  left: 60%;
+}
+
+.mapPin {
+  position: absolute;
+  z-index: 2;
+  width: 33px;
+  height: 33px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  transform: translate(-50%, -50%);
+  border: 2px solid #fff;
+  border-radius: 50% 50% 50% 2px;
+  background: #24305f;
+  box-shadow: 0 2px 7px rgb(36 48 95 / 30%);
+  color: #fff;
+  cursor: pointer;
+  rotate: -45deg;
+  transition: scale 120ms ease, background-color 120ms ease;
+}
+
+.mapPin:hover,
+.mapPinSelected {
+  z-index: 3;
+  scale: 1.15;
+  background: #2b5e7f;
+}
+
+.mapPin svg {
+  width: 16px;
+  height: 16px;
+  rotate: 45deg;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.9;
+}
+
+.mapAttribution {
+  position: absolute;
+  right: 10px;
+  bottom: 9px;
+  padding: 4px 7px;
+  border-radius: 3px;
+  background: rgb(255 255 255 / 82%);
+  color: #68717b;
+  font-size: 10px;
+}
+
+.mapPopup {
+  position: absolute;
+  z-index: 4;
+  top: 18px;
+  left: 18px;
+  width: min(300px, calc(100% - 36px));
+  display: grid;
+  gap: 6px;
+  padding: 15px 36px 15px 15px;
+  border: 1px solid #dce5e8;
+  border-radius: 7px;
+  background: white;
+  box-shadow: 0 8px 25px rgb(36 48 95 / 14%);
+  color: #5e6470;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.mapPopup strong {
+  color: #24305f;
+  font-size: 14px;
+}
+
+.popupClose {
+  position: absolute;
+  top: 4px;
+  right: 8px;
+  border: 0;
+  background: transparent;
+  color: #5e6470;
+  cursor: pointer;
+  font-size: 24px;
+}
+
+.emptyMap {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #383937;
+  font-size: 15px;
+}
+
+.mapNote {
+  margin: 11px 0 0;
+  color: #69717b;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.listPanel {
+  border: 1px solid #e0e6e8;
+  border-radius: 5px;
+  background: white;
+}
+
+.alphabet {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 14px;
+  border-bottom: 1px solid #e3e8e9;
+}
+
+.alphabet button {
+  min-width: 30px;
+  min-height: 30px;
+  padding: 0 7px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  color: #547d88;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+}
+
+.alphabet button:hover,
+.alphabet .alphabetActive {
+  border-color: #24305f;
+  background: #24305f;
+  color: #fff;
+}
+
+.churchList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.churchList li + li {
+  border-top: 1px solid #e8ecee;
+}
+
+.churchRow {
+  width: 100%;
+  min-height: 76px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 18px;
+  border: 0;
+  background: white;
+  color: #383937;
+  cursor: pointer;
+  text-align: left;
+}
+
+.churchRow:hover {
+  background: #f5fafb;
+}
+
+.churchRow > span:first-child {
+  display: grid;
+  gap: 7px;
+}
+
+.churchRow strong {
+  color: #24305f;
+  font-size: 16px;
+}
+
+.address {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #68717b;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.address svg {
+  width: 16px;
+  height: 16px;
+  color: #6b9ba5;
+}
+
+.rowChevron {
+  color: #6b9ba5;
+  font-size: 25px;
+}
+
+.churchNote {
+  margin: -4px 18px 15px 41px;
+  color: #69717b;
+  font-size: 13px;
+}
+
+.emptyList {
+  padding: 28px 18px;
+  color: #5e6470;
+  font-size: 14px;
+}
+
+.previewNote {
+  margin: 0;
+  padding: 14px 18px;
+  border-top: 1px solid #e8ecee;
+  color: #69717b;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.aboutNote {
+  max-width: 900px;
+  margin: 33px 0 0;
+  color: #5e6470;
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.aboutNote p {
+  margin: 0 0 12px;
+}
+
+.aboutNote a {
+  color: #2b5e7f;
+  text-underline-offset: 2px;
+}
+
+.footer {
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 12px max(28px, calc((100vw - 1180px) / 2));
+  border-top: 1px solid #e4e6e8;
+  color: #69717b;
+  font-size: 11px;
+}
+
+.footer .brandName {
+  font-size: 14px;
+}
+
+.footer .brandDots i {
+  width: 16px;
+  height: 16px;
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+.page button:focus-visible,
+.brandLink:focus-visible,
+.aboutNote a:focus-visible {
+  outline: 3px solid #449aae;
+  outline-offset: 3px;
+}
+
+@media (max-width: 640px) {
+  .header {
+    min-height: 64px;
+    padding: 0 18px;
+  }
+
+  .brandName {
+    font-size: 15px;
+  }
+
+  .brandDots i {
+    width: 17px;
+    height: 17px;
+  }
+
+  .headerCaption {
+    font-size: 11px;
+  }
+
+  .main {
+    width: calc(100% - 32px);
+    margin: 27px auto 34px;
+  }
+
+  .searchSection h1 {
+    margin-bottom: 15px;
+    font-size: 29px;
+  }
+
+  .searchForm {
+    min-height: 48px;
+  }
+
+  .searchForm input {
+    min-height: 46px;
+    padding-inline: 11px;
+    font-size: 13px;
+  }
+
+  .searchButton {
+    min-width: 48px;
+    padding-inline: 14px;
+  }
+
+  .searchButton span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    clip-path: inset(50%);
+  }
+
+  .viewToolbar {
+    gap: 8px;
+  }
+
+  .resultCount {
+    font-size: 11px;
+  }
+
+  .mapCanvas {
+    height: 410px;
+    min-height: 340px;
+  }
+
+  .mapPin {
+    width: 29px;
+    height: 29px;
+  }
+
+  .mapPin svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .churchRow {
+    padding-inline: 13px;
+  }
+
+  .churchRow strong {
+    font-size: 14px;
+  }
+
+  .address {
+    font-size: 12px;
+  }
+
+  .churchNote {
+    margin-left: 36px;
+  }
+
+  .footer {
+    min-height: 60px;
+    padding-inline: 16px;
+  }
+
+  .footer > span:last-child {
+    text-align: right;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mapPin {
+    transition: none;
+  }
+}

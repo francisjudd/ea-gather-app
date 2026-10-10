@@ -2,14 +2,6 @@
   box-sizing: border-box;
 }
 
-.site-footer-legal {
-  flex-basis: 100%;
-  padding-top: 7px;
-  color: var(--color-text-muted);
-  font-size: 10px;
-  line-height: 1.5;
-}
-
 html,
 body {
   min-height: 100%;
@@ -39,7 +31,7 @@ a {
 .app-shell {
   min-height: 100svh;
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
 }
 
 .site-header {
@@ -884,6 +876,14 @@ a {
   border-top: 1px solid var(--color-border-strong);
   color: var(--color-text-muted);
   font-size: 11px;
+}
+
+.site-footer-legal {
+  flex-basis: 100%;
+  padding-top: 7px;
+  color: var(--color-text-muted);
+  font-size: 10px;
+  line-height: 1.5;
 }
 
 .site-footer > span:first-child {
