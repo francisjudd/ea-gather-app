@@ -67,45 +67,23 @@ a {
 }
 
 /* Evangelical Alliance brand lockup (shared BrandLockup component).
-   Mirrors the demand-side header so the logo is identical across every page. */
+   Renders the real logo artwork (public/ea-logo.svg) so the logo is identical
+   across every page. */
 .ea-brand {
   display: inline-flex;
   align-items: center;
-  gap: 9px;
   color: inherit;
 }
 
-.ea-brand-name {
-  color: #24305f;
-  font-size: 19px;
-  letter-spacing: -0.055em;
+.ea-brand-img {
+  display: block;
+  width: 220px;
+  height: auto;
 }
 
-.ea-brand-name strong {
-  color: inherit;
-  font-weight: 700;
-}
-
-.ea-brand-dots {
-  display: inline-flex;
-  align-items: center;
-  margin-left: -4px;
-}
-
-.ea-brand-dots i {
-  width: 21px;
-  height: 21px;
-  margin-left: -5px;
-  border-radius: 50%;
-  background: #24305f;
-}
-
-.ea-brand-dots i:nth-child(2) {
-  background: #449aae; /* brand teal */
-}
-
-.ea-brand-dots i:nth-child(3) {
-  background: #dcda60; /* brand lime */
+/* Compact footer variant. */
+.ea-brand--sm .ea-brand-img {
+  width: 160px;
 }
 
 .header-caption {

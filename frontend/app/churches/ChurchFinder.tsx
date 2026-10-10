@@ -1,8 +1,8 @@
 'use client'
 
 import { useMemo, useState, type FormEvent } from 'react'
-import Link from 'next/link'
 import FullNav from '../../components/FullNavigation'
+import BrandLockup from '../../components/BrandLockup'
 import MapView from './MapView'
 import ChurchProfileCard from './ChurchProfileCard'
 import { initiativeTypes } from '../../lib/initiatives'
@@ -151,19 +151,6 @@ const churches: Church[] = [
 ]
 
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
-
-function ChurchMark() {
-  return (
-    <span className={styles.brandLockup}>
-      <span className={styles.brandName}>evangelical <strong>alliance</strong></span>
-      <span className={styles.brandDots} aria-hidden="true">
-        <i />
-        <i />
-        <i />
-      </span>
-    </span>
-  )
-}
 
 function SearchIcon() {
   return (
@@ -626,7 +613,7 @@ export default function ChurchFinder() {
       </main>
 
       <footer className={styles.footer}>
-        <ChurchMark />
+        <BrandLockup size="sm" />
         <span>© Evangelical Alliance</span>
       </footer>
     </div>
