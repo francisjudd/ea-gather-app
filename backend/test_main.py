@@ -11,29 +11,42 @@ from main import app
 
 
 class BackendRoutingTests(unittest.TestCase):
-    def test_public_routes_have_openapi_prefix(self):
+    def test_service_routes_are_unprefixed(self):
         # Included routers have no .path of their own; their routes are checked below.
         paths = {getattr(route, "path", None) for route in app.routes}
-        for path in ("/openapi", "/openapi/", "/openapi/docs", "/openapi/redoc", "/openapi/openapi.json"):
+        for path in ("/", "/docs", "/redoc", "/openapi.json"):
             with self.subTest(path=path):
                 self.assertIn(path, paths)
 
-    def test_openapi_contains_public_health_route(self):
-        self.assertIn("/openapi", app.openapi()["paths"])
+    def test_openapi_contains_service_health_route(self):
+        self.assertIn("/", app.openapi()["paths"])
+        self.assertEqual(app.root_path, "/openapi")
 
-    def test_api_routes_are_served_under_openapi_prefix(self):
+    def test_api_routes_are_unprefixed(self):
         paths = app.openapi()["paths"]
         for path in (
-            "/openapi/churches",
-            "/openapi/churches/{church_id}",
-            "/openapi/initiatives",
-            "/openapi/geocode",
-            "/openapi/mp/lookup",
-            "/openapi/admin/submissions",
-            "/openapi/admin/submissions/{submission_id}",
+            "/churches",
+            "/churches/{church_id}",
+            "/initiatives",
+            "/geocode",
+            "/mp/lookup",
+            "/admin/submissions",
+            "/admin/submissions/{submission_id}",
         ):
             with self.subTest(path=path):
                 self.assertIn(path, paths)
+
+    def test_health_and_docs_behind_stripping_proxy(self):
+        client = TestClient(app, root_path="/openapi")
+        response = client.get("/")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("API is running", response.json()["message"])
+        docs = client.get("/docs")
+        self.assertEqual(docs.status_code, 200)
+        self.assertIn("/openapi/openapi.json", docs.text)
+        schema = client.get("/openapi.json").json()
+        self.assertIn({"url": "/openapi"}, schema["servers"])
+        self.assertFalse(any(path.startswith("/openapi/") for path in schema["paths"]))
 
 
 class HelperTests(unittest.TestCase):
@@ -65,14 +78,14 @@ class AdminAuthTests(unittest.TestCase):
 
     def test_refuses_when_token_not_configured(self):
         with mock.patch.dict(os.environ, {"ADMIN_TOKEN": ""}):
-            response = self.client.get("/openapi/admin/submissions")
+            response = self.client.get("/admin/submissions")
         self.assertEqual(response.status_code, 503)
 
     def test_rejects_missing_or_wrong_token(self):
         with mock.patch.dict(os.environ, {"ADMIN_TOKEN": "secret"}):
             for headers in ({}, {"Authorization": "Bearer wrong"}, {"Authorization": "secret"}):
                 with self.subTest(headers=headers):
-                    response = self.client.get("/openapi/admin/submissions", headers=headers)
+                    response = self.client.get("/admin/submissions", headers=headers)
                     self.assertEqual(response.status_code, 401)
 
 

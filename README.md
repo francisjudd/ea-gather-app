@@ -97,8 +97,10 @@ python -m pip install -r backend/requirements.txt
 npx vercel dev --local
 ```
 
-Add future FastAPI endpoints under `/openapi/...`: service routing preserves
-the public request path rather than stripping the prefix.
+Add future FastAPI endpoints without the public prefix (for example `/churches`).
+The openapi service uses a request.path transform to strip `/openapi` before
+FastAPI receives requests. FastAPI root_path is `/openapi`, keeping generated
+docs and schema URLs on the public prefix.
 
 Set `DATABASE_URL` and `ADMIN_TOKEN` in the Vercel project's environment
 variables. On Vercel, use the transaction pooler (port `6543`) for

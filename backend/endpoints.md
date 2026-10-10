@@ -2,7 +2,8 @@
 
 Endpoints required to render the frontend as it stands. All paths are served
 under the `/openapi` prefix (per `vercel.json` + `main.py`), so a route defined
-as `/churches` is reached at `/openapi/churches`.
+as `/churches` is reached at `/openapi/churches`. The service strips the public
+prefix before forwarding; FastAPI routes are unprefixed and root_path is `/openapi`.
 
 The frontend currently renders from three sources:
 
