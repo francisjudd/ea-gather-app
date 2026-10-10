@@ -20,6 +20,15 @@ type Item =
 // so we start on Cards instead.
 const hasMapKey = Boolean(process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY)
 
+function WandIcon() {
+  return (
+    <svg className={styles.mpCtaIcon} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72Z" />
+      <path d="m14 7 3 3M5 6v4M19 14v4M10 2v2M7 8H3M21 16h-4M11 3H9" />
+    </svg>
+  )
+}
+
 function StatCard({ value, label, note }: { value: number; label: string; note: string }) {
   return (
     <div className={styles.statCard}>
@@ -108,7 +117,8 @@ export default function ConstituencyView({ detail }: { detail: ConstituencyDetai
                 <p className={styles.mpName}>{detail.mp.name}</p>
                 {detail.mp.party && <p className={styles.mpParty}>{detail.mp.party}</p>}
                 <Link className={styles.mpCta} href={writeHref}>
-                  Write to {detail.mp.name.split(' ')[0]}
+                  <WandIcon />
+                  Draft email to {detail.mp.name.split(' ')[0]}
                 </Link>
               </aside>
             )}
@@ -123,11 +133,7 @@ export default function ConstituencyView({ detail }: { detail: ConstituencyDetai
           <StatCard value={categories.length} label="Types of support" note="from food to debt advice" />
         </dl>
 
-        <section className={styles.section} aria-labelledby="browse-title">
-          <h2 id="browse-title" className="ea-underline" style={{ ['--bleed' as string]: 'var(--page-bleed)' }}>
-            Churches and community services in {detail.name}
-          </h2>
-
+        <section className={styles.section} aria-label={`Churches and community services in ${detail.name}`}>
           {total === 0 ? (
             <p className={styles.empty}>We don&rsquo;t have any churches or community services listed in {detail.name} yet.</p>
           ) : (

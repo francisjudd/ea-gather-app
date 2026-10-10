@@ -17,7 +17,7 @@
 
 /* ---- Hero ----------------------------------------------------------------- */
 .hero {
-  padding: var(--space-5) 0 calc(var(--space-8) + var(--space-5));
+  padding: var(--space-4) 0 var(--space-7);
 }
 
 .hero :focus-visible {
@@ -29,7 +29,7 @@
   flex-wrap: wrap;
   align-items: center;
   gap: var(--space-2);
-  margin: 0 0 var(--space-6);
+  margin: 0 0 var(--space-5);
   padding: 0;
   list-style: none;
   font-size: var(--text-sm);
@@ -77,9 +77,9 @@
 .title {
   --bleed: var(--page-bleed);
   max-width: none;
-  margin: 0 0 var(--space-4);
+  margin: 0 0 var(--space-3);
   color: var(--ea-white);
-  font-size: clamp(2.5rem, 1.6rem + 4vw, 4.25rem);
+  font-size: clamp(2.25rem, 1.4rem + 3.4vw, 3.5rem);
   font-weight: var(--weight-bold);
   letter-spacing: -0.03em;
   line-height: 1.05;
@@ -98,14 +98,15 @@
   min-width: 250px;
   padding: var(--space-5);
   border-radius: var(--radius-lg);
-  background: var(--color-surface);
-  box-shadow: var(--shadow-lg);
-  color: var(--color-text);
+  border: 1px solid rgb(255 255 255 / 28%);
+  background: rgb(255 255 255 / 10%);
+  backdrop-filter: blur(4px);
+  color: var(--ea-white);
 }
 
 .mpLabel {
   margin: 0;
-  color: var(--color-text-on-panel);
+  color: var(--ea-lime);
   font-size: var(--text-xs);
   font-weight: 700;
   letter-spacing: 0.1em;
@@ -114,7 +115,7 @@
 
 .mpName {
   margin: var(--space-1) 0 0;
-  color: var(--color-text-strong);
+  color: var(--ea-white);
   font-size: var(--text-xl);
   font-weight: 700;
   line-height: var(--leading-tight);
@@ -122,17 +123,20 @@
 
 .mpParty {
   margin: var(--space-1) 0 0;
-  color: var(--color-text-muted);
+  color: rgb(255 255 255 / 80%);
   font-size: var(--text-sm);
 }
 
 .mpCta {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
   margin-top: var(--space-4);
   padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-md);
-  background: var(--color-primary);
-  color: var(--ea-white);
+  background: var(--ea-lime); /* lime on navy only, per the brand contrast note */
+  color: var(--ea-navy);
   font-size: var(--text-sm);
   font-weight: 700;
   text-align: center;
@@ -140,21 +144,29 @@
 }
 
 .mpCta:hover {
-  background: var(--color-primary-hover);
-  color: var(--ea-white);
+  color: var(--ea-navy);
+  filter: brightness(1.06);
 }
 
-/* ---- Stats: overlap the hero edge ---------------------------------------- */
+.mpCtaIcon {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 .stats {
   position: relative;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--space-4);
-  margin: calc(-1 * var(--space-8)) auto var(--space-7);
+  margin: calc(-1 * var(--space-6)) auto var(--space-4);
 }
 
 .statCard {
-  padding: var(--space-5);
+  padding: var(--space-4);
   border: 1px solid var(--color-border);
   border-top: 4px solid var(--ea-teal);
   border-radius: var(--radius-md);
@@ -178,7 +190,7 @@
 
 .statValue {
   color: var(--color-text-strong);
-  font-size: clamp(2.25rem, 1.6rem + 2.4vw, 3.25rem);
+  font-size: clamp(1.75rem, 1.3rem + 1.6vw, 2.5rem);
   font-weight: 700;
   letter-spacing: -0.03em;
   line-height: 1;
@@ -190,13 +202,6 @@
 }
 
 /* ---- Sections ------------------------------------------------------------- */
-.section h2 {
-  --bleed: var(--page-bleed);
-  margin: 0 0 var(--space-4);
-  font-size: var(--text-2xl);
-  font-weight: var(--weight-semibold);
-}
-
 .sectionIntro {
   max-width: 60ch;
   margin: 0 0 var(--space-5);
@@ -219,7 +224,7 @@
   flex-wrap: nowrap;
   align-items: center;
   gap: var(--space-4);
-  margin: var(--space-4) 0;
+  margin: 0 0 var(--space-3);
   padding-bottom: 2px;
   overflow-x: auto;
 }
@@ -484,7 +489,7 @@
 }
 
 .programmesNote {
-  margin: 0 0 var(--space-4);
+  margin: 0 0 var(--space-3);
   color: var(--color-text-muted);
   font-size: var(--text-sm);
 }
