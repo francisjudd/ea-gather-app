@@ -12,7 +12,8 @@ export default defineConfig({
       provider: 'v8',
       include: ['lib/messaging/**', 'components/messaging/**'],
       exclude: ['**/__tests__/**'],
-      reporter: ['text', 'html'],
+      reporter: ['text', 'text-summary', 'html'],
+      thresholds: { lines: 90, branches: 90, functions: 90, statements: 90 },
     },
   },
 })
