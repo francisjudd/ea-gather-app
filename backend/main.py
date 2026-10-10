@@ -7,7 +7,7 @@ from fastapi import HTTPException
 from pydantic import BaseModel
 
 import admin
-import churches
+import churches as churches_api
 import mps
 
 # Services preserve the public request path, including /openapi.
@@ -19,7 +19,7 @@ app = FastAPI(
     openapi_url="/openapi/openapi.json",
 )
 
-app.include_router(churches.router, prefix="/openapi")
+app.include_router(churches_api.router, prefix="/openapi")
 app.include_router(mps.router, prefix="/openapi")
 app.include_router(admin.router, prefix="/openapi")
 

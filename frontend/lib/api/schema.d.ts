@@ -178,6 +178,41 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/churches": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Churches */
+        get: operations["list_churches_churches_get"];
+        put?: never;
+        /** Create Church */
+        post: operations["create_church_churches_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/churches/{church_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update Church Status */
+        patch: operations["update_church_status_churches__church_id__patch"];
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -215,8 +250,49 @@ export interface components {
             /** Distancemiles */
             distanceMiles?: number | null;
         };
+        /** ChurchStatusUpdate */
+        ChurchStatusUpdate: {
+            /** Status */
+            status: string;
+        };
         /** ChurchSubmission */
-        ChurchSubmission: {
+        "ChurchSubmission-Input": {
+            /** Name */
+            name: string;
+            /**
+             * Denomination
+             * @default
+             */
+            denomination: string;
+            /** Address */
+            address: string;
+            /**
+             * Place
+             * @default
+             */
+            place: string;
+            /**
+             * Postcode
+             * @default
+             */
+            postcode: string;
+            /**
+             * Operatinghours
+             * @default
+             */
+            operatingHours: string;
+            /** Contactname */
+            contactName: string;
+            /** Contactemail */
+            contactEmail: string;
+            /**
+             * Initiatives
+             * @default []
+             */
+            initiatives: string[];
+        };
+        /** ChurchSubmission */
+        "ChurchSubmission-Output": {
             /** Id */
             id: string;
             /** Name */
@@ -405,7 +481,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ChurchSubmission"];
+                    "application/json": components["schemas"]["ChurchSubmission-Output"];
                 };
             };
             /** @description Validation Error */
@@ -552,7 +628,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ChurchSubmission"][];
+                    "application/json": components["schemas"]["ChurchSubmission-Output"][];
                 };
             };
             /** @description Validation Error */
@@ -589,7 +665,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ChurchSubmission"];
+                    "application/json": components["schemas"]["ChurchSubmission-Output"];
                 };
             };
             /** @description Validation Error */
@@ -659,6 +735,105 @@ export interface operations {
                 };
                 content: {
                     "application/json": unknown;
+                };
+            };
+        };
+    };
+    list_churches_churches_get: {
+        parameters: {
+            query?: {
+                status?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_church_churches_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ChurchSubmission-Input"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_church_status_churches__church_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                church_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ChurchStatusUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

@@ -113,7 +113,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ChurchSubmission'
+                $ref: '#/components/schemas/ChurchSubmission-Output'
         '422':
           description: Validation Error
           content:
@@ -244,7 +244,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ChurchSubmission'
+                  $ref: '#/components/schemas/ChurchSubmission-Output'
                 title: Response List Submissions Openapi Admin Submissions Get
         '422':
           description: Validation Error
@@ -284,7 +284,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ChurchSubmission'
+                $ref: '#/components/schemas/ChurchSubmission-Output'
         '422':
           description: Validation Error
           content:
@@ -321,6 +321,81 @@ paths:
           content:
             application/json:
               schema: {}
+  /churches:
+    post:
+      summary: Create Church
+      operationId: create_church_churches_post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChurchSubmission-Input'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      summary: List Churches
+      operationId: list_churches_churches_get
+      parameters:
+      - name: status
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Status
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /churches/{church_id}:
+    patch:
+      summary: Update Church Status
+      operationId: update_church_status_churches__church_id__patch
+      parameters:
+      - name: church_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Church Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChurchStatusUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
     Church:
@@ -399,7 +474,59 @@ components:
       - phone
       - constituency
       title: Church
-    ChurchSubmission:
+    ChurchStatusUpdate:
+      properties:
+        status:
+          type: string
+          title: Status
+      type: object
+      required:
+      - status
+      title: ChurchStatusUpdate
+    ChurchSubmission-Input:
+      properties:
+        name:
+          type: string
+          title: Name
+        denomination:
+          type: string
+          title: Denomination
+          default: ''
+        address:
+          type: string
+          title: Address
+        place:
+          type: string
+          title: Place
+          default: ''
+        postcode:
+          type: string
+          title: Postcode
+          default: ''
+        operatingHours:
+          type: string
+          title: Operatinghours
+          default: ''
+        contactName:
+          type: string
+          title: Contactname
+        contactEmail:
+          type: string
+          title: Contactemail
+        initiatives:
+          items:
+            type: string
+          type: array
+          title: Initiatives
+          default: []
+      type: object
+      required:
+      - name
+      - address
+      - contactName
+      - contactEmail
+      title: ChurchSubmission
+    ChurchSubmission-Output:
       properties:
         id:
           type: string
