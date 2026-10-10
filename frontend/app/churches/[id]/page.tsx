@@ -211,6 +211,7 @@ export default async function ChurchProfilePage({ params }: Props) {
               <h2 id="points-h" className={styles.underline}>
                 What this church means for {church.constituency}
               </h2>
+              <br />
               <p className={styles.lede}>Local evidence, ready to cite in debates, APPGs and constituency updates.</p>
               {points.length === 0 ? (
                 <p className={styles.lede}>More talking points are being added for this church.</p>
