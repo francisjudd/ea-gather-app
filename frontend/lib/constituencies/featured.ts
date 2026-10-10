@@ -79,8 +79,18 @@ export async function getFeaturedByCity(perPlace = PER_PLACE): Promise<FeaturedG
       }
     }
 
+    // The source lists some services twice, sometimes with a different postcode. In a short list of
+    // highlights, two cards with the same name look like a mistake, so show each name once.
+    const seen = new Set<string>()
+    const unique = inPlace.filter((service) => {
+      const key = service.name.trim().toLowerCase()
+      if (seen.has(key)) return false
+      seen.add(key)
+      return true
+    })
+
     const byCategory = CATEGORY_ORDER.map((category) =>
-      inPlace
+      unique
         .filter((service) => service.category === category)
         .sort((a, b) => completeness(b) - completeness(a) || hash(a.id) - hash(b.id)),
     )
