@@ -66,6 +66,25 @@
   font-size: 13px;
 }
 
+.headerNav {
+  display: inline-flex;
+  align-items: center;
+  gap: 22px;
+}
+
+.headerNavLink {
+  color: #547d88;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.headerNavLink:hover {
+  color: #24305f;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .main {
   width: min(1180px, calc(100% - 48px));
   flex: 1;

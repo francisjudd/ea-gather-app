@@ -326,6 +326,17 @@ a {
   box-shadow: 0 0 0 3px rgb(43 94 127 / 15%);
 }
 
+.field input[aria-invalid="true"] {
+  border-color: #b3261e;
+  box-shadow: 0 0 0 3px rgb(179 38 30 / 12%);
+}
+
+.field-error {
+  color: #b3261e;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
 .privacy-note {
   display: flex;
   align-items: center;

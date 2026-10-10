@@ -254,7 +254,10 @@ export default function ChurchFinder() {
         <Link className={styles.brandLink} href="/" aria-label="Evangelical Alliance home">
           <ChurchMark />
         </Link>
-        <span className={styles.headerCaption}>Church directory</span>
+        <nav className={styles.headerNav} aria-label="Primary">
+          <Link className={styles.headerNavLink} href="/churches">Church directory</Link>
+          <Link className={styles.headerNavLink} href="/demand">The demand side</Link>
+        </nav>
       </header>
 
       <main className={styles.main}>
