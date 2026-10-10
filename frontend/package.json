@@ -9,7 +9,7 @@
     "start": "next start",
     "lint": "eslint app",
     "typecheck": "tsc --noEmit",
-    "api:types": "openapi-typescript ../backend/openapi.yaml -o ./lib/api/schema.d.ts",
+    "api:types": "openapi-typescript https://ea-gather-app.vercel.app/openapi/openapi.json -o ./lib/api/schema.d.ts",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage"
   },

@@ -4,7 +4,7 @@ Evangelical Alliance Gathering Church Action. This repository is an npm
 workspaces monorepo:
 
 - `frontend/` — Next.js App Router application and generated API types.
-- `backend/openapi.yaml` — placeholder for the backend's OpenAPI contract.
+- `backend/` — FastAPI service serving the live OpenAPI contract at `/openapi/openapi.json`.
 - [`USER_STORIES.md`](./USER_STORIES.md) — Product objectives, user personas, MVP acceptance criteria, and demo flow.
 
 ## Prerequisites
@@ -24,16 +24,16 @@ The app runs at <http://localhost:3000>.
 
 ## Generate backend types
 
-When the backend OpenAPI specification is received, replace the starter
-contract at `backend/openapi.yaml` with that spec, then run:
+The backend serves its OpenAPI contract at `/openapi/openapi.json`. Regenerate
+the frontend types from the live contract:
 
 ```sh
 npm run api:types
 ```
 
-This runs `openapi-typescript` and writes `frontend/lib/api/schema.d.ts`. Commit
-the generated file with the updated contract; do not hand-edit generated types.
-The current placeholder intentionally defines no API endpoints.
+This runs `openapi-typescript` against the deployed contract and writes
+`frontend/lib/api/schema.d.ts`. Commit the generated file with the updated
+contract; do not hand-edit generated types.
 
 ## Deploying Next.js and FastAPI to Vercel
 
@@ -66,8 +66,11 @@ npx vercel dev --local
 ```
 
 Add future FastAPI endpoints under `/openapi/...`: service routing preserves
-the public request path rather than stripping the prefix. The OpenAPI types
-remain placeholders until the real backend contract is supplied.
+the public request path rather than stripping the prefix. The backend currently
+defines its routes at `/churches` (not `/openapi/churches`), so the live
+`/churches` endpoint is only reachable through the backend directly — see
+[`backend/endpoints.md`](./backend/endpoints.md) for the documented contract and
+the routing note.
 
 ## Common commands
 
@@ -77,4 +80,4 @@ remain placeholders until the real backend contract is supplied.
 | `npm run build` | Build the frontend for production |
 | `npm run lint` | Lint the frontend |
 | `npm run typecheck` | Check frontend TypeScript |
-| `npm run api:types` | Generate frontend types from `backend/openapi.yaml` |
+| `npm run api:types` | Generate frontend types from the live backend contract |

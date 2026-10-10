@@ -7,7 +7,20 @@
     },
     "openapi": {
       "root": "backend/",
-      "entrypoint": "main:app"
+      "entrypoint": "main:app",
+      "routes": [
+        {
+          "src": "/openapi(?:/(.*))?",
+          "transforms": [
+            {
+              "type": "request.path",
+              "op": "set",
+              "args": "/$1"
+            }
+          ],
+          "continue": true
+        }
+      ]
     }
   },
   "rewrites": [
