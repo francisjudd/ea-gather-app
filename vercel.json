@@ -5,16 +5,16 @@
       "root": "frontend/",
       "framework": "nextjs"
     },
-    "backend": {
+    "openapi": {
       "root": "backend/",
       "entrypoint": "main:app"
     }
   },
   "rewrites": [
     {
-      "source": "/backend/:path*",
+      "source": "/openapi/:path*",
       "destination": {
-        "service": "backend"
+        "service": "openapi"
       }
     },
     {

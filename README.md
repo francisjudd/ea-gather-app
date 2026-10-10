@@ -40,11 +40,11 @@ The current placeholder intentionally defines no API endpoints.
 The root `vercel.json` uses Vercel Services (Beta) to deploy both applications
 in one project, under the project's existing domain:
 
-- `/backend` and `/backend/*` route to FastAPI in `backend/`.
+- `/openapi` and `/openapi/*` route to FastAPI in `backend/`.
 - All other paths route to Next.js in `frontend/`, including the existing
   `/api/parish-dashboards` endpoint.
-- FastAPI's health response is at `/backend`, interactive docs at
-  `/backend/docs`, and OpenAPI schema at `/backend/openapi.json`.
+- FastAPI's health response is at `/openapi`, interactive docs at
+  `/openapi/docs`, and OpenAPI schema at `/openapi/openapi.json`.
 
 Before merging this configuration, open the existing Vercel project's
 **Settings → Build and Deployment**, change **Root Directory** from `frontend`
@@ -53,8 +53,8 @@ Node.js version and framework defaults; remove any custom project-level build,
 install, or output overrides if present so each service uses its own defaults.
 No domain or DNS changes are needed.
 
-After the PR preview deploys, verify `/`, `/api/parish-dashboards`, `/backend`,
-and `/backend/docs` on its preview URL before merging. Merging to `main` then
+After the PR preview deploys, verify `/`, `/api/parish-dashboards`, `/openapi`,
+and `/openapi/docs` on its preview URL before merging. Merging to `main` then
 uses the project's normal production deployment workflow.
 
 For local development of both services, install the Python requirements and
@@ -65,7 +65,7 @@ python -m pip install -r backend/requirements.txt
 npx vercel dev --local
 ```
 
-Add future FastAPI endpoints under `/backend/...`: service routing preserves
+Add future FastAPI endpoints under `/openapi/...`: service routing preserves
 the public request path rather than stripping the prefix. The OpenAPI types
 remain placeholders until the real backend contract is supplied.
 
