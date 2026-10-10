@@ -82,3 +82,11 @@ export function approveChurch(id: string): ChurchSubmission[] {
 export function rejectChurch(id: string): ChurchSubmission[] {
   return setSubmissionStatus(id, 'rejected')
 }
+
+export function updateSubmissionInitiatives(id: string, initiatives: string[]): ChurchSubmission[] {
+  const next = readStore().map((submission) =>
+    submission.id === id ? { ...submission, initiatives } : submission,
+  )
+  writeStore(next)
+  return next
+}

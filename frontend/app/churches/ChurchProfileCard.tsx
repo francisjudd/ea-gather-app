@@ -1,3 +1,4 @@
+import { initiativeLabels } from '../../lib/initiatives'
 import styles from './churches.module.css'
 
 type Church = {
@@ -11,25 +12,6 @@ type Church = {
   operatingHours: string
   verified: boolean
   initiatives: string[]
-}
-
-const initiativeLabels: Record<string, string> = {
-  'food-bank': 'Food bank or food pantry',
-  'warm-space': 'Warm space / community lounge',
-  'debt-advice': 'Debt advice & financial wellbeing',
-  'clothing-bank': 'Clothing or baby bank',
-  'family-groups': 'Parent / toddler & family groups',
-  'youth': 'Youth clubs or mentoring',
-  'holiday-clubs': 'Holiday clubs / school-holiday meals',
-  'schools': 'Schools work or chaplaincy',
-  'older-people': "Older people's lunches & visits",
-  'mental-health': 'Mental health support groups',
-  'esol': 'ESOL classes / refugee support',
-  'recovery': 'Recovery / addiction support',
-  'prison': 'Prison visiting or chaplaincy',
-  'street-pastors': 'Street pastors or homelessness outreach',
-  'community-groups': 'Hosting community groups in our building',
-  'eco-church': 'Environmental / Eco Church work',
 }
 
 function VerifiedBadge() {

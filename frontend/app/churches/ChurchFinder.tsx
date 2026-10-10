@@ -4,6 +4,7 @@ import { useMemo, useState, type FormEvent } from 'react'
 import Link from 'next/link'
 import MapView from './MapView'
 import ChurchProfileCard from './ChurchProfileCard'
+import { initiativeTypes } from '../../lib/initiatives'
 import styles from './churches.module.css'
 
 type Church = {
@@ -18,25 +19,6 @@ type Church = {
   verified: boolean
   initiatives: string[]
 }
-
-const initiativeTypes = [
-  { id: 'food-bank', label: 'Food bank or food pantry' },
-  { id: 'warm-space', label: 'Warm space / community lounge' },
-  { id: 'debt-advice', label: 'Debt advice & financial wellbeing' },
-  { id: 'clothing-bank', label: 'Clothing or baby bank' },
-  { id: 'family-groups', label: 'Parent / toddler & family groups' },
-  { id: 'youth', label: 'Youth clubs or mentoring' },
-  { id: 'holiday-clubs', label: 'Holiday clubs / school-holiday meals' },
-  { id: 'schools', label: 'Schools work or chaplaincy' },
-  { id: 'older-people', label: "Older people's lunches & visits" },
-  { id: 'mental-health', label: 'Mental health support groups' },
-  { id: 'esol', label: 'ESOL classes / refugee support' },
-  { id: 'recovery', label: 'Recovery / addiction support' },
-  { id: 'prison', label: 'Prison visiting or chaplaincy' },
-  { id: 'street-pastors', label: 'Street pastors or homelessness outreach' },
-  { id: 'community-groups', label: 'Hosting community groups in our building' },
-  { id: 'eco-church', label: 'Environmental / Eco Church work' },
-] as const
 
 const churches: Church[] = [
   {
