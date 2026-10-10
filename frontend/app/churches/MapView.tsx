@@ -11,7 +11,11 @@ type Church = {
   place: string
   lat: number
   lng: number
+  /** When set, the pin is a plain coloured circle (navy = church, teal = community service). */
+  kind?: 'church' | 'service'
 }
+
+const PIN_COLOURS = { church: '#24305F', service: '#449AAE' } as const
 
 const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
 
@@ -21,10 +25,15 @@ export default function MapView({
   churches,
   selectedChurch,
   onSelectChurch,
+  canvasClassName,
+  focusSelected = false,
 }: {
   churches: Church[]
   selectedChurch: string
   onSelectChurch: (id: string) => void
+  canvasClassName?: string
+  /** Pan/zoom to the selected church's pin instead of refitting all pins. Default off. */
+  focusSelected?: boolean
 }) {
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<google.maps.Map | null>(null)
@@ -32,7 +41,10 @@ export default function MapView({
   const markerLibRef = useRef<google.maps.MarkerLibrary | null>(null)
   const coreLibRef = useRef<google.maps.CoreLibrary | null>(null)
   const markersRef = useRef<google.maps.Marker[]>([])
+  const markerByIdRef = useRef<Map<string, google.maps.Marker>>(new Map())
   const [error, setError] = useState('')
+  // When focusing the selection we must not refit all pins on every selection change.
+  const refitKey = focusSelected ? '' : selectedChurch
 
   const renderMarkers = useCallback(
     (
@@ -44,6 +56,7 @@ export default function MapView({
     ) => {
       markersRef.current.forEach((marker) => marker.setMap(null))
       markersRef.current = []
+      markerByIdRef.current = new Map()
 
       const bounds = new core.LatLngBounds()
       items.forEach((church) => {
@@ -52,11 +65,22 @@ export default function MapView({
           position,
           map,
           title: church.name,
+          ...(church.kind && {
+            icon: {
+              path: core.SymbolPath.CIRCLE,
+              fillColor: PIN_COLOURS[church.kind],
+              fillOpacity: 1,
+              strokeColor: '#ffffff',
+              strokeWeight: 2,
+              scale: 9,
+            },
+          }),
         })
         markerInstance.addListener('click', () => {
           onSelectChurch(church.id)
         })
         markersRef.current.push(markerInstance)
+        markerByIdRef.current.set(church.id, markerInstance)
         bounds.extend(position)
       })
 
@@ -115,11 +139,25 @@ export default function MapView({
     const core = coreLibRef.current
     if (!map || !maps || !marker || !core) return
     renderMarkers(maps, marker, core, map, churches)
-  }, [churches, selectedChurch, renderMarkers])
+  }, [churches, refitKey, renderMarkers])
+
+  useEffect(() => {
+    if (!focusSelected) return
+    const map = mapRef.current
+    const marker = markerByIdRef.current.get(selectedChurch)
+    const position = marker?.getPosition()
+    if (!map || !marker || !position) return
+    map.panTo(position)
+    if ((map.getZoom() ?? 0) < 14) map.setZoom(14)
+    marker.setAnimation(google.maps.Animation.BOUNCE)
+    const timeout = window.setTimeout(() => marker.setAnimation(null), 1400)
+    return () => window.clearTimeout(timeout)
+  }, [focusSelected, selectedChurch])
 
   if (!apiKey) {
     return (
       <div className={styles.mapPanel}>
+        <div className={`${styles.mapCanvas} ${canvasClassName ?? ''}`} />
         <div className={styles.mapError}>
           Google Maps is not configured. Add NEXT_PUBLIC_GOOGLE_MAPS_API_KEY to your .env file.
         </div>
@@ -129,7 +167,7 @@ export default function MapView({
 
   return (
     <div className={styles.mapPanel}>
-      <div ref={containerRef} className={styles.mapCanvas} />
+      <div ref={containerRef} className={`${styles.mapCanvas} ${canvasClassName ?? ''}`} />
       {error && <div className={styles.mapError}>{error}</div>}
     </div>
   )
