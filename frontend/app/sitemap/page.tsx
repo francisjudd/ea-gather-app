@@ -23,7 +23,6 @@ export default async function SitemapPage() {
           <span className="brand-name">More Than <strong>Sunday</strong></span>
         </Link>
         <div className="site-actions">
-          <span className="header-caption">An initiative from the Evangelical Alliance</span>
           <SiteNav />
         </div>
       </header>
