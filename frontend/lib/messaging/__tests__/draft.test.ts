@@ -196,16 +196,16 @@ describe('constituency link', () => {
   const site = 'https://example.org'
 
   it.each([
-    ['Putney', 'https://example.org/constituencies/putney'],
-    ['Cardiff South & Penarth', 'https://example.org/constituencies/cardiff-south-and-penarth'],
-    ['Ynys Môn', 'https://example.org/constituencies/ynys-mon'],
+    ['Putney', 'https://example.org/constituencies/putney?utm_campaign=mp_outreach'],
+    ['Cardiff South & Penarth', 'https://example.org/constituencies/cardiff-south-and-penarth?utm_campaign=mp_outreach'],
+    ['Ynys Môn', 'https://example.org/constituencies/ynys-mon?utm_campaign=mp_outreach'],
   ])('links %s to its page', (name, expected) => {
     expect(toLetterInput(draft({ mpConstituency: name }), site).constituency_url).toBe(expected)
   })
 
   it('ignores a trailing slash on the site URL', () => {
     expect(toLetterInput(draft({ mpConstituency: 'Putney' }), `${site}/`).constituency_url).toBe(
-      'https://example.org/constituencies/putney',
+      'https://example.org/constituencies/putney?utm_campaign=mp_outreach',
     )
   })
 
@@ -216,6 +216,6 @@ describe('constituency link', () => {
 
   it('puts the link in the rendered letter', () => {
     const { body } = renderLetterFallback(toLetterInput(draft({ mpConstituency: 'Putney' }), site))
-    expect(body).toContain('here: https://example.org/constituencies/putney')
+    expect(body).toContain('here: https://example.org/constituencies/putney?utm_campaign=mp_outreach')
   })
 })
