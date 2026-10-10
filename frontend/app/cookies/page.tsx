@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import SiteNav from '../../components/SiteNav'
 
 export const metadata: Metadata = {
   title: 'Cookie policy | Evangelical Alliance',
@@ -15,9 +16,7 @@ export default function CookiePolicyPage() {
         </Link>
         <div className="site-actions">
           <span className="header-caption">An initiative from the Evangelical Alliance</span>
-          <nav aria-label="Primary">
-            <Link className="site-nav-link" href="/churches">Church directory</Link>
-          </nav>
+          <SiteNav />
         </div>
       </header>
 

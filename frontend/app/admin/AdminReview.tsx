@@ -2,6 +2,7 @@
 
 import { useSyncExternalStore } from 'react'
 import Link from 'next/link'
+import SiteNav from '../../components/SiteNav'
 import {
   getPendingSubmissions,
   subscribeToSubmissions,
@@ -135,7 +136,7 @@ export default function AdminReview() {
         <Link className="brand-lockup" href="/" aria-label="Evangelical Alliance home">
           <span className="brand-name">evangelical <strong>alliance</strong></span>
         </Link>
-        <span className="header-caption">Admin · Review</span>
+        <SiteNav />
       </header>
 
       <div className="admin-layout">
