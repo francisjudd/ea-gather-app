@@ -78,6 +78,12 @@ a {
   gap: 26px;
 }
 
+.site-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 22px;
+}
+
 .site-nav-link,
 .site-actions nav a {
   color: var(--color-link);

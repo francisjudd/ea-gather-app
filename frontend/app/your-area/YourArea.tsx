@@ -2,6 +2,7 @@
 
 import { useMemo, useState, type FormEvent } from 'react'
 import Link from 'next/link'
+import SiteNav from '../../components/SiteNav'
 import styles from './your-area.module.css'
 import {
   sampleAreas,
@@ -83,11 +84,7 @@ export default function YourArea() {
         <Link className="brand-lockup" href="/your-area" aria-label="More Than Sunday — your area">
           <span className="brand-name">More Than <strong>Sunday</strong></span>
         </Link>
-        <nav className={styles.headerNav} aria-label="Primary">
-          <Link className="header-caption" href="/your-area">Your area</Link>
-          <Link className="header-caption" href="/demand">The demand side</Link>
-          <Link className="button button-quiet" href="/contact-mp">Write to your MP <span aria-hidden="true">→</span></Link>
-        </nav>
+        <SiteNav />
       </header>
 
       <section className={styles.hero}>
