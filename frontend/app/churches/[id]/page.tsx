@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import FullNav from '../../../components/FullNavigation'
+import TalkingPoints from '../../../components/TalkingPoints'
+
 import {
   getChurchById,
   getChurchIds,
@@ -141,7 +143,17 @@ export default async function ChurchProfilePage({ params }: Props) {
   const church = await getChurchById(id)
   if (!church) notFound()
 
-  const points = church.talkingPoints
+
+  interface Item {
+    label: string;
+    figure: string;
+    text: string;
+  }
+
+const items: Item[] = church.talkingPoints;
+
+const points: string[] = items.map(({ label, figure, text }) => `${figure} ${label}. ${text}`);
+
   const attendanceText =
     church.attendance != null ? `${church.attendance.toLocaleString('en-GB')} on Sundays` : 'Sunday meeting'
 
@@ -207,7 +219,7 @@ export default async function ChurchProfilePage({ params }: Props) {
         <div className={`${styles.wrap} ${styles.layout}`}>
           <div>
             {/* Talking points */}
-            <section className={styles.panel} aria-labelledby="points-h">
+            {/*<section className={styles.panel} aria-labelledby="points-h">
               <p className={styles.kicker}>For Parliament</p>
               <h2 id="points-h" className={styles.underline}>
                 What this church means for {church.constituency}
@@ -235,7 +247,14 @@ export default async function ChurchProfilePage({ params }: Props) {
                   <CopyPointsButton churchName={church.name} constituency={church.constituency} points={points} />
                 )}
               </div>
-            </section>
+            </section>*/}
+            <TalkingPoints
+              talkingPoints={points}
+              mpHref="/contact-mp"
+              email={church.mp.email}
+              name={church.mp.name}
+              subject= { "Talking points from " + church.name}
+            />
 
             {/* Community projects */}
             <ActivitiesPanel activities={church.activities} />
@@ -254,20 +273,22 @@ export default async function ChurchProfilePage({ params }: Props) {
           {/* Sidebar */}
           <aside className={styles.aside}>
             <section className={styles.card} aria-labelledby="mp-h">
-              <p className={styles.kicker}>Your MP</p>
-              <hr className={styles.dotted} />
-              <div className={styles.mp}>
-                <div className={styles.mpAvatar} aria-hidden="true">
-                  {initials(church.mp.name)}
+              <Link href="/contact-mp" style={{textDecoration: "none"}}>
+                <p className={styles.kicker}>Your MP</p>
+                <hr className={styles.dotted} />
+                <div className={styles.mp}>
+                  <div className={styles.mpAvatar} aria-hidden="true">
+                    {initials(church.mp.name)}
+                  </div>
+                  <div>
+                    <b>{church.mp.name}</b>
+                    <span>
+                      {church.mp.party ? `${church.mp.party} · ` : ''}
+                      {church.mp.constituency}
+                    </span>
+                  </div>
                 </div>
-                <div>
-                  <b>{church.mp.name}</b>
-                  <span>
-                    {church.mp.party ? `${church.mp.party} · ` : ''}
-                    {church.mp.constituency}
-                  </span>
-                </div>
-              </div>
+              </Link>
             </section>
 
             <section className={styles.card} aria-labelledby="contact-h">

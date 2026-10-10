@@ -4,6 +4,7 @@ import { useMemo, useState, type FormEvent } from 'react'
 import Link from 'next/link'
 import FullNav from '../../components/FullNavigation'
 import styles from './your-area.module.css'
+import TalkingPoints from '../../components/TalkingPoints'
 import {
   sampleAreas,
   summarizeArea,
@@ -195,23 +196,13 @@ export default function YourArea() {
               </ul>
             </section>
 
-            <section className={styles.letterPanel} aria-labelledby="letter-heading">
-              <p className={styles.eyebrow}>FOR YOUR LETTER TO YOUR MP</p>
-              <h3 id="letter-heading" className="ea-underline">Talking points from this area</h3>
-              <ul className="ea-list">
-                {talkingPoints.map((point, index) => (
-                  <li key={index}>{point}</li>
-                ))}
-              </ul>
-              <div className="action-row">
-                <Link className="button button-primary" href={mpHref}>Use this to write to your MP <span aria-hidden="true">→</span></Link>
-                <a className="button button-quiet" style={{color: "white"}} href={`mailto:${activeArea.mpEmail}`}>Email {activeArea.mpName} directly</a>
-              </div>
-              <p className={styles.letterNote}>
-                These figures are drawn from a small sample so you can see how the numbers read. They are
-                not a full census of the constituency.
-              </p>
-            </section>
+            <TalkingPoints
+              talkingPoints={talkingPoints}
+              mpHref={mpHref}
+              email={activeArea.mpEmail}
+              name={activeArea.mpName}
+              subject="Talking points from this area"
+            />
           </section>
         )}
       </div>
