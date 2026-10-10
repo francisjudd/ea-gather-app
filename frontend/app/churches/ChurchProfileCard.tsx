@@ -43,11 +43,11 @@ export default function ChurchProfileCard({ church }: { church: Church }) {
 
   return (
     <article className={styles.profileCard} aria-label={`${church.name} profile`}>
+      <Link href={`/churches/${church.id}`} className={styles.profileLink} style={{textDecoration: "none"}}>
       <div className={styles.profileHeader}>
         <div>
-          <Link href={`/churches/${church.id}`} className={styles.profileLink}>
+          
             <h3>{church.name}</h3>
-          </Link>
           <p className={styles.profileMeta}>
             {church.denomination}
             <span className={styles.profileMetaDot} aria-hidden="true">·</span>
@@ -90,6 +90,7 @@ export default function ChurchProfileCard({ church }: { church: Church }) {
           ))}
         </ul>
       </div>
+      </Link>
     </article>
   )
 }
