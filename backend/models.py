@@ -26,6 +26,10 @@ class Church(ApiModel):
     website: str | None
     phone: str | None
     constituency: str | None
+    contact_first_name: str | None
+    contact_surname: str | None
+    contact_role: str | None
+    contact_email: str | None
     distance_miles: float | None = None
 
 

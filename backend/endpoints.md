@@ -18,7 +18,7 @@ The endpoints below replace those sources. Status legend: **✅ implemented**,
 | 3 | `GET` | `/initiatives` | ❌ | Initiative taxonomy (replaces `lib/initiatives.ts`) | — | `Initiative[]` |
 | 4 | `GET` | `/geocode` | ❌ | Resolve postcode/place → lat/lng (replaces local `resolveCenter`) | `q` | `{ lat, lng }` |
 
-`Church` = `{ id, name, address, place, lat, lng, denomination, operatingHours, verified, initiatives[] }`
+`Church` = `{ id, name, address, place, lat, lng, denomination, operatingHours, verified, initiatives[], contactFirstName, contactSurname, contactRole, contactEmail }`
 
 > **Status note:** `GET /churches` and `POST /churches` are implemented in
 > `backend/main.py` but are **in-memory** (a Python list), not backed by
