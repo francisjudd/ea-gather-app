@@ -22,16 +22,16 @@
 
 ---
 
-## 2. MP’s Office (MP, Caseworkers, Researchers)
+## 2. MP’s Office (MP, Parliamentary Researchers & Policy Aides)
 
-> **Caseworker Note:** Caseworkers may be the most frequent users here. Signposting constituents is daily work for them, and it connects directly to the core objective.
+> **Advocacy & Policy Note:** MPs and researchers need credible, constituency-specific evidence they can champion in Parliament, APPGs, select committees, and minister questions.
 
 | ID | Priority | User Story | Acceptance / Notes |
 |:---|:---|:---|:---|
 | **MP-01** | `[MVP]` | **When** a church in my constituency writes to me, **I want to** see what all churches in the constituency are doing, **so I can** tell whether it’s one church or a wider network and decide where to visit. | Constituency-wide summary dashboard linked directly from the email. |
-| **MP-02** | `[MVP]` | **When** I prepare for a debate or a local campaign, **I want** figures and top talking points by activity type for my constituency, **so I can** cite local evidence rather than national averages. | Aggregated stats (e.g. total meals, warm space hours, volunteer hours). |
-| **MP-03** | `Post-MVP` | **When** a constituent comes to us needing help (food, debt, isolation), **I want to** find nearby services quickly, including whether a referral is needed, **so** my caseworkers can signpost them that day. | Searchable service directory with referral criteria, opening times, and tags. |
-| **MP-04** | `Post-MVP` | **When** I want to visit or meet a church, **I want** a named contact and a way to reach them, **so** arranging it doesn’t depend on the original letter. | Secure contact pathway for parliamentarians. |
+| **MP-02** | `[MVP]` | **When** I prepare for a debate, APPG gathering, or local campaign, **I want** figures and top talking points by activity type for my constituency, **so I can** cite local evidence rather than national averages. | Aggregated stats (e.g. total meals, warm space hours, volunteer hours). |
+| **MP-03** | `Post-MVP` | **When** preparing for parliamentary gatherings or community summits, **I want to** request briefings and convene roundtables with church leaders on local challenges (cost of living, youth safety, mental wellbeing), **so** we can build opportunity-based partnerships. | Direct "Convene Dialogue / Briefing Request" action on the church profile. |
+| **MP-04** | `Post-MVP` | **When** I want to visit or meet a church, **I want** a named contact and a direct way to reach them, **so** arranging visits doesn’t get lost in general correspondence. | Secure contact pathway for parliamentarians and policy aides. |
 
 ---
 

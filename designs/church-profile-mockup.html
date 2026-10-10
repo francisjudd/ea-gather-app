@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>St Mark's Doncaster · Church Impact Profile | More Than Sunday</title>
+  <meta name="description" content="How St Mark's Doncaster serves Doncaster Central beyond Sunday: weekly reach, community projects and opportunities to work together.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+  <style>
+    /* ------------------------------------------------------------------
+       Tokens: mirrored from frontend/app/brand.css (EA Brand Guidelines)
+       ------------------------------------------------------------------ */
+    :root {
+      --ea-navy: #24305F; --ea-teal: #449AAE; --ea-lime: #DCDA60;
+      --ea-feature-dark: #2B5E7F; --ea-feature-light: #F5FAFB;
+      --ea-dark-grey: #383937; --ea-white: #FFFFFF;
+      --ea-gradient-1: linear-gradient(135deg, var(--ea-navy) 35%, var(--ea-teal) 130%);
+
+      --color-text: var(--ea-dark-grey);
+      --color-text-strong: var(--ea-navy);
+      --color-text-muted: #5E6470;
+      --color-text-on-panel: var(--ea-feature-dark);
+      --color-link: var(--ea-feature-dark);
+      --color-border: #DCE5E8;
+      --color-border-strong: #B7C6CC;
+
+      --cat-practical: #B8691A;   --cat-practical-bg: #FBF1E6;
+      --cat-youth: #C2483A;       --cat-youth-bg: #FBEDEB;
+      --cat-wellbeing: #6B55A8;   --cat-wellbeing-bg: #F1EEF8;
+      --cat-vulnerable: #A03E78;  --cat-vulnerable-bg: #F8ECF3;
+
+      --font-sans: "proxima-nova", "Lato", Arial, system-ui, sans-serif;
+      --radius-md: 8px; --radius-lg: 12px; --radius-full: 999px;
+      --shadow-sm: 0 1px 2px rgb(36 48 95 / 0.06);
+      --shadow-md: 0 4px 12px rgb(36 48 95 / 0.10);
+      --container: 1120px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; font-family: var(--font-sans); font-size: 16px; line-height: 1.55;
+      color: var(--color-text); background: var(--ea-feature-light);
+    }
+    h1, h2, h3, h4 { color: var(--color-text-strong); line-height: 1.2; margin: 0; }
+    a { color: var(--color-link); }
+    :focus-visible { outline: 3px solid var(--ea-teal); outline-offset: 3px; }
+    .wrap { width: min(var(--container), calc(100% - 48px)); margin-inline: auto; }
+    .kicker { margin: 0; font-size: 11px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--color-text-on-panel); }
+
+    /* Brand devices */
+    .ea-underline { position: relative; padding-bottom: 12px; margin-bottom: 20px; }
+    .ea-underline::after { content: ""; position: absolute; left: 0; bottom: 0; width: 66%; max-width: 220px; height: 2px; background: var(--ea-teal); }
+    .ea-dotted { height: 4px; border: 0; margin: 0; background-image: radial-gradient(circle, var(--ea-teal) 1.5px, transparent 2px); background-size: 12px 4px; background-repeat: repeat-x; }
+
+    /* Header (matches .site-header) */
+    .site-header { background: #fff; border-bottom: 1px solid var(--color-border); }
+    .site-header .wrap { min-height: 72px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+    .brand-name { color: var(--color-text-strong); font-size: 15px; letter-spacing: 0.11em; text-decoration: none; text-transform: uppercase; }
+    .brand-name strong { color: var(--ea-feature-dark); }
+    .site-nav { display: flex; gap: 22px; }
+    .site-nav a { font-size: 14px; font-weight: 700; text-decoration: none; }
+    .site-nav a[aria-current] { color: var(--ea-navy); text-decoration: underline; text-underline-offset: 6px; text-decoration-color: var(--ea-teal); text-decoration-thickness: 2px; }
+
+    /* Hero band: gradient + stroked circle, no logo (brand rule) */
+    .hero { background: var(--ea-gradient-1); color: #fff; position: relative; overflow: hidden; }
+    .hero::before { content: ""; position: absolute; width: 360px; aspect-ratio: 1; right: -90px; top: -140px; border: 52px solid rgb(43 94 127 / 0.55); border-radius: 50%; }
+    .hero::after  { content: ""; position: absolute; width: 140px; aspect-ratio: 1; right: 220px; bottom: -80px; border: 22px solid rgb(68 154 174 / 0.35); border-radius: 50%; }
+    .hero .wrap { position: relative; z-index: 1; padding: 40px 0 112px; }
+    .crumbs { font-size: 13px; color: rgb(255 255 255 / 0.75); margin-bottom: 24px; }
+    .crumbs a { color: #fff; }
+    .hero .kicker { color: var(--ea-lime); }
+    .hero h1 { color: #fff; font-size: clamp(2rem, 1.4rem + 2.2vw, 2.9rem); font-weight: 900; margin: 10px 0 12px; letter-spacing: -0.01em; }
+    .hero-meta { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 15px; color: rgb(255 255 255 / 0.88); }
+    .hero-meta span { display: inline-flex; align-items: center; gap: 6px; }
+    .hero-meta svg { width: 16px; height: 16px; stroke: var(--ea-lime); }
+    .verified { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: var(--radius-full); background: rgb(255 255 255 / 0.12); border: 1px solid rgb(255 255 255 / 0.25); font-size: 12px; font-weight: 700; color: #fff; }
+    .verified svg { width: 14px; height: 14px; stroke: var(--ea-lime); }
+
+    /* Stats overlap the hero */
+    .stats { margin-top: -72px; position: relative; z-index: 2; display: grid; grid-template-columns: repeat(4, 1fr); background: #fff; border: 1px solid var(--color-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-md); }
+    .stat { padding: 24px 26px; }
+    .stat + .stat { border-left: 1px solid var(--color-border); }
+    .stat-value { font-size: clamp(1.75rem, 1.3rem + 1.4vw, 2.4rem); font-weight: 900; color: var(--ea-navy); line-height: 1; }
+    .stat-label { margin-top: 8px; font-size: 13px; color: var(--color-text-muted); }
+
+    /* Layout */
+    .layout { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 40px; margin: 48px auto 64px; align-items: start; }
+    .panel { background: #fff; border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 32px; }
+    .panel + .panel { margin-top: 24px; }
+    .panel h2 { font-size: 1.45rem; font-weight: 700; }
+    .lede { margin: -6px 0 20px; color: var(--color-text-muted); font-size: 15px; }
+
+    /* Talking points */
+    .points { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+    .point { display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: start; padding: 16px 18px; border-radius: var(--radius-md); background: var(--ea-feature-light); }
+    .point-num { font-size: 1.35rem; font-weight: 900; color: var(--ea-navy); min-width: 64px; line-height: 1.2; }
+    .point p { margin: 0; color: var(--color-text-on-panel); font-size: 15px; }
+    .point strong { display: block; color: var(--ea-navy); font-size: 13px; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 2px; }
+    .panel-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
+    .note { font-size: 12px; color: var(--color-text-muted); margin: 0; }
+
+    /* Buttons (match .button) */
+    .button { min-height: 46px; display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 0 18px; border: 1px solid transparent; border-radius: var(--radius-md); font: inherit; font-size: 14px; font-weight: 700; text-decoration: none; cursor: pointer; transition: background-color 120ms ease, border-color 120ms ease, transform 120ms ease; }
+    .button:active { transform: translateY(1px); }
+    .button svg { width: 18px; height: 18px; }
+    .button-primary { background: var(--ea-navy); color: #fff; }
+    .button-primary:hover { background: #1A2349; }
+    .button-secondary { background: #fff; color: var(--ea-navy); border-color: var(--color-border-strong); }
+    .button-secondary:hover { border-color: var(--ea-navy); background: var(--ea-feature-light); }
+
+    /* Activities */
+    .activities { list-style: none; margin: 0; padding: 0; }
+    .activity { display: grid; grid-template-columns: 1fr auto; gap: 8px 20px; padding: 18px 0; align-items: center; }
+    .activity + .activity { border-top: 1px solid var(--color-border); }
+    .activity h3 { font-size: 1.05rem; font-weight: 700; }
+    .activity-meta { grid-column: 1; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; font-size: 13px; color: var(--color-text-muted); }
+    .activity-reach { grid-column: 2; grid-row: 1 / span 2; text-align: right; }
+    .activity-reach b { display: block; font-size: 1.4rem; font-weight: 900; color: var(--ea-navy); line-height: 1; }
+    .activity-reach span { font-size: 12px; color: var(--color-text-muted); }
+
+    .chip { display: inline-flex; align-items: center; gap: 4px; padding: 2px 9px; border-radius: var(--radius-full); font-size: 12px; font-weight: 700; color: var(--color-text); background: var(--chip-bg); }
+    .chip svg { width: 13px; height: 13px; stroke: var(--chip-fg); }
+    .chip[data-cat="practical"]  { --chip-fg: var(--cat-practical);  --chip-bg: var(--cat-practical-bg); }
+    .chip[data-cat="youth"]      { --chip-fg: var(--cat-youth);      --chip-bg: var(--cat-youth-bg); }
+    .chip[data-cat="wellbeing"]  { --chip-fg: var(--cat-wellbeing);  --chip-bg: var(--cat-wellbeing-bg); }
+    .chip[data-cat="vulnerable"] { --chip-fg: var(--cat-vulnerable); --chip-bg: var(--cat-vulnerable-bg); }
+
+    .week { display: flex; gap: 4px; list-style: none; margin: 0; padding: 0; }
+    .week li { width: 20px; height: 20px; display: grid; place-items: center; border-radius: 50%; font-size: 9.5px; font-weight: 700; border: 1.5px solid #7F8B91; color: var(--color-text-muted); }
+    .week li[data-on="true"] { background: var(--ea-teal); border-color: var(--ea-teal); color: #fff; }
+    .week li:last-child { border-style: dashed; }
+
+    /* Story */
+    .story { position: relative; padding: 36px 32px 32px; border-radius: var(--radius-lg); background: var(--ea-navy); color: #fff; overflow: hidden; }
+    .story::before { content: ""; position: absolute; width: 200px; aspect-ratio: 1; right: -60px; bottom: -90px; border: 30px solid rgb(68 154 174 / 0.35); border-radius: 50%; }
+    .story .kicker { color: var(--ea-lime); }
+    .story blockquote { position: relative; margin: 14px 0 18px; font-size: clamp(1.15rem, 1rem + 0.5vw, 1.35rem); font-weight: 300; line-height: 1.5; }
+    .story blockquote::before { content: "\201C"; position: absolute; left: -6px; top: -34px; font-size: 64px; color: var(--ea-lime); font-weight: 900; }
+    .story cite { font-style: normal; font-size: 14px; color: rgb(255 255 255 / 0.8); }
+    .story cite b { color: #fff; }
+
+    /* Sidebar */
+    .aside { position: sticky; top: 24px; display: grid; gap: 24px; }
+    .card { background: #fff; border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 24px; }
+    .card h2 { font-size: 1.15rem; font-weight: 700; }
+
+    .actions { display: grid; gap: 10px; margin-top: 4px; }
+    .action { display: grid; grid-template-columns: 40px 1fr auto; gap: 12px; align-items: center; padding: 14px; border: 1px solid var(--color-border); border-radius: var(--radius-md); text-decoration: none; color: inherit; transition: border-color 120ms ease, box-shadow 120ms ease, transform 120ms ease; }
+    .action:hover { border-color: var(--ea-teal); box-shadow: var(--shadow-md); transform: translateY(-1px); }
+    .action-icon { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: var(--ea-feature-light); }
+    .action-icon svg { width: 20px; height: 20px; stroke: var(--ea-feature-dark); }
+    .action b { display: block; color: var(--ea-navy); font-size: 15px; }
+    .action span { font-size: 13px; color: var(--color-text-muted); line-height: 1.4; display: block; }
+    .action .chev { width: 16px; height: 16px; stroke: var(--color-border-strong); transition: stroke 120ms ease, transform 120ms ease; }
+    .action:hover .chev { stroke: var(--ea-teal); transform: translateX(2px); }
+    .action.is-primary { background: var(--ea-navy); border-color: var(--ea-navy); }
+    .action.is-primary b, .action.is-primary span { color: #fff; }
+    .action.is-primary span { opacity: 0.8; }
+    .action.is-primary .action-icon { background: rgb(255 255 255 / 0.12); }
+    .action.is-primary .action-icon svg { stroke: var(--ea-lime); }
+    .action.is-primary .chev { stroke: var(--ea-lime); }
+
+    .mini-map { position: relative; height: 170px; border-radius: var(--radius-md); overflow: hidden; background: #EEF3F4; margin: 4px 0 14px; }
+    .mini-map svg { width: 100%; height: 100%; display: block; }
+    .map-legend { font-size: 12px; color: var(--color-text-muted); margin: 0; }
+
+    .mp { display: flex; gap: 14px; align-items: center; }
+    .mp-avatar { width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; background: var(--ea-gradient-1); color: #fff; font-weight: 900; font-size: 15px; flex: none; }
+    .mp b { color: var(--ea-navy); display: block; }
+    .mp span { font-size: 13px; color: var(--color-text-muted); }
+
+    .contact dl { margin: 0; display: grid; gap: 10px; font-size: 14px; }
+    .contact dt { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-text-muted); }
+    .contact dd { margin: 2px 0 0; color: var(--color-text); }
+
+    /* Footer (matches .site-footer) */
+    .site-footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px 18px; padding: 20px 0 28px; border-top: 1px solid var(--color-border-strong); font-size: 11px; color: var(--color-text-muted); }
+    .site-footer .kicker { font-size: 9px; }
+    .site-footer-legal { flex-basis: 100%; font-size: 10px; line-height: 1.5; }
+
+    .toast { position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 20px); opacity: 0; background: var(--ea-navy); color: #fff; padding: 10px 16px; border-radius: var(--radius-md); font-size: 14px; font-weight: 700; box-shadow: var(--shadow-md); transition: opacity 180ms ease, transform 180ms ease; pointer-events: none; }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+    .toast b { color: var(--ea-lime); }
+
+    @media (max-width: 960px) {
+      .layout { grid-template-columns: 1fr; }
+      .aside { position: static; }
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .stat:nth-child(3) { border-left: 0; }
+      .stat:nth-child(n+3) { border-top: 1px solid var(--color-border); }
+    }
+    @media (max-width: 560px) {
+      .wrap { width: calc(100% - 32px); }
+      .site-nav { display: none; }
+      .panel { padding: 22px; }
+      .stat { padding: 18px; }
+      .activity { grid-template-columns: 1fr; }
+      .activity-reach { grid-column: 1; grid-row: auto; text-align: left; display: flex; align-items: baseline; gap: 6px; }
+    }
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand-name" href="#">More Than <strong>Sunday</strong></a>
+      <nav class="site-nav" aria-label="Main">
+        <a href="#">Find a church</a>
+        <a href="#" aria-current="page">Your area</a>
+        <a href="#">Write to your MP</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="wrap">
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="#">Doncaster Central</a> &nbsp;/&nbsp; Church profile</nav>
+        <p class="kicker">Church impact profile</p>
+        <h1>St Mark's Doncaster</h1>
+        <div class="hero-meta">
+          <span><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>Doncaster Central</span>
+          <span>Church of England</span>
+          <span>~180 on Sundays</span>
+          <span class="verified"><svg viewBox="0 0 20 20" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 10 3 3 7-7"/></svg>Verified · Sep 2026</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="wrap">
+      <section class="stats" aria-label="Headline impact">
+        <div class="stat"><div class="stat-value">320</div><div class="stat-label">People reached each week</div></div>
+        <div class="stat"><div class="stat-value">5</div><div class="stat-label">Community projects</div></div>
+        <div class="stat"><div class="stat-value">3,400</div><div class="stat-label">Volunteer hours a year</div></div>
+        <div class="stat"><div class="stat-value">6 / 7</div><div class="stat-label">Days the building is open</div></div>
+      </section>
+    </div>
+
+    <div class="wrap layout">
+      <div>
+        <!-- Talking points: advocacy-first -->
+        <section class="panel" aria-labelledby="points-h">
+          <p class="kicker">For Parliament</p>
+          <h2 id="points-h" class="ea-underline">What this church means for Doncaster Central</h2>
+          <p class="lede">Local evidence, ready to cite in debates, APPGs and constituency updates.</p>
+          <ul class="points" id="talking-points">
+            <li class="point"><span class="point-num">140</span><p><strong>Cost of living</strong>households helped each week through the food pantry and warm space, with no council subsidy.</p></li>
+            <li class="point"><span class="point-num">45</span><p><strong>Young people</strong>teenagers mentored every Friday evening in one of the town's most deprived wards.</p></li>
+            <li class="point"><span class="point-num">£45k</span><p><strong>Debt &amp; resilience</strong>of crisis debt resolved for 22 local households this year through free CAP coaching.</p></li>
+          </ul>
+          <div class="panel-foot">
+            <p class="note">Self-reported by the church · last confirmed 14 Sep 2026</p>
+            <button class="button button-secondary" type="button" id="copy-points">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+              Copy talking points
+            </button>
+          </div>
+        </section>
+
+        <!-- Activities -->
+        <section class="panel" aria-labelledby="act-h">
+          <p class="kicker">Beyond Sunday</p>
+          <h2 id="act-h" class="ea-underline">Community projects</h2>
+          <ul class="activities">
+            <li class="activity">
+              <h3>Food pantry &amp; essentials</h3>
+              <div class="activity-meta">
+                <span class="chip" data-cat="practical"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M4 10h16l-1.5 9h-13L4 10Zm4 0 4-6 4 6"/></svg>Practical support</span>
+                <ol class="week" aria-label="Runs Wednesday"><li>M</li><li>T</li><li data-on="true">W</li><li>T</li><li>F</li><li>S</li><li>S</li></ol>
+              </div>
+              <div class="activity-reach"><b>85</b><span>people / week</span></div>
+            </li>
+            <li class="activity">
+              <h3>Warm space &amp; lunch club</h3>
+              <div class="activity-meta">
+                <span class="chip" data-cat="practical"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M4 10h16l-1.5 9h-13L4 10Zm4 0 4-6 4 6"/></svg>Practical support</span>
+                <ol class="week" aria-label="Runs Tuesday and Thursday"><li>M</li><li data-on="true">T</li><li>W</li><li data-on="true">T</li><li>F</li><li>S</li><li>S</li></ol>
+              </div>
+              <div class="activity-reach"><b>55</b><span>people / week</span></div>
+            </li>
+            <li class="activity">
+              <h3>Friday youth mentoring &amp; sport</h3>
+              <div class="activity-meta">
+                <span class="chip" data-cat="youth"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0M17 11a3 3 0 1 0 0-6M21 20a5 5 0 0 0-3-4.6"/></svg>Family &amp; youth</span>
+                <ol class="week" aria-label="Runs Friday"><li>M</li><li>T</li><li>W</li><li>T</li><li data-on="true">F</li><li>S</li><li>S</li></ol>
+              </div>
+              <div class="activity-reach"><b>45</b><span>people / week</span></div>
+            </li>
+            <li class="activity">
+              <h3>CAP debt coaching</h3>
+              <div class="activity-meta">
+                <span class="chip" data-cat="vulnerable"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-3Z"/></svg>Crisis support</span>
+                <ol class="week" aria-label="Runs Monday and Thursday"><li data-on="true">M</li><li>T</li><li>W</li><li data-on="true">T</li><li>F</li><li>S</li><li>S</li></ol>
+              </div>
+              <div class="activity-reach"><b>22</b><span>households / year</span></div>
+            </li>
+            <li class="activity">
+              <h3>Parent &amp; toddler group</h3>
+              <div class="activity-meta">
+                <span class="chip" data-cat="wellbeing"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.5-9.3-8A5 5 0 0 1 12 6a5 5 0 0 1 9.3 6C19 15.5 12 20 12 20Z"/></svg>Wellbeing</span>
+                <ol class="week" aria-label="Runs Saturday"><li>M</li><li>T</li><li>W</li><li>T</li><li>F</li><li data-on="true">S</li><li>S</li></ol>
+              </div>
+              <div class="activity-reach"><b>35</b><span>people / week</span></div>
+            </li>
+          </ul>
+        </section>
+
+        <!-- Story -->
+        <section class="panel" style="padding:0;border:0;background:transparent" aria-labelledby="story-h">
+          <div class="story">
+            <p class="kicker" id="story-h">A story from this year</p>
+            <blockquote>When the local depot closed, three families on our street faced eviction. Through debt coaching and our volunteers, all three are now secure. We don't just hand out food — we help people get back on their feet.</blockquote>
+            <cite><b>Rev. Susan Whitaker</b> · Vicar, St Mark's Doncaster</cite>
+          </div>
+        </section>
+      </div>
+
+      <!-- Sidebar -->
+      <aside class="aside" aria-label="Work together">
+        <section class="card" aria-labelledby="opp-h">
+          <p class="kicker">Work together</p>
+          <h2 id="opp-h" class="ea-underline">Opportunities for dialogue</h2>
+          <div class="actions">
+            <a class="action is-primary" href="#">
+              <span class="action-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/></svg></span>
+              <span><b>Arrange a visit</b><span>Meet volunteers and residents on site</span></span>
+              <svg class="chev" viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg>
+            </a>
+            <a class="action" href="#">
+              <span class="action-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V10M19 21V10M9 21V10M15 21V10M2 10l10-6 10 6"/></svg></span>
+              <span><b>Request a briefing</b><span>Local evidence for a debate or APPG</span></span>
+              <svg class="chev" viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg>
+            </a>
+            <a class="action" href="#">
+              <span class="action-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 20h4v-2a3 3 0 0 0-5.4-1.8M17 20H7m10 0v-2c0-.7-.1-1.3-.4-1.8M7 20H3v-2a3 3 0 0 1 5.4-1.8M7 20v-2c0-.7.1-1.3.4-1.8m0 0a5 5 0 0 1 9.2 0M15 7a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/></svg></span>
+              <span><b>Convene a roundtable</b><span>Bring local churches to the table</span></span>
+              <svg class="chev" viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg>
+            </a>
+            <a class="action" href="#">
+              <span class="action-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
+              <span><b>Explore partnership</b><span>Grants, commissioning and co-funding</span></span>
+              <svg class="chev" viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg>
+            </a>
+          </div>
+        </section>
+
+        <section class="card" aria-labelledby="map-h">
+          <p class="kicker">Where it happens</p>
+          <h2 id="map-h" class="ea-underline">Reach in the constituency</h2>
+          <div class="mini-map" role="img" aria-label="Map of Doncaster Central showing St Mark's and a one-mile reach area">
+            <svg viewBox="0 0 300 170" preserveAspectRatio="xMidYMid slice">
+              <rect width="300" height="170" fill="#EEF3F4"/>
+              <path d="M0 120 C60 100 90 140 150 118 S250 80 300 96" stroke="#D3E3E8" stroke-width="14" fill="none"/>
+              <g stroke="#fff" stroke-width="5" fill="none">
+                <path d="M-10 40 L310 70"/><path d="M80 -10 L120 180"/><path d="M200 -10 L170 180"/><path d="M-10 150 L310 30"/>
+              </g>
+              <path d="M20 18 L270 12 L288 150 L36 160 Z" fill="none" stroke="#24305F" stroke-width="1.5" stroke-dasharray="5 4" opacity="0.5"/>
+              <circle cx="150" cy="85" r="58" fill="rgb(68 154 174 / 0.16)" stroke="#449AAE" stroke-width="1.5"/>
+              <circle cx="122" cy="62" r="5" fill="#B8691A" stroke="#fff" stroke-width="1.5"/>
+              <circle cx="182" cy="70" r="5" fill="#C2483A" stroke="#fff" stroke-width="1.5"/>
+              <circle cx="168" cy="112" r="5" fill="#A03E78" stroke="#fff" stroke-width="1.5"/>
+              <circle cx="128" cy="108" r="5" fill="#6B55A8" stroke="#fff" stroke-width="1.5"/>
+              <circle cx="150" cy="85" r="9" fill="#24305F" stroke="#fff" stroke-width="2.5"/>
+            </svg>
+          </div>
+          <p class="map-legend">Dashed line: Doncaster Central · Shaded: ~1 mile reach</p>
+        </section>
+
+        <section class="card" aria-labelledby="mp-h">
+          <p class="kicker" id="mp-h">Your MP</p>
+          <hr class="ea-dotted" style="margin:12px 0 16px">
+          <div class="mp">
+            <div class="mp-avatar" aria-hidden="true">SW</div>
+            <div><b>Sarah Whitfield MP</b><span>Labour · Doncaster Central</span></div>
+          </div>
+        </section>
+
+        <section class="card contact" aria-labelledby="contact-h">
+          <p class="kicker" id="contact-h">Church contact</p>
+          <hr class="ea-dotted" style="margin:12px 0 16px">
+          <dl>
+            <div><dt>Named contact</dt><dd>Rev. Susan Whitaker, Vicar</dd></div>
+            <div><dt>Address</dt><dd>14 Greyfriars Road, Doncaster DN1 3LN</dd></div>
+            <div><dt>Email</dt><dd><a href="mailto:s.whitaker@stmarksdoncaster.org">s.whitaker@stmarksdoncaster.org</a></dd></div>
+          </dl>
+        </section>
+      </aside>
+    </div>
+
+    <div class="wrap">
+      <footer class="site-footer">
+        <span class="kicker">More Than Sunday · Church action</span>
+        <span>Questions? <a href="mailto:advocacy@eauk.org">Contact the advocacy team</a></span>
+        <div class="site-footer-legal">
+          The Evangelical Alliance. A company limited by guarantee registered in England and Wales No. 123448.
+          Registered Charity No England and Wales: 212325, Scotland: SC040576. Registered office: 176 Copenhagen Street, London, N1 0ST.
+        </div>
+      </footer>
+    </div>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"><b>✓</b> Talking points copied</div>
+
+  <script>
+    document.getElementById('copy-points').addEventListener('click', async () => {
+      const lines = [...document.querySelectorAll('#talking-points .point')].map((li) => {
+        const num = li.querySelector('.point-num').textContent
+        const label = li.querySelector('strong').textContent
+        const text = li.querySelector('p').textContent.replace(label, '').trim()
+        return `• ${label}: ${num} ${text}`
+      })
+      const body = `St Mark's Doncaster (Doncaster Central)\n${lines.join('\n')}\nSource: More Than Sunday, Evangelical Alliance`
+      try { await navigator.clipboard.writeText(body) } catch {}
+      const toast = document.getElementById('toast')
+      toast.classList.add('show')
+      setTimeout(() => toast.classList.remove('show'), 1800)
+    })
+  </script>
+</body>
+</html>
