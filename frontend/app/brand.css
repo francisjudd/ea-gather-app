@@ -1,0 +1,341 @@
+/* ==========================================================================
+   More Than Sunday: design tokens
+   Source: Evangelical Alliance Brand Guidelines (PDF, pp. 27–29, 31–36, 45–49)
+
+   Structure
+     1. Fonts            (brand stack with a licensed fallback)
+     2. Brand primitives (the guideline's hex values; don't edit these)
+     3. Semantic tokens  (what components should actually use)
+     4. Category palette (OUR extension: not in the brand guidelines)
+     5. Type, space, radius, elevation
+     6. Brand graphic devices as utilities (underline, dotted rule, circles)
+     7. Domain components (weekly strip, category chip, verified badge, pin)
+     8. Optional: shadcn/ui variable mapping
+
+   Contrast notes (WCAG 2.1, checked against white):
+     navy 12.6:1 · feature-dark 7.0:1 · dark-grey 11.6:1   → OK for text
+     teal 3.2:1 → icons, borders, large headings ONLY (not links/body)
+     lime 1.5:1 on white → NEVER on light; 8.6:1 on navy → fine on dark
+   ========================================================================== */
+
+
+/* --------------------------------------------------------------------------
+   1. FONTS
+   Proxima Nova is the brand's typeface (Adobe Fonts, family name "proxima-nova").
+   We can't legally hotlink it: Adobe kits only work on the domains the
+   Evangelical Alliance has registered. Lato is the brand's OWN approved fallback
+   (guidelines p.33), so using it is still on-brand.
+   Put "proxima-nova" first in the stack anyway: if this ever ships inside
+   eauk.org, their kit will already be loaded and it'll upgrade automatically.
+
+   Lato is loaded via next/font in layout.tsx (no <link> tags needed).
+   -------------------------------------------------------------------------- */
+
+
+:root {
+  /* ------------------------------------------------------------------------
+     2. BRAND PRIMITIVES (guidelines p.27). Reference these, don't use directly.
+     ------------------------------------------------------------------------ */
+  --ea-navy:          #24305F;  /* base colour: "should always be very visible" */
+  --ea-teal:          #449AAE;  /* secondary, supports navy */
+  --ea-lime:          #DCDA60;  /* supporting: vibrancy, use sparingly */
+  --ea-feature-dark:  #2B5E7F;  /* text inside feature-light boxes */
+  --ea-feature-light: #F5FAFB;  /* panel / box background */
+  --ea-dark-grey:     #383937;  /* standard body text */
+  --ea-muted-blue:    #292D3A;  /* near-black for deep surfaces */
+  --ea-white:         #FFFFFF;
+
+  /* Gradients (p.28 and p.45): navy dominant, fading to teal */
+  --ea-gradient-1: linear-gradient(135deg, var(--ea-navy) 35%, var(--ea-teal) 130%);
+  --ea-gradient-2: linear-gradient(135deg, var(--ea-feature-dark) 20%, var(--ea-teal) 120%);
+
+  /* Usage ratio guide (p.29): navy 50% / teal 35% / lime 15% */
+
+
+  /* ------------------------------------------------------------------------
+     3. SEMANTIC TOKENS: components use these
+     ------------------------------------------------------------------------ */
+  /* Surfaces */
+  --color-bg:            var(--ea-white);
+  --color-surface:       var(--ea-white);         /* cards */
+  --color-surface-muted: var(--ea-feature-light); /* panels, filter rail, hover */
+  --color-surface-inverse: var(--ea-navy);        /* header bands, hero */
+
+  /* Text */
+  --color-text:          var(--ea-dark-grey);
+  --color-text-strong:   var(--ea-navy);          /* headings */
+  --color-text-muted:    #5E6470;                 /* meta: distance, dates (5.9:1) */
+  --color-text-on-panel: var(--ea-feature-dark);  /* text inside surface-muted (brand rule) */
+  --color-text-inverse:  var(--ea-white);
+
+  /* Interactive */
+  --color-link:          var(--ea-feature-dark);  /* NOT teal: teal fails 4.5:1 */
+  --color-link-hover:    var(--ea-navy);
+  --color-primary:       var(--ea-navy);          /* primary buttons */
+  --color-primary-hover: #1A2349;
+  --color-accent:        var(--ea-teal);          /* selected borders, icons, toggles */
+  --color-highlight:     var(--ea-lime);          /* ON DARK ONLY: active chip on navy, key stat */
+  --color-focus:         var(--ea-feature-dark);
+
+  /* Lines */
+  --color-border:        #DCE5E8;                 /* light teal-grey, sits with feature-light */
+  --color-border-strong: #B7C6CC;
+
+  /* Status (kept neutral so "verified" ≠ environmental green) */
+  --color-verified:      var(--ea-navy);
+  --color-stale:         #8A6D1F;                 /* "not confirmed in 12+ months" */
+
+
+  /* ------------------------------------------------------------------------
+     4. CATEGORY PALETTE: our extension for data, NOT brand colours.
+     Muted to sit beside teal/lime. All ≥3:1 on white (OK for icons, dots, pins).
+     ALWAYS pair with an icon: never rely on colour alone.
+     *-bg tints are for chip backgrounds; chip TEXT uses --color-text.
+     Brief's categories → suggested Lucide icons in comments.
+     ------------------------------------------------------------------------ */
+  --cat-practical:    #B8691A;  --cat-practical-bg:  #FBF1E6;  /* practical support: "hand-heart" / "shopping-basket" */
+  --cat-youth:        #C2483A;  --cat-youth-bg:      #FBEDEB;  /* youth & family: "baby" / "users" */
+  --cat-wellbeing:    #6B55A8;  --cat-wellbeing-bg:  #F1EEF8;  /* wellbeing: "heart-pulse" / "sprout" */
+  --cat-vulnerable:   #A03E78;  --cat-vulnerable-bg: #F8ECF3;  /* vulnerable groups: "shield-check" / "home" */
+  --cat-environment:  #3F7D3A;  --cat-environment-bg:#EDF5EC;  /* environmental: "leaf" */
+
+
+  /* ------------------------------------------------------------------------
+     5. TYPE · SPACE · RADIUS · ELEVATION
+     ------------------------------------------------------------------------ */
+  /* --font-lato is set by next/font in layout.tsx (self-hosted Lato) */
+  --font-sans: "proxima-nova", var(--font-lato), Arial, system-ui, sans-serif;
+  /* Serif (Waymar) skipped: requires a request to the Evangelical Alliance. */
+
+  /* Weights. Brand uses light body text; on screen, 400 is more legible at small sizes. */
+  --weight-light:    300;   /* large intro text only */
+  --weight-regular:  400;   /* body */
+  --weight-medium:   500;   /* section headings (Lato has no 500, so it falls back to 400; use 700 if too weak) */
+  --weight-semibold: 600;   /* sub-headings (Lato → 700) */
+  --weight-bold:     700;   /* titles */
+
+  /* Fluid type scale (brand ratio title:sub:section:body ≈ 30:25:15:12pt) */
+  --text-xs:   0.75rem;                         /* 12: meta, day labels */
+  --text-sm:   0.875rem;                        /* 14: card body, chips */
+  --text-base: 1rem;                            /* 16: body */
+  --text-lg:   1.125rem;                        /* 18: card title */
+  --text-xl:   clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem);   /* section heading */
+  --text-2xl:  clamp(1.5rem, 1.2rem + 1.2vw, 2rem);      /* sub-heading */
+  --text-3xl:  clamp(1.875rem, 1.4rem + 2vw, 2.75rem);   /* page title */
+  --leading-tight: 1.2;
+  --leading-body:  1.55;
+
+  /* Spacing: the brand indents in multiples of 8mm, so use an 8px scale */
+  --space-1: 4px;  --space-2: 8px;  --space-3: 12px; --space-4: 16px;
+  --space-5: 24px; --space-6: 32px; --space-7: 48px; --space-8: 64px;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;      /* cards, inputs */
+  --radius-lg: 12px;     /* panels: matches the rounded boxes in the guidelines */
+  --radius-full: 999px;  /* chips, dots, pins */
+
+  --shadow-sm: 0 1px 2px rgb(36 48 95 / 0.06);
+  --shadow-md: 0 4px 12px rgb(36 48 95 / 0.10);   /* navy-tinted, not grey */
+  --shadow-lg: 0 12px 32px rgb(36 48 95 / 0.16);  /* drawer, map popover */
+
+  /* Layout */
+  --header-height: 64px;
+  --list-width: 420px;       /* split view: list column; map fills the rest */
+  --drawer-width: 480px;
+  --container: 1200px;
+  --gutter: var(--space-4);
+}
+
+
+/* --------------------------------------------------------------------------
+   BASE
+   -------------------------------------------------------------------------- */
+body {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--leading-body);
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+h1, h2, h3 { color: var(--color-text-strong); line-height: var(--leading-tight); }
+h1 { font-size: var(--text-3xl); font-weight: var(--weight-bold); }
+h2 { font-size: var(--text-2xl); font-weight: var(--weight-semibold); }
+h3 { font-size: var(--text-xl);  font-weight: var(--weight-medium); }
+
+a { color: var(--color-link); }
+a:hover { color: var(--color-link-hover); }
+:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 2px; }
+
+
+/* --------------------------------------------------------------------------
+   6. BRAND GRAPHIC DEVICES
+   -------------------------------------------------------------------------- */
+
+/* Heading underline (p.46): 2pt teal on light, lime on dark.
+   Runs from the left edge (page bleed) to ~2/3 across the heading.
+   Usage: <h2 class="ea-underline">Projects</h2>  (inside a container that sets
+   --bleed to the left gutter, so the line reaches the viewport edge) */
+.ea-underline {
+  position: relative;
+  padding-bottom: var(--space-3);
+  margin-bottom: var(--space-3);    /* "equidistant from heading and body" */
+}
+.ea-underline::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: calc(-1 * var(--bleed, 0px));
+  width: calc(var(--bleed, 0px) + 66%);
+  height: 2px;
+  background: var(--ea-teal);
+}
+.on-dark .ea-underline::after { background: var(--ea-lime); }
+
+/* Dotted rule (p.47): teal dots, alternative to the underline or as a divider.
+   Use between list sections or under a card title. */
+.ea-dotted {
+  height: 4px;
+  border: 0;
+  background-image: radial-gradient(circle, var(--ea-teal) 1.5px, transparent 2px);
+  background-size: 12px 4px;
+  background-repeat: repeat-x;
+}
+
+/* Gradient band with stroked circles (pp.45, 49): constituency hero/header.
+   Keep the logo OFF this: brand rules forbid the logo on brand-colour backgrounds. */
+.ea-hero {
+  background: var(--ea-gradient-1);
+  color: var(--color-text-inverse);
+  position: relative;
+  overflow: hidden;
+}
+.ea-hero::before {                       /* decorative stroked circle */
+  content: "";
+  position: absolute;
+  width: 320px; aspect-ratio: 1;
+  right: -80px; top: -120px;
+  border: 48px solid rgb(43 94 127 / 0.55);  /* feature-dark, translucent */
+  border-radius: 50%;
+}
+
+/* Stroked-circle bullets (p.48): circle height = font size */
+.ea-list { list-style: none; padding-left: 0; }
+.ea-list > li { position: relative; padding-left: 1.6em; }
+.ea-list > li::before {
+  content: "";
+  position: absolute; left: 0; top: 0.3em;
+  width: 0.85em; height: 0.85em;
+  border: 1.5px solid #9AA3A8;
+  border-radius: 50%;
+}
+
+
+/* --------------------------------------------------------------------------
+   7. DOMAIN COMPONENTS: the "More Than Sunday" visual signature
+   -------------------------------------------------------------------------- */
+
+/* Weekly strip: 7 dots, Mon→Sun. Echoes the brand's dotted line + circle bullets.
+   Markup: <ol class="week" aria-label="Active Tue, Thu, Sun">
+             <li data-on="false">M</li> <li data-on="true">T</li> ... </ol>
+   Optional: set --dot-color per dot to the category colour when one category
+   dominates that day; default is teal. */
+.week {
+  display: flex; gap: var(--space-1);
+  list-style: none; padding: 0; margin: 0;
+}
+.week > li {
+  --size: 22px;
+  width: var(--size); height: var(--size);
+  display: grid; place-items: center;
+  border-radius: var(--radius-full);
+  font-size: 0.625rem; font-weight: var(--weight-bold);
+  border: 1.5px solid #7F8B91;   /* hollow = quiet day; ≥3:1 so the on/off state reads */
+  color: var(--color-text-muted);
+}
+.week > li[data-on="true"] {
+  background: var(--dot-color, var(--ea-teal));
+  border-color: var(--dot-color, var(--ea-teal));
+  color: var(--ea-white);
+}
+.week > li:last-child { /* Sunday: subtle distinction, the "more than Sunday" point */
+  border-style: dashed;
+}
+
+/* Category chip: icon + label, tinted background */
+.chip {
+  display: inline-flex; align-items: center; gap: var(--space-1);
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-full);
+  font-size: var(--text-xs); font-weight: var(--weight-bold);
+  color: var(--color-text);
+  background: var(--chip-bg, var(--color-surface-muted));
+}
+.chip svg { width: 14px; height: 14px; color: var(--chip-fg, var(--ea-teal)); }
+.chip[data-cat="practical"]   { --chip-fg: var(--cat-practical);   --chip-bg: var(--cat-practical-bg); }
+.chip[data-cat="youth"]       { --chip-fg: var(--cat-youth);       --chip-bg: var(--cat-youth-bg); }
+.chip[data-cat="wellbeing"]   { --chip-fg: var(--cat-wellbeing);   --chip-bg: var(--cat-wellbeing-bg); }
+.chip[data-cat="vulnerable"]  { --chip-fg: var(--cat-vulnerable);  --chip-bg: var(--cat-vulnerable-bg); }
+.chip[data-cat="environment"] { --chip-fg: var(--cat-environment); --chip-bg: var(--cat-environment-bg); }
+
+/* Verified badge: navy + tick, deliberately not green */
+.verified {
+  display: inline-flex; align-items: center; gap: var(--space-1);
+  font-size: var(--text-xs); color: var(--color-verified);
+}
+.verified[data-stale="true"] { color: var(--color-stale); }
+
+/* Card: white on white page, or white on feature-light list rail */
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  display: grid; gap: var(--space-3);
+}
+.card:hover,
+.card[data-active="true"] {       /* data-active = hovered pin on map */
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-md);
+}
+.card__title { font-size: var(--text-lg); font-weight: var(--weight-bold); color: var(--color-text-strong); }
+.card__meta  { font-size: var(--text-sm); color: var(--color-text-muted); }
+.card__stat  { font-size: var(--text-xl); font-weight: var(--weight-bold); color: var(--color-text-strong); }
+
+/* Map pin (for AdvancedMarkerElement content): a circle, echoing the logo's circles */
+.pin {
+  width: 18px; height: 18px;
+  border-radius: var(--radius-full);
+  background: var(--pin-color, var(--ea-navy));
+  border: 2px solid var(--ea-white);
+  box-shadow: var(--shadow-sm);
+}
+.pin[data-active="true"] { transform: scale(1.4); box-shadow: 0 0 0 4px rgb(68 154 174 / 0.35); }
+/* Map style: use a muted greyscale Google Maps style so category pins stand out. */
+
+
+/* --------------------------------------------------------------------------
+   8. OPTIONAL: shadcn/ui mapping (Tailwind v4 style, full colour values)
+   Uncomment if the team uses shadcn, so its components inherit the brand.
+   -------------------------------------------------------------------------- */
+/*
+:root {
+  --background: var(--color-bg);
+  --foreground: var(--color-text);
+  --card: var(--color-surface);
+  --card-foreground: var(--color-text);
+  --popover: var(--color-surface);
+  --popover-foreground: var(--color-text);
+  --primary: var(--color-primary);
+  --primary-foreground: var(--ea-white);
+  --secondary: var(--color-surface-muted);
+  --secondary-foreground: var(--color-text-on-panel);
+  --muted: var(--color-surface-muted);
+  --muted-foreground: var(--color-text-muted);
+  --accent: var(--color-surface-muted);
+  --accent-foreground: var(--color-text-strong);
+  --border: var(--color-border);
+  --input: var(--color-border-strong);
+  --ring: var(--color-focus);
+  --radius: var(--radius-md);
+}
+*/
