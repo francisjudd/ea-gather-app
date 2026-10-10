@@ -3,7 +3,7 @@ import { constituencies } from '@/lib/constituencies/source'
 import ServiceSearch from './ServiceSearch'
 
 export const metadata: Metadata = {
-  title: 'Find community services | More Than Sunday',
+  title: 'Find services | More Than Sunday',
   description: 'Search by postcode or constituency to find food banks, warm spaces, debt help and other community services near you.',
 }
 

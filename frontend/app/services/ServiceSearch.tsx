@@ -141,13 +141,13 @@ export default function ServiceSearch({ constituencies }: { constituencies: Cons
           <nav aria-label="Breadcrumb" className={c.breadcrumb}>
             <ol>
               <li><Link href="/">Home</Link></li>
-              <li aria-current="page">Community services</li>
+              <li aria-current="page">Services</li>
             </ol>
           </nav>
 
           <div className={styles.heroBody}>
-            <p className={c.eyebrow}>Community services</p>
-            <h1 id="page-title" className={styles.heading}>Find community services near you</h1>
+            <p className={c.eyebrow}>Services</p>
+            <h1 id="page-title" className={styles.heading}>Find services near you</h1>
             <p className={styles.lede}>
               Food banks, warm spaces, debt help and more. Search by postcode or constituency.
             </p>
@@ -198,7 +198,7 @@ export default function ServiceSearch({ constituencies }: { constituencies: Cons
           <section ref={resultsRef} className={styles.results} aria-labelledby="results-title">
             <h2 id="results-title" className={styles.resultsTitle}>
               {results.services.length === 0
-                ? `No community services listed in ${results.constituency.name} yet`
+                ? `No services listed in ${results.constituency.name} yet`
                 : `${results.services.length} ${results.services.length === 1 ? 'service' : 'services'} in ${results.constituency.name}`}
             </h2>
             {results.postcode && results.services.length > 0 && (

@@ -103,6 +103,61 @@ a {
   gap: 22px;
 }
 
+/* The last two nav items are buttons. The compound selector outranks `.site-actions nav a`. */
+.site-nav-buttons {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: 6px;
+}
+
+.site-nav a.site-nav-button {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.site-nav-button-icon {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.site-nav a.site-nav-button--primary {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.site-nav a.site-nav-button--primary:hover {
+  background: var(--color-primary-hover);
+  color: #fff;
+  text-decoration: none;
+}
+
+.site-nav a.site-nav-button--secondary {
+  border-color: var(--color-border-strong);
+  background: #fff;
+  color: var(--color-primary);
+}
+
+.site-nav a.site-nav-button--secondary:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
 .site-nav-link,
 .site-actions nav a {
   color: var(--color-link);
