@@ -80,7 +80,7 @@ export function toLetterInput(draft: Draft): LetterInput {
       }),
     message: {
       personal_note: draft.personalNote,
-      include_prayer_line: true,
+      include_prayer_line: false,
       mention_evangelical_alliance: draft.advocacyFollowUp,
     },
     outcome: { type: 'visit' },
