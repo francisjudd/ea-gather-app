@@ -92,6 +92,16 @@
   gap: 6px;
 }
 
+.meta a {
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.meta a:hover {
+  color: var(--ea-lime);
+}
+
 .meta svg {
   width: 16px;
   height: 16px;

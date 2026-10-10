@@ -1,13 +1,13 @@
 'use client'
 
-import { useEffect, useMemo, useState, type FormEvent } from 'react'
-import Link from 'next/link'
+import { useEffect, useMemo, useState, useSyncExternalStore, type FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
 import EmailButton from '@/components/messaging/EmailButton'
 import GmailButton from '@/components/messaging/GmailButton'
 import { isMailtoTooLong, buildLetterMailto, renderLetterFallback, type LetterInput } from '@/lib/messaging'
 import type { components } from '@/lib/api/schema'
 import FullNav from '../../components/FullNavigation'
+import SiteFooter from '../../components/SiteFooter'
 import { activities, toLetterInput, type Draft } from '@/lib/messaging/draft'
 
 import { flowSteps, type StepSlug } from './steps'
@@ -151,7 +151,7 @@ export default function ContactMpFlow({ step }: { step: string }) {
       try {
         const saved = window.localStorage.getItem(storageKey)
         if (saved) setDraft(readDraft(saved))
-        // Prefill the postcode when arriving from the "Your area" view
+        // Prefill the postcode when arriving from a constituency page
         // (?postcode=...) so the letter tool starts on the right area.
         const urlPostcode = new URLSearchParams(window.location.search).get('postcode')
         if (urlPostcode) setDraft((previous) => ({ ...previous, postcode: urlPostcode }))
@@ -181,7 +181,14 @@ export default function ContactMpFlow({ step }: { step: string }) {
   const onChange = (name: keyof Draft, value: string) => {
     setDraft((previous) => ({ ...previous, [name]: value }))
   }
-  const letterInput = useMemo(() => toLetterInput(draft), [draft])
+  // The site's origin, for the constituency link in the letter. Empty on the server, so the
+  // first render matches; the letter gains the link once this runs in the browser.
+  const siteUrl = useSyncExternalStore(
+    () => () => {},
+    () => window.location.origin,
+    () => '',
+  )
+  const letterInput = useMemo(() => toLetterInput(draft, siteUrl), [draft, siteUrl])
   const letter = useMemo(() => renderLetterFallback(letterInput), [letterInput])
   const emailBody = letter.body
   const emailSubject = letter.subjects[0]
@@ -584,14 +591,7 @@ export default function ContactMpFlow({ step }: { step: string }) {
           )}
         </section>
       </div>
-      <footer className="site-footer">
-        <span>MORE THAN SUNDAY · CHURCH ACTION</span>
-        <span>Questions? <a href="mailto:advocacy@eauk.org">Contact the advocacy team</a></span>
-        <div className="site-footer-legal">
-          The Evangelical Alliance. A company limited by guarantee registered in England and Wales No. 123448.
-          Registered Charity No England and Wales: 212325, Scotland: SC040576. Registered office: 176 Copenhagen Street, London, N1 0ST.
-        </div>
-      </footer>
+      <SiteFooter />
     </main>
   )
 }

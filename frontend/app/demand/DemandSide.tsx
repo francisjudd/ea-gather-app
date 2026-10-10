@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState, type FormEvent } from 'react'
+import Link from 'next/link'
 import FullNav from '../../components/FullNavigation'
 import BrandLockup from '../../components/BrandLockup'
 import styles from './demand.module.css'
@@ -219,7 +220,9 @@ export default function DemandSide() {
 
       <footer className={styles.footer}>
         <BrandLockup size="sm" />
-        <span>© Evangelical Alliance</span>
+        <span>
+          <Link href="/sitemap">Sitemap</Link> · © Evangelical Alliance
+        </span>
       </footer>
     </div>
   )

@@ -24,6 +24,8 @@ export interface LetterInput {
     mention_evangelical_alliance?: boolean
   }
   constituency_rollup?: { church_count: number; activity_count: number; rollup_url: string } | null
+  /** Absolute link to this constituency's page on our site. Omitted when unknown. */
+  constituency_url?: string | null
   outcome: {
     type: 'visit' | 'visit_photo' | 'missed_anything' | 'signposting' | 'meeting' | 'keep_informed'
     details?: { activity?: string; day?: string; availability?: string } | null

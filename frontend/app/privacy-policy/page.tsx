@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import SiteNav from '../../components/SiteNav'
+import SiteFooter from '../../components/SiteFooter'
 
 export const metadata: Metadata = {
   title: 'Privacy policy | Evangelical Alliance',
@@ -15,7 +16,6 @@ export default function PrivacyPolicyPage() {
           <span className="brand-name">More Than <strong>Sunday</strong></span>
         </Link>
         <div className="site-actions">
-          <span className="header-caption">An initiative from the Evangelical Alliance</span>
           <SiteNav />
         </div>
       </header>
@@ -66,14 +66,7 @@ export default function PrivacyPolicyPage() {
         </section>
       </div>
 
-      <footer className="site-footer">
-        <span>MORE THAN SUNDAY · CHURCH ACTION</span>
-        <span>Questions? <a href="mailto:advocacy@eauk.org">Contact the advocacy team</a></span>
-        <div className="site-footer-legal">
-          The Evangelical Alliance. A company limited by guarantee registered in England and Wales No. 123448.
-          Registered Charity No England and Wales: 212325, Scotland: SC040576. Registered office: 176 Copenhagen Street, London, N1 0ST.
-        </div>
-      </footer>
+      <SiteFooter />
     </main>
   )
 }

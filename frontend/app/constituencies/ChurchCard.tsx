@@ -50,8 +50,10 @@ export function ChurchCard({
 
   return (
     <li className={styles.card} data-highlighted={highlighted} id={`item-${church.id}`}>
-      <button type="button" className={styles.cardButton} aria-haspopup="dialog" onClick={onOpen}>
-        <span className={styles.cardName}>{church.name}</span>
+      <Link className={`${styles.cardName} ${styles.cardNameLink}`} href={`/churches/${church.id}`}>
+        {church.name}
+      </Link>
+      <button type="button" className={`${styles.cardButton} ${styles.cardButtonBelow}`} aria-haspopup="dialog" onClick={onOpen}>
         {church.denomination && <span className={styles.cardMeta}>{church.denomination}</span>}
         <span className={styles.cardAddress}>
           <PinIcon />
@@ -93,11 +95,11 @@ export function ChurchCompact({
 
   return (
     <li className={styles.compact} data-selected={selected} id={`item-${church.id}`}>
-      <button type="button" className={styles.compactButton} aria-pressed={selected} onClick={onSelect}>
-        <span className={styles.compactTop}>
-          <span className={styles.compactName}>{church.name}</span>
-          {church.programmes.length > 0 && <CountBadge count={church.programmes.length} />}
-        </span>
+      <div className={`${styles.compactTop} ${styles.compactHead}`}>
+        <Link className={styles.compactName} href={`/churches/${church.id}`}>{church.name}</Link>
+        {church.programmes.length > 0 && <CountBadge count={church.programmes.length} />}
+      </div>
+      <button type="button" className={`${styles.compactButton} ${styles.compactButtonBelow}`} aria-pressed={selected} onClick={onSelect}>
         {church.denomination && <span className={styles.cardMeta}>{church.denomination}</span>}
         <span className={styles.cardAddress}>
           <PinIcon />
@@ -251,6 +253,10 @@ export function ChurchDialog({ church, onClose }: { church: ConstituencyChurch |
               ))}
             </>
           )}
+
+          <Link className={styles.compactDetails} href={`/churches/${church.id}`}>
+            View church profile <ArrowIcon />
+          </Link>
 
           {(church.website || church.phone) && (
             <>

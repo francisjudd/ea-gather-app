@@ -86,11 +86,6 @@ a {
   width: 160px;
 }
 
-.header-caption {
-  color: var(--color-text-muted);
-  font-size: var(--text-sm);
-}
-
 .site-actions {
   display: inline-flex;
   align-items: center;
@@ -101,6 +96,61 @@ a {
   display: inline-flex;
   align-items: center;
   gap: 22px;
+}
+
+/* The last two nav items are buttons. The compound selector outranks `.site-actions nav a`. */
+.site-nav-buttons {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: 6px;
+}
+
+.site-nav a.site-nav-button {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.site-nav-button-icon {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.site-nav a.site-nav-button--primary {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.site-nav a.site-nav-button--primary:hover {
+  background: var(--color-primary-hover);
+  color: #fff;
+  text-decoration: none;
+}
+
+.site-nav a.site-nav-button--secondary {
+  border-color: var(--color-border-strong);
+  background: #fff;
+  color: var(--color-primary);
+}
+
+.site-nav a.site-nav-button--secondary:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  text-decoration: none;
 }
 
 .site-nav-link,
@@ -1019,12 +1069,6 @@ a {
     padding: 0 19px;
   }
 
-  .header-caption {
-    max-width: 142px;
-    font-size: 9px;
-    text-align: right;
-  }
-
   .brand-name {
     font-size: 11px;
   }
@@ -1760,6 +1804,33 @@ a {
   color: var(--color-link);
   text-decoration: underline;
   text-underline-offset: 2px;
+}
+
+.sitemap-list {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--color-text);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.sitemap-list--columns {
+  columns: 3 200px;
+  column-gap: 32px;
+}
+
+.sitemap-list li {
+  break-inside: avoid;
+}
+
+.sitemap-list a {
+  color: var(--color-link);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.sitemap-page {
+  width: min(1120px, calc(100% - 48px));
 }
 
 @media (max-width: 640px) {

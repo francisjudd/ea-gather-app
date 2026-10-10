@@ -7,6 +7,10 @@ import type { NextConfig } from 'next'
 const devBackendUrl = process.env.BACKEND_URL ?? 'http://127.0.0.1:8000'
 
 const nextConfig: NextConfig = {
+  // The old "Your area" page was retired in favour of the constituencies pages.
+  async redirects() {
+    return [{ source: '/your-area', destination: '/constituencies', permanent: false }]
+  },
   async rewrites() {
     if (process.env.NODE_ENV !== 'development') return []
     return [

@@ -97,7 +97,7 @@ export default function ConstituencyView({ detail }: { detail: ConstituencyDetai
           <nav aria-label="Breadcrumb" className={styles.breadcrumb}>
             <ol>
               <li><Link href="/">Home</Link></li>
-              <li><Link href="/constituency">Constituencies</Link></li>
+              <li><Link href="/constituencies">Constituencies</Link></li>
               <li aria-current="page">{detail.name}</li>
             </ol>
           </nav>
@@ -246,7 +246,9 @@ export default function ConstituencyView({ detail }: { detail: ConstituencyDetai
 
       <footer className={churches.footer}>
         <ChurchMark />
-        <span>© Evangelical Alliance</span>
+        <span>
+          <Link href="/sitemap">Sitemap</Link> · © Evangelical Alliance
+        </span>
       </footer>
     </div>
   )

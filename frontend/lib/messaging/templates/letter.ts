@@ -54,6 +54,11 @@ I would welcome a short meeting, or a slot at one of your surgeries, to talk abo
 We would be glad to keep you updated on our work and to be a point of contact for you in the community.
 {{/is.keep_informed}}
 
+@@ data
+{{#constituency_url}}
+You can see the churches and community services in {{mp.constituency}} here: {{constituency_url}}
+
+{{/constituency_url}}
 @@ template
 With every good wish,
 @@ data

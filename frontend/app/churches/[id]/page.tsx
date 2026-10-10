@@ -13,8 +13,11 @@ import {
   type ChurchProfile,
 } from '../church-data'
 import { dayLabels, dayShortLabels, type DayKey } from '../../../lib/churchHours'
+import { constituencies } from '@/lib/constituencies/source'
+import { slugifyConstituency } from '@/lib/constituencies/slug'
 import CopyPointsButton from './CopyPointsButton'
 import styles from './church-profile.module.css'
+import c from '../../constituencies/constituency.module.css'
 
 // Mockup shows the week Mon→Sun; the profile data stores days in the same order.
 const WEEK: DayKey[] = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
@@ -154,6 +157,12 @@ const items: Item[] = church.talkingPoints;
 
 const points: string[] = items.map(({ label, figure, text }) => `${figure} ${label}. ${text}`);
 
+  // Link to the constituency page only when one exists (a church with no constituency falls back
+  // to its place name, which has no page).
+  const constituencySlugs = new Set((await constituencies.list()).map((item) => item.slug))
+  const constituencySlug = slugifyConstituency(church.constituency)
+  const constituencyHref = constituencySlugs.has(constituencySlug) ? `/constituencies/${constituencySlug}` : null
+
   const attendanceText =
     church.attendance != null ? `${church.attendance.toLocaleString('en-GB')} on Sundays` : 'Sunday meeting'
 
@@ -165,8 +174,19 @@ const points: string[] = items.map(({ label, figure, text }) => `${figure} ${lab
         {/* Hero band */}
         <section className={styles.hero}>
           <div className={styles.wrap}>
-            <nav className={styles.crumbs} aria-label="Breadcrumb">
-              <Link href="/churches">Church directory</Link> &nbsp;/&nbsp; Church profile
+            <nav className={c.breadcrumb} aria-label="Breadcrumb">
+              <ol>
+                <li><Link href="/">Home</Link></li>
+                {constituencyHref ? (
+                  <>
+                    <li><Link href="/constituencies">Constituencies</Link></li>
+                    <li><Link href={constituencyHref}>{church.constituency}</Link></li>
+                  </>
+                ) : (
+                  <li><Link href="/churches">Churches</Link></li>
+                )}
+                <li aria-current="page">{church.name}</li>
+              </ol>
             </nav>
             <p className={styles.kicker}>Church impact profile</p>
             <h1 className={styles.title}>{church.name}</h1>
@@ -176,7 +196,7 @@ const points: string[] = items.map(({ label, figure, text }) => `${figure} ${lab
                   <path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11Z" />
                   <circle cx="12" cy="10" r="2.5" />
                 </svg>
-                {church.constituency}
+                {constituencyHref ? <Link href={constituencyHref}>{church.constituency}</Link> : church.constituency}
               </span>
               <span>{church.denomination}</span>
               <span>{attendanceText}</span>
@@ -320,7 +340,7 @@ const points: string[] = items.map(({ label, figure, text }) => `${figure} ${lab
       <footer className={styles.footer}>
         <span className={styles.kicker}>More Than Sunday · Church action</span>
         <span>
-          Questions? <a href="mailto:advocacy@eauk.org">Contact the advocacy team</a>
+          Questions? <a href="mailto:advocacy@eauk.org">Contact the advocacy team</a> · <Link href="/sitemap">Sitemap</Link>
         </span>
         <div className={styles.footerLegal}>
           The Evangelical Alliance. A company limited by guarantee registered in England and Wales No. 123448.
