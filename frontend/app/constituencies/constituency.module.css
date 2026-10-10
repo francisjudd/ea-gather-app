@@ -6,15 +6,6 @@
   margin-inline: auto;
 }
 
-/* ---- Index page row ------------------------------------------------------ */
-.rowCounts {
-  display: block;
-  margin-top: var(--space-1);
-  color: var(--color-text-muted);
-  font-size: var(--text-sm);
-  font-weight: 400;
-}
-
 /* ---- Hero ----------------------------------------------------------------- */
 .hero {
   padding: var(--space-4) 0 var(--space-7);
@@ -657,4 +648,91 @@
     grid-template-columns: 1fr;
     margin-top: calc(-1 * var(--space-7));
   }
+}
+
+/* ---- Index page ------------------------------------------------------------ */
+.heroSearch {
+  max-width: 760px;
+  margin-top: var(--space-5);
+}
+
+.indexMain {
+  flex: 1;
+  padding-block: var(--space-5) var(--space-8);
+}
+
+.indexBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.indexCount {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.alphabet {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+
+.alphabet button {
+  min-width: 32px;
+  padding: var(--space-1) var(--space-2);
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-link);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.alphabet button[aria-pressed='true'] {
+  background: var(--color-primary);
+  color: var(--ea-white);
+}
+
+.indexGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  grid-auto-rows: 1fr;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.indexCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  height: 100%;
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  text-decoration: none;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.indexCard:hover {
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-md);
+}
+
+.indexName {
+  color: var(--color-text-strong);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+}
+
+.indexMeta {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
 }
