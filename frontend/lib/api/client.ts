@@ -47,8 +47,8 @@ const devBackendUrl = process.env.BACKEND_URL ?? 'http://127.0.0.1:8000'
 
 function resolveUrl(path: string): string {
   if (typeof window === 'undefined') {
-    // Server: strip the `/openapi` prefix and hit the backend directly.
-    return `${devBackendUrl}${path.replace(/^\/openapi/, '')}`
+    // Server: hit the backend directly, preserving the `/openapi` prefix.
+    return `${devBackendUrl}${path}`
   }
   return path
 }
