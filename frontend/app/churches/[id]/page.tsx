@@ -12,7 +12,10 @@ import {
 } from '../church-data'
 import { dayLabels, dayShortLabels, type DayKey } from '../../../lib/churchHours'
 import CopyPointsButton from './CopyPointsButton'
+import { constituencies } from '@/lib/constituencies/source'
+import { slugifyConstituency } from '@/lib/constituencies/slug'
 import styles from './church-profile.module.css'
+import c from '../../constituency/constituency.module.css'
 
 // Mockup shows the week Mon→Sun; the profile data stores days in the same order.
 const WEEK: DayKey[] = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
@@ -140,6 +143,11 @@ export default async function ChurchProfilePage({ params }: Props) {
   const church = getChurchById(id)
   if (!church) notFound()
 
+  // Link to the constituency page only when one exists for this constituency name.
+  const constituencySlugs = new Set((await constituencies.list()).map((item) => item.slug))
+  const constituencySlug = slugifyConstituency(church.constituency)
+  const constituencyHref = constituencySlugs.has(constituencySlug) ? `/constituency/${constituencySlug}` : null
+
   const points = church.talkingPoints
   const attendanceText =
     church.attendance != null ? `${church.attendance.toLocaleString('en-GB')} on Sundays` : 'Sunday meeting'
@@ -150,20 +158,24 @@ export default async function ChurchProfilePage({ params }: Props) {
 
       <main>
         {/* Hero band */}
-        <section className={styles.hero}>
+        <section className={`${styles.hero} on-dark`}>
           <div className={styles.wrap}>
-            <nav className={styles.crumbs} aria-label="Breadcrumb">
-              <Link href="/churches">Church directory</Link> &nbsp;/&nbsp; Church profile
+            <nav className={c.breadcrumb} aria-label="Breadcrumb">
+              <ol>
+                <li><Link href="/">Home</Link></li>
+                <li><Link href="/churches">Churches</Link></li>
+                <li aria-current="page">{church.name}</li>
+              </ol>
             </nav>
             <p className={styles.kicker}>Church impact profile</p>
-            <h1 className={styles.title}>{church.name}</h1>
+            <h1 className={`ea-underline ${styles.title}`}>{church.name}</h1>
             <div className={styles.meta}>
               <span>
                 <svg viewBox="0 0 24 24" fill="none" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11Z" />
                   <circle cx="12" cy="10" r="2.5" />
                 </svg>
-                {church.constituency}
+                {constituencyHref ? <Link href={constituencyHref}>{church.constituency}</Link> : church.constituency}
               </span>
               <span>{church.denomination}</span>
               <span>{attendanceText}</span>
@@ -184,20 +196,20 @@ export default async function ChurchProfilePage({ params }: Props) {
         <div className={styles.wrap}>
           <section className={styles.stats} aria-label="Headline impact">
             <div className={styles.stat}>
-              <div className={styles.statValue}>{church.reachPerWeek}</div>
               <div className={styles.statLabel}>People reached each week</div>
+              <div className={styles.statValue}>{church.reachPerWeek}</div>
             </div>
             <div className={styles.stat}>
-              <div className={styles.statValue}>{church.projectCount}</div>
               <div className={styles.statLabel}>Community projects</div>
+              <div className={styles.statValue}>{church.projectCount}</div>
             </div>
             <div className={styles.stat}>
-              <div className={styles.statValue}>{formatFigure(church.volunteerHoursYear)}</div>
               <div className={styles.statLabel}>Volunteer hours a year</div>
+              <div className={styles.statValue}>{formatFigure(church.volunteerHoursYear)}</div>
             </div>
             <div className={styles.stat}>
-              <div className={styles.statValue}>{church.daysOpenLabel}</div>
               <div className={styles.statLabel}>Days the building is open</div>
+              <div className={styles.statValue}>{church.daysOpenLabel}</div>
             </div>
           </section>
         </div>
@@ -211,7 +223,6 @@ export default async function ChurchProfilePage({ params }: Props) {
               <h2 id="points-h" className={styles.underline}>
                 What this church means for {church.constituency}
               </h2>
-              <br />
               <p className={styles.lede}>Local evidence, ready to cite in debates, APPGs and constituency updates.</p>
               {points.length === 0 ? (
                 <p className={styles.lede}>More talking points are being added for this church.</p>

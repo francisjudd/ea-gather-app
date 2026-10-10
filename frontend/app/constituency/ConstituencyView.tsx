@@ -41,7 +41,7 @@ function StatCard({ value, label, note }: { value: number; label: string; note: 
   )
 }
 
-export default function ConstituencyView({ detail }: { detail: ConstituencyDetail }) {
+export default function ConstituencyView({ detail, profileIds }: { detail: ConstituencyDetail; profileIds: string[] }) {
   const [view, setView] = useState<View>(hasMapKey ? 'map' : 'cards')
   const [type, setType] = useState<TypeFilter>('all')
   const [highlighted, setHighlighted] = useState('') // item key, set by a card or a map pin
@@ -73,6 +73,7 @@ export default function ConstituencyView({ detail }: { detail: ConstituencyDetai
   )
 
   const detailChurch = detail.churches.find((church) => church.id === detailId) ?? null
+  const hasProfile = detailChurch != null && profileIds.includes(detailChurch.id)
 
   // A map pin click highlights the matching item and scrolls it into view.
   useEffect(() => {
@@ -238,7 +239,7 @@ export default function ConstituencyView({ detail }: { detail: ConstituencyDetai
                   </ul>
                 </>
               )}
-              <ChurchDialog church={detailChurch} onClose={() => setDetailId('')} />
+              <ChurchDialog church={detailChurch} hasProfile={hasProfile} onClose={() => setDetailId('')} />
             </>
           )}
         </section>

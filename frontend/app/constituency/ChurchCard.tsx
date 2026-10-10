@@ -189,7 +189,15 @@ export function ServiceCompact({
   )
 }
 
-export function ChurchDialog({ church, onClose }: { church: ConstituencyChurch | null; onClose: () => void }) {
+export function ChurchDialog({
+  church,
+  hasProfile,
+  onClose,
+}: {
+  church: ConstituencyChurch | null
+  hasProfile: boolean
+  onClose: () => void
+}) {
   const ref = useRef<HTMLDialogElement>(null)
 
   useEffect(() => {
@@ -250,6 +258,12 @@ export function ChurchDialog({ church, onClose }: { church: ConstituencyChurch |
                 </div>
               ))}
             </>
+          )}
+
+          {hasProfile && (
+            <Link className={styles.compactDetails} href={`/churches/${church.id}`}>
+              View church profile <ArrowIcon />
+            </Link>
           )}
 
           {(church.website || church.phone) && (

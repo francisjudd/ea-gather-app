@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { constituencies } from '@/lib/constituencies/source'
+import { getChurchIds } from '../../churches/church-data'
 import ConstituencyView from '../ConstituencyView'
 
 type Params = { params: Promise<{ slug: string }> }
@@ -23,5 +24,5 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 export default async function ConstituencyPage({ params }: Params) {
   const detail = await constituencies.get((await params).slug)
   if (!detail) notFound()
-  return <ConstituencyView detail={detail} />
+  return <ConstituencyView detail={detail} profileIds={getChurchIds()} />
 }

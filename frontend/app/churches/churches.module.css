@@ -861,3 +861,24 @@
   }
 }
 
+
+/* ---- Finder: search lives in the hero ------------------------------------ */
+.heroSearch {
+  max-width: 760px;
+  margin-top: var(--space-5);
+}
+
+.heroSearch .locationButton,
+.heroSearch .viewAllLink {
+  color: rgb(255 255 255 / 92%);
+}
+
+.heroSearch .locationButton:hover,
+.heroSearch .viewAllLink:hover {
+  color: var(--ea-lime);
+}
+
+.finderMain {
+  flex: 1;
+  padding-block: var(--space-5) var(--space-8);
+}

@@ -1,14 +1,15 @@
 'use client'
 
-import { useMemo, useState, type FormEvent } from 'react'
+import { useEffect, useMemo, useState, type FormEvent } from 'react'
+import Link from 'next/link'
 import FullNav from '../../components/FullNavigation'
 import BrandLockup from '../../components/BrandLockup'
 import MapView from './MapView'
-import ChurchProfileCard from './ChurchProfileCard'
-import { initiativeTypes } from '../../lib/initiatives'
+import { initiativeLabels, initiativeTypes } from '../../lib/initiatives'
 import { dayKeys, dayShortLabels, parseChurchHours, type DayKey } from '../../lib/churchHours'
 import { distanceMiles, formatDistance, type LatLng } from '../../lib/geo'
 import styles from './churches.module.css'
+import c from '../constituency/constituency.module.css'
 import { PinIcon, SearchIcon } from './icons'
 
 type Church = {
@@ -152,6 +153,14 @@ const churches: Church[] = [
 ]
 
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
+
+function ArrowIcon() {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 20 20" fill="none">
+      <path d="M4 10h11m-4-4 4 4-4 4" />
+    </svg>
+  )
+}
 
 // --- Local geocoding for the sample directory -------------------------------
 // The preview has no geocoder API, so we resolve a searched postcode / place
@@ -331,42 +340,58 @@ export default function ChurchFinder() {
     setView('list')
   }
 
+  // Selecting a church (list or map pin) scrolls its item into view in the side list.
+  useEffect(() => {
+    if (selectedChurch) document.getElementById(`item-${selectedChurch}`)?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
+  }, [selectedChurch])
+
   return (
     <div className={styles.page}>
       <FullNav />
 
-      <main className={styles.main}>
-        <section className={styles.searchSection} aria-labelledby="page-title">
-          <p className={styles.eyebrow}>EVANGELICAL ALLIANCE DIRECTORY</p>
-          <h1 id="page-title">Find a church</h1>
+      <section className={`ea-hero on-dark ${c.hero}`} aria-labelledby="page-title">
+        <div className={c.container}>
+          <nav aria-label="Breadcrumb" className={c.breadcrumb}>
+            <ol>
+              <li><Link href="/">Home</Link></li>
+              <li aria-current="page">Churches</li>
+            </ol>
+          </nav>
+          <p className={c.eyebrow}>Evangelical Alliance directory</p>
+          <h1 id="page-title" className={`ea-underline ${c.title}`}>Find a church</h1>
 
-          <form className={styles.searchForm} onSubmit={submitSearch} role="search">
-            <label className={styles.visuallyHidden} htmlFor="church-search">
-              Search by church name, postcode or place
-            </label>
-            <input
-              id="church-search"
-              type="search"
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder="Search by church name, postcode or place..."
-            />
-            <button className={styles.searchButton} type="submit">
-              <SearchIcon />
-              <span>Search</span>
-            </button>
-          </form>
+          <div className={styles.heroSearch}>
+            <form className={styles.searchForm} onSubmit={submitSearch} role="search">
+              <label className={styles.visuallyHidden} htmlFor="church-search">
+                Search by church name, postcode or place
+              </label>
+              <input
+                id="church-search"
+                type="search"
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder="Search by church name, postcode or place..."
+              />
+              <button className={styles.searchButton} type="submit">
+                <SearchIcon />
+                <span>Search</span>
+              </button>
+            </form>
 
-          <div className={styles.searchLinks}>
-            <button className={styles.locationButton} type="button" onClick={useCurrentLocation}>
-              <PinIcon />
-              <span>Use my current location</span>
-            </button>
-            <button className={styles.viewAllLink} type="button" onClick={viewAllChurches}>
-              Or view all Evangelical Alliance member churches
-            </button>
+            <div className={styles.searchLinks}>
+              <button className={styles.locationButton} type="button" onClick={useCurrentLocation}>
+                <PinIcon />
+                <span>Use my current location</span>
+              </button>
+              <button className={styles.viewAllLink} type="button" onClick={viewAllChurches}>
+                Or view all Evangelical Alliance member churches
+              </button>
+            </div>
           </div>
+        </div>
+      </section>
 
+      <main className={`${c.container} ${styles.finderMain}`}>
           {activeCenter && (
             <div className={styles.locationBar} role="group" aria-label="Location search options">
               <span className={styles.locationBarLabel}>
@@ -454,69 +479,85 @@ export default function ChurchFinder() {
             </div>
           </div>
 
-          <div className={styles.viewToolbar}>
-            <span className={styles.viewLabel}>View:</span>
-            <div className={styles.viewSwitch} role="group" aria-label="Display churches as a map or a list">
-              <button
-                className={view === 'map' ? styles.viewActive : ''}
-                type="button"
-                aria-pressed={view === 'map'}
-                onClick={() => setView('map')}
-              >
-                <PinIcon />
-                Map
-              </button>
-              <button
-                className={view === 'list' ? styles.viewActive : ''}
-                type="button"
-                aria-pressed={view === 'list'}
-                onClick={() => setView('list')}
-              >
-                <svg aria-hidden="true" viewBox="0 0 20 20" fill="none">
-                  <path d="M7 5h10M7 10h10M7 15h10" />
-                  <circle cx="3" cy="5" r=".8" />
-                  <circle cx="3" cy="10" r=".8" />
-                  <circle cx="3" cy="15" r=".8" />
-                </svg>
-                List
-              </button>
+          <div className={c.controlBar}>
+            <div className={c.viewSwitch} role="group" aria-label="Show churches as a map or as cards">
+              <button type="button" aria-pressed={view === 'map'} onClick={() => setView('map')}>Map</button>
+              <button type="button" aria-pressed={view === 'list'} onClick={() => setView('list')}>Cards</button>
             </div>
             <span className={styles.resultCount} aria-live="polite">
               {filteredChurches.length} sample {filteredChurches.length === 1 ? 'church' : 'churches'}
             </span>
           </div>
-        </section>
 
         {view === 'map' ? (
           <>
-            <MapView
-              churches={filteredChurches}
-              selectedChurch={selectedChurch}
-              onSelectChurch={setSelectedChurch}
-            />
-            {selectedChurch && (() => {
-              const cardChurch = churches.find((church) => church.id === selectedChurch)
-              if (!cardChurch) return null
-              const distanceMiles = filteredChurches.find((church) => church.id === selectedChurch)?.distanceMiles
-              return (
-                <div className={styles.profilePanel}>
-                  <ChurchProfileCard church={{ ...cardChurch, distanceMiles }} />
-                </div>
-              )
-            })()}
+            <div className={c.split}>
+              <ul className={c.sideList} aria-label="Churches">
+                {filteredChurches.map((church) => {
+                  const open = selectedChurch === church.id
+                  return (
+                    <li key={church.id} className={c.compact} data-selected={open} id={`item-${church.id}`}>
+                      <button
+                        type="button"
+                        className={c.compactButton}
+                        aria-pressed={open}
+                        onClick={() => setSelectedChurch(open ? '' : church.id)}
+                      >
+                        <span className={c.compactTop}>
+                          <span className={c.compactName}>{church.name}</span>
+                          {church.distanceMiles != null && (
+                            <span className={styles.distanceBadge}>{formatDistance(church.distanceMiles)}</span>
+                          )}
+                        </span>
+                        <span className={c.cardMeta}>
+                          {[church.denomination, church.place].filter(Boolean).join(' · ')}
+                        </span>
+                        <span className={c.cardAddress}>
+                          <PinIcon />
+                          <span>{church.address}</span>
+                        </span>
+                      </button>
+                      {open && (
+                        <div className={c.compactMore}>
+                          <span className={c.pills}>
+                            {church.initiatives.slice(0, 3).map((id) => (
+                              <span key={id} className={c.pill}>{initiativeLabels[id] ?? id}</span>
+                            ))}
+                          </span>
+                          <Link className={c.compactDetails} href={`/churches/${church.id}`}>
+                            View church profile <ArrowIcon />
+                          </Link>
+                        </div>
+                      )}
+                    </li>
+                  )
+                })}
+                {filteredChurches.length === 0 && (
+                  <li className={c.empty}>
+                    No sample churches match your search. Try another name, postcode or place, widen the radius, or
+                    clear the filters.
+                  </li>
+                )}
+              </ul>
+              <div className={c.mapWrap}>
+                <MapView
+                  churches={filteredChurches}
+                  selectedChurch={selectedChurch}
+                  onSelectChurch={setSelectedChurch}
+                  canvasClassName={c.mapCanvasTall}
+                  focusSelected
+                />
+              </div>
+            </div>
+            <p className={c.mapNote}>
+              The addresses shown on this map are where the churches meet, and not necessarily the
+              correspondence address. Please contact the individual churches for the correspondence address.
+            </p>
           </>
         ) : (
-          <section className={styles.listPanel} aria-label="Church directory list">
+          <>
             <div className={styles.alphabet} role="group" aria-label="Filter churches by first letter">
-              <button
-                className={letter === 'All' ? styles.alphabetActive : ''}
-                type="button"
-                aria-pressed={letter === 'All'}
-                onClick={() => chooseLetter('All')}
-              >
-                All
-              </button>
-              {alphabet.map((item) => (
+              {['All', ...alphabet].map((item) => (
                 <button
                   key={item}
                   className={letter === item ? styles.alphabetActive : ''}
@@ -528,56 +569,41 @@ export default function ChurchFinder() {
                 </button>
               ))}
             </div>
-            <ul className={styles.churchList}>
+            <ul className={c.cardGrid}>
               {filteredChurches.map((church) => (
-                <li key={church.id}>
-                  <button
-                    className={styles.churchRow}
-                    type="button"
-                    aria-expanded={selectedChurch === church.id}
-                    onClick={() => setSelectedChurch(selectedChurch === church.id ? '' : church.id)}
-                  >
-                    <span>
-                      <strong>{church.name}</strong>
-                      <span className={styles.address}>
-                        <PinIcon />
-                        {church.address}
-                      </span>
+                <li key={church.id} className={c.card}>
+                  <Link className={c.cardButton} href={`/churches/${church.id}`}>
+                    <span className={c.cardName}>{church.name}</span>
+                    <span className={c.cardMeta}>{[church.denomination, church.place].filter(Boolean).join(' · ')}</span>
+                    <span className={c.cardAddress}>
+                      <PinIcon />
+                      <span>{church.address}</span>
                     </span>
-                    <span className={styles.rowMeta}>
+                    <span className={c.pills}>
+                      {church.initiatives.slice(0, 3).map((id) => (
+                        <span key={id} className={c.pill}>{initiativeLabels[id] ?? id}</span>
+                      ))}
+                    </span>
+                    <span className={c.cardFooter}>
+                      <span className={c.cardMore}>View church profile <ArrowIcon /></span>
                       {church.distanceMiles != null && (
-                        <span className={styles.rowDistance} aria-label={`${church.distanceMiles.toFixed(1)} miles away`}>
-                          {formatDistance(church.distanceMiles)}
-                        </span>
+                        <span className={styles.distanceBadge}>{formatDistance(church.distanceMiles)}</span>
                       )}
-                      <span className={styles.rowChevron} aria-hidden="true">›</span>
                     </span>
-                  </button>
-                  {selectedChurch === church.id && (
-                    <div className={styles.profileInline}>
-                      <ChurchProfileCard church={church} />
-                    </div>
-                  )}
+                  </Link>
                 </li>
               ))}
-              {filteredChurches.length === 0 && (
-                <li className={styles.emptyList}>
-                  No sample churches match your search. Try another name, postcode or place, widen the
-                  radius, or clear the opening-day and initiative filters.
-                </li>
-              )}
             </ul>
+            {filteredChurches.length === 0 && (
+              <p className={c.empty}>
+                No sample churches match your search. Try another name, postcode or place, widen the radius, or
+                clear the filters.
+              </p>
+            )}
             <p className={styles.previewNote}>
               This preview uses a small sample of directory entries; it is not the full church directory.
             </p>
-          </section>
-        )}
-
-        {view === 'map' && (
-          <p className={styles.mapNote}>
-            The addresses shown on this map are where the churches meet, and not necessarily the
-            correspondence address. Please contact the individual churches for the correspondence address.
-          </p>
+          </>
         )}
 
         <aside className={styles.aboutNote}>
