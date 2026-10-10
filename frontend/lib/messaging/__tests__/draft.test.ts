@@ -7,6 +7,7 @@ const emptyDraft: Draft = {
   mpName: '',
   mpParty: '',
   mpEmail: '',
+  mpConstituency: '',
   churchName: '',
   denomination: '',
   attendance: '',
@@ -31,7 +32,7 @@ describe('toLetterInput', () => {
       church: { name: 'our church', address: null, postcode: '' },
       mp: { display_name: 'there', first_name: null, email: '', constituency: '' },
       activities: [],
-      message: { personal_note: '', include_prayer_line: true, mention_evangelical_alliance: false },
+      message: { personal_note: '', include_prayer_line: false, mention_evangelical_alliance: false },
       outcome: { type: 'visit' },
     })
   })
@@ -149,7 +150,7 @@ describe('toLetterInput', () => {
       const ids = ['food-bank', 'warm-space', 'debt-advice', 'clothing-bank', 'family-groups', 'youth', 'schools']
       const input = toLetterInput(draft({ selectedActivities: ids }))
       expect(input.activities).toHaveLength(7)
-      const lines = renderLetterFallback(input).body.split('\n').filter((l) => l.startsWith('- '))
+      const lines = renderLetterFallback(input).body.split('\n').filter((l) => l.startsWith('* '))
       expect(lines).toHaveLength(5)
     })
   })
@@ -170,8 +171,8 @@ describe('toLetterInput', () => {
       expect(toLetterInput(draft({ monthlyUpdate: true }))).toEqual(toLetterInput(draft({ monthlyUpdate: false })))
     })
 
-    it('always includes the prayer line', () => {
-      expect(toLetterInput(emptyDraft).message?.include_prayer_line).toBe(true)
+    it('never includes the prayer line', () => {
+      expect(toLetterInput(emptyDraft).message?.include_prayer_line).toBe(false)
     })
 
     it('passes the personal note through untrimmed (the letter trims it)', () => {

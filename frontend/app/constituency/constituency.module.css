@@ -1,0 +1,660 @@
+/* Constituency pages. Colours, type and spacing come from brand.css tokens. */
+
+.container {
+  --page-bleed: max(24px, calc((100vw - 1180px) / 2));
+  width: min(1180px, calc(100% - 48px));
+  margin-inline: auto;
+}
+
+/* ---- Index page row ------------------------------------------------------ */
+.rowCounts {
+  display: block;
+  margin-top: var(--space-1);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  font-weight: 400;
+}
+
+/* ---- Hero ----------------------------------------------------------------- */
+.hero {
+  padding: var(--space-4) 0 var(--space-7);
+}
+
+.hero :focus-visible {
+  outline-color: var(--ea-lime);
+}
+
+.breadcrumb ol {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-5);
+  padding: 0;
+  list-style: none;
+  font-size: var(--text-sm);
+}
+
+.breadcrumb li + li::before {
+  content: '/';
+  margin-right: var(--space-2);
+  color: rgb(255 255 255 / 55%);
+}
+
+.breadcrumb a {
+  color: rgb(255 255 255 / 85%);
+  text-decoration: none;
+}
+
+.breadcrumb a:hover {
+  color: var(--ea-white);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.breadcrumb [aria-current='page'] {
+  color: var(--ea-lime);
+  font-weight: 700;
+}
+
+.heroGrid {
+  position: relative; /* above the decorative circle */
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: var(--space-6);
+}
+
+.eyebrow {
+  margin: 0 0 var(--space-3);
+  color: var(--ea-lime);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.title {
+  --bleed: var(--page-bleed);
+  max-width: none;
+  margin: 0 0 var(--space-3);
+  color: var(--ea-white);
+  font-size: clamp(2.25rem, 1.4rem + 3.4vw, 3.5rem);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+
+.lede {
+  max-width: 34ch;
+  margin: 0;
+  color: rgb(255 255 255 / 88%);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-light);
+  line-height: var(--leading-body);
+}
+
+.mpCard {
+  min-width: 250px;
+  padding: var(--space-5);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgb(255 255 255 / 28%);
+  background: rgb(255 255 255 / 10%);
+  backdrop-filter: blur(4px);
+  color: var(--ea-white);
+}
+
+.mpLabel {
+  margin: 0;
+  color: var(--ea-lime);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.mpName {
+  margin: var(--space-1) 0 0;
+  color: var(--ea-white);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+}
+
+.mpParty {
+  margin: var(--space-1) 0 0;
+  color: rgb(255 255 255 / 80%);
+  font-size: var(--text-sm);
+}
+
+.mpCta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--ea-lime); /* lime on navy only, per the brand contrast note */
+  color: var(--ea-navy);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+}
+
+.mpCta:hover {
+  color: var(--ea-navy);
+  filter: brightness(1.06);
+}
+
+.mpCtaIcon {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.stats {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-4);
+  margin: calc(-1 * var(--space-6)) auto var(--space-4);
+}
+
+.statCard {
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-top: 4px solid var(--ea-teal);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-md);
+}
+
+.statCard dt {
+  color: var(--color-text-on-panel);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.statCard dd {
+  display: grid;
+  gap: var(--space-1);
+  margin: var(--space-2) 0 0;
+}
+
+.statValue {
+  color: var(--color-text-strong);
+  font-size: clamp(1.75rem, 1.3rem + 1.6vw, 2.5rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.statNote {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+/* ---- Sections ------------------------------------------------------------- */
+.sectionIntro {
+  max-width: 60ch;
+  margin: 0 0 var(--space-5);
+  color: var(--color-text-muted);
+}
+
+.divider {
+  margin: var(--space-8) 0;
+}
+
+.empty {
+  margin: var(--space-4) 0;
+  color: var(--color-text-muted);
+}
+
+/* ---- Churches: map, then a grid of equal-height cards ---------------------- */
+/* Both toggles share one row and never wrap; on very narrow screens the row scrolls inside itself. */
+.controlBar {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: var(--space-4);
+  margin: 0 0 var(--space-3);
+  padding-bottom: 2px;
+  overflow-x: auto;
+}
+
+.controlBar > * {
+  flex: none;
+}
+
+.toggleCount {
+  margin-left: var(--space-1);
+  font-weight: 400;
+  opacity: 0.85;
+}
+
+.viewSwitch {
+  display: inline-flex;
+  overflow: hidden;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+}
+
+.viewSwitch button {
+  padding: var(--space-2) var(--space-5);
+  white-space: nowrap;
+  border: 0;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.viewSwitch button + button {
+  border-left: 1px solid var(--color-border-strong);
+}
+
+.viewSwitch button[aria-pressed='true'] {
+  background: var(--color-primary);
+  color: var(--ea-white);
+}
+
+/* Map view: one bordered container, side list (1/3) beside the map (2/3) */
+.split {
+  --split-height: clamp(460px, 70vh, 640px);
+  display: grid;
+  grid-template-columns: minmax(280px, 1fr) 2fr;
+  overflow: hidden;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.sideList {
+  display: grid;
+  align-content: start;
+  gap: var(--space-2);
+  height: var(--split-height);
+  margin: 0;
+  padding: var(--space-3);
+  overflow-y: auto;
+  border-right: 1px solid var(--color-border-strong);
+  background: var(--color-surface-muted);
+  list-style: none;
+}
+
+.mapWrap {
+  min-width: 0;
+}
+
+/* The map's own frame is dropped: the container provides it. */
+.mapWrap > div {
+  border: 0;
+  border-radius: 0;
+}
+
+.mapWrap .mapCanvasTall {
+  height: var(--split-height);
+}
+
+.compact {
+  border: 1px solid var(--color-border);
+  border-left: 4px solid transparent;
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.compact:hover {
+  border-color: var(--color-border-strong);
+  border-left-color: var(--color-border-strong);
+}
+
+.compact[data-selected='true'] {
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-sm);
+}
+
+.compactButton {
+  display: grid;
+  gap: var(--space-1);
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.compactTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.compactName {
+  color: var(--color-text-strong);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+}
+
+.compactMore {
+  display: grid;
+  gap: var(--space-2);
+  padding: 0 var(--space-4) var(--space-3);
+}
+
+.compactDetails {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-link);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.compactDetails svg {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+
+.mapNote {
+  margin: var(--space-3) 0 var(--space-5);
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+}
+
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-auto-rows: 1fr; /* every card the same height */
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.card {
+  display: flex;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  transition: border-color 120ms ease, box-shadow 120ms ease, transform 120ms ease;
+}
+
+.card:hover,
+.card[data-highlighted='true'] {
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-md);
+}
+
+.card:hover {
+  transform: translateY(-2px);
+}
+
+.cardButton {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-2);
+  padding: var(--space-5);
+  border: 0;
+  border-radius: inherit;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.cardName {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  color: var(--color-text-strong);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.cardMeta {
+  margin: 0;
+  color: var(--color-text-on-panel);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.cardAddress {
+  display: flex;
+  gap: var(--space-2);
+  align-items: flex-start;
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.cardAddress > span {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.cardAddress svg {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  margin-top: 3px;
+  stroke: var(--ea-teal);
+  stroke-width: 2;
+}
+
+.countBadge {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-1);
+  padding: 3px var(--space-3);
+  border-radius: var(--radius-full);
+  background: var(--color-primary);
+  color: var(--ea-white);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.countBadge strong {
+  color: var(--ea-lime); /* lime on navy only (8.6:1), per the brand's contrast note */
+  font-size: var(--text-sm);
+}
+
+.programmesNote {
+  margin: 0 0 var(--space-3);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.pills {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: var(--space-1);
+}
+
+.pill {
+  align-self: flex-start;
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-full);
+  background: var(--color-surface-muted);
+  color: var(--color-text-on-panel);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  line-height: 1.6;
+}
+
+.cardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-top: auto; /* keeps the footer on the bottom edge of equal-height cards */
+  padding-top: var(--space-3);
+  border-top: 1px dotted var(--color-border-strong);
+}
+
+.cardMore {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-link);
+  font-size: var(--text-sm);
+  font-weight: 700;
+}
+
+.cardMore svg {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 120ms ease;
+}
+
+.card:hover .cardMore svg {
+  transform: translateX(3px);
+}
+
+.contactList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--text-sm);
+}
+
+/* ---- Details dialog ------------------------------------------------------- */
+.dialog {
+  width: min(520px, calc(100% - 32px));
+  max-height: calc(100dvh - 48px);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  color: var(--color-text);
+}
+
+.dialog::backdrop {
+  background: rgb(36 48 95 / 55%);
+}
+
+.dialogBody {
+  position: relative;
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-6);
+  border-top: 6px solid var(--ea-teal);
+}
+
+.dialogClose {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--color-surface-muted);
+  color: var(--color-text-strong);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.dialogTitle {
+  margin: 0;
+  padding-right: var(--space-7);
+  color: var(--color-text-strong);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+}
+
+.dialogHeading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin: var(--space-3) 0 0;
+  padding-top: var(--space-3);
+  border-top: 1px dotted var(--color-border-strong);
+  color: var(--color-text-on-panel);
+  font-size: var(--text-xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.dialogEmpty {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+.programmeGroup {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.programmeGroup ul {
+  margin: 0;
+  padding-left: var(--space-5);
+}
+
+/* ---- Responsive ----------------------------------------------------------- */
+@media (max-width: 900px) {
+  .split {
+    --split-height: 380px;
+    grid-template-columns: 1fr;
+  }
+
+  .mapWrap {
+    order: -1; /* map above the list on narrow screens */
+  }
+
+  .sideList {
+    height: 340px;
+    border-top: 1px solid var(--color-border-strong);
+    border-right: 0;
+  }
+
+  .heroGrid {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .stats {
+    grid-template-columns: 1fr;
+    margin-top: calc(-1 * var(--space-7));
+  }
+}

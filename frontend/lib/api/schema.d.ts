@@ -4,6 +4,129 @@
  */
 
 export interface paths {
+    "/openapi/churches": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Churches */
+        get: operations["list_churches_openapi_churches_get"];
+        put?: never;
+        /**
+         * Submit Church
+         * @description Submit a church for review. It appears in the directory only after an admin approves it.
+         */
+        post: operations["submit_church_openapi_churches_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/openapi/churches/{church_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Church */
+        get: operations["get_church_openapi_churches__church_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/openapi/initiatives": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Initiatives */
+        get: operations["list_initiatives_openapi_initiatives_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/openapi/geocode": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Geocode Query */
+        get: operations["geocode_query_openapi_geocode_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/openapi/mp/lookup": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Lookup Mp */
+        get: operations["lookup_mp_openapi_mp_lookup_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/openapi/admin/submissions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Submissions */
+        get: operations["list_submissions_openapi_admin_submissions_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/openapi/admin/submissions/{submission_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update Submission */
+        patch: operations["update_submission_openapi_admin_submissions__submission_id__patch"];
+        trace?: never;
+    };
     "/openapi/": {
         parameters: {
             query?: never;
@@ -94,13 +217,46 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** Church */
+        Church: {
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            /** Address */
+            address: string;
+            /** Place */
+            place: string;
+            /** Postcode */
+            postcode: string | null;
+            /** Lat */
+            lat: number;
+            /** Lng */
+            lng: number;
+            /** Denomination */
+            denomination: string;
+            /** Operatinghours */
+            operatingHours: string;
+            /** Verified */
+            verified: boolean;
+            /** Initiatives */
+            initiatives: string[];
+            /** Website */
+            website: string | null;
+            /** Phone */
+            phone: string | null;
+            /** Constituency */
+            constituency: string | null;
+            /** Distancemiles */
+            distanceMiles?: number | null;
+        };
         /** ChurchStatusUpdate */
         ChurchStatusUpdate: {
             /** Status */
             status: string;
         };
         /** ChurchSubmission */
-        ChurchSubmission: {
+        "ChurchSubmission-Input": {
             /** Name */
             name: string;
             /**
@@ -135,10 +291,113 @@ export interface components {
              */
             initiatives: string[];
         };
+        /** ChurchSubmission */
+        "ChurchSubmission-Output": {
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            /** Denomination */
+            denomination: string;
+            /** Address */
+            address: string;
+            /** Place */
+            place: string;
+            /** Postcode */
+            postcode: string;
+            /** Operatinghours */
+            operatingHours: string;
+            /** Contactname */
+            contactName: string;
+            /** Contactemail */
+            contactEmail: string;
+            /** Initiatives */
+            initiatives: string[];
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "pending" | "approved" | "rejected";
+            /**
+             * Submittedat
+             * Format: date-time
+             */
+            submittedAt: string;
+        };
+        /** ChurchSubmissionIn */
+        ChurchSubmissionIn: {
+            /** Name */
+            name: string;
+            /**
+             * Denomination
+             * @default
+             */
+            denomination: string;
+            /** Address */
+            address: string;
+            /**
+             * Place
+             * @default
+             */
+            place: string;
+            /**
+             * Postcode
+             * @default
+             */
+            postcode: string;
+            /**
+             * Operatinghours
+             * @default
+             */
+            operatingHours: string;
+            /** Contactname */
+            contactName: string;
+            /**
+             * Contactemail
+             * Format: email
+             */
+            contactEmail: string;
+            /** Initiatives */
+            initiatives?: string[];
+        };
+        /** GeocodeResult */
+        GeocodeResult: {
+            /** Lat */
+            lat: number;
+            /** Lng */
+            lng: number;
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
+        };
+        /** Initiative */
+        Initiative: {
+            /** Id */
+            id: string;
+            /** Label */
+            label: string;
+        };
+        /** Mp */
+        Mp: {
+            /** Name */
+            name: string;
+            /** Party */
+            party: string | null;
+            /** Email */
+            email: string | null;
+            /** Constituency */
+            constituency: string;
+            /** Postcode */
+            postcode: string;
+        };
+        /** SubmissionUpdate */
+        SubmissionUpdate: {
+            /** Status */
+            status?: ("pending" | "approved" | "rejected") | null;
+            /** Initiatives */
+            initiatives?: string[] | null;
         };
         /** ValidationError */
         ValidationError: {
@@ -162,6 +421,264 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    list_churches_openapi_churches_get: {
+        parameters: {
+            query?: {
+                /** @description Text match on name, address or constituency */
+                q?: string | null;
+                /** @description First letter of the church name */
+                letter?: string | null;
+                /** @description Comma-separated initiative ids; churches must offer all */
+                initiatives?: string | null;
+                lat?: number | null;
+                lng?: number | null;
+                /** @description Miles from lat/lng */
+                radius?: number;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Church"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    submit_church_openapi_churches_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ChurchSubmissionIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChurchSubmission-Output"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_church_openapi_churches__church_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                church_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Church"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_initiatives_openapi_initiatives_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Initiative"][];
+                };
+            };
+        };
+    };
+    geocode_query_openapi_geocode_get: {
+        parameters: {
+            query: {
+                /** @description Postcode, postcode area or place name */
+                q: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GeocodeResult"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    lookup_mp_openapi_mp_lookup_get: {
+        parameters: {
+            query: {
+                postcode: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Mp"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_submissions_openapi_admin_submissions_get: {
+        parameters: {
+            query?: {
+                status?: "pending" | "approved" | "rejected";
+            };
+            header?: {
+                authorization?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChurchSubmission-Output"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_submission_openapi_admin_submissions__submission_id__patch: {
+        parameters: {
+            query?: never;
+            header?: {
+                authorization?: string | null;
+            };
+            path: {
+                submission_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SubmissionUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChurchSubmission-Output"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     root_openapi__get: {
         parameters: {
             query?: never;
@@ -262,7 +779,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["ChurchSubmission"];
+                "application/json": components["schemas"]["ChurchSubmission-Input"];
             };
         };
         responses: {

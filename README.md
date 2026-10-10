@@ -4,7 +4,8 @@ Evangelical Alliance Gathering Church Action. This repository is an npm
 workspaces monorepo:
 
 - `frontend/` — Next.js App Router application and generated API types.
-- `backend/` — FastAPI service serving the live OpenAPI contract at `/openapi/openapi.json`.
+- `backend/` — FastAPI service backed by Supabase Postgres; `backend/openapi.yaml`
+  is its exported OpenAPI contract.
 - [`USER_STORIES.md`](./USER_STORIES.md) — Product objectives, user personas, MVP acceptance criteria, and demo flow.
 
 ## Prerequisites
@@ -22,18 +23,49 @@ npm run dev
 
 The app runs at <http://localhost:3000>.
 
-## Generate backend types
+## Backend (FastAPI + Supabase)
 
-The backend serves its OpenAPI contract at `/openapi/openapi.json`. Regenerate
-the frontend types from the live contract:
+The API reads from a Supabase Postgres database. Create `backend/.env`
+(gitignored) with:
 
 ```sh
+# Supabase session/transaction pooler (IPv4). The direct db.<ref>.supabase.co
+# host is IPv6-only and won't connect from most networks.
+DATABASE_URL=postgresql://postgres.<project-ref>:<password>@aws-0-eu-west-1.pooler.supabase.com:5432/postgres?sslmode=require
+# Shared secret for /openapi/admin/* (send as `Authorization: Bearer <token>`)
+ADMIN_TOKEN=<long random string>
+```
+
+Run it alongside the frontend:
+
+```sh
+cd backend
+python3 -m venv venv && venv/bin/pip install -r requirements.txt
+venv/bin/uvicorn main:app --reload --port 8000
+```
+
+`npm run dev` proxies `/openapi/*` to `http://127.0.0.1:8000` (override with
+`BACKEND_URL`), so the frontend always calls same-origin `/openapi/...` URLs.
+Interactive docs: <http://localhost:3000/openapi/docs>. Tests:
+`cd backend && venv/bin/python -m unittest`.
+
+Loading data (already done for the shared Supabase project):
+`backend/scripts/import_combined_db.py` (churches, services, postcodes from
+`data-source/combined.db`), `backend/scripts/import_mps.py` (MPs from the CSV)
+and `backend/scripts/church_submissions.sql`. See each file for usage.
+
+## Generate backend types
+
+After changing the API, export its contract and regenerate the frontend types:
+
+```sh
+backend/venv/bin/pip install pyyaml
+backend/venv/bin/python backend/scripts/export_openapi.py
 npm run api:types
 ```
 
-This runs `openapi-typescript` against the deployed contract and writes
-`frontend/lib/api/schema.d.ts`. Commit the generated file with the updated
-contract; do not hand-edit generated types.
+This writes `backend/openapi.yaml` and `frontend/lib/api/schema.d.ts`. Commit
+both; do not hand-edit generated types.
 
 ## Deploying Next.js and FastAPI to Vercel
 
@@ -66,11 +98,11 @@ npx vercel dev --local
 ```
 
 Add future FastAPI endpoints under `/openapi/...`: service routing preserves
-the public request path rather than stripping the prefix. The backend currently
-defines its routes at `/churches` (not `/openapi/churches`), so the live
-`/churches` endpoint is only reachable through the backend directly — see
-[`backend/endpoints.md`](./backend/endpoints.md) for the documented contract and
-the routing note.
+the public request path rather than stripping the prefix.
+
+Set `DATABASE_URL` and `ADMIN_TOKEN` in the Vercel project's environment
+variables. On Vercel, use the transaction pooler (port `6543`) for
+`DATABASE_URL`, which suits serverless functions.
 
 ## Common commands
 
@@ -80,4 +112,4 @@ the routing note.
 | `npm run build` | Build the frontend for production |
 | `npm run lint` | Lint the frontend |
 | `npm run typecheck` | Check frontend TypeScript |
-| `npm run api:types` | Generate frontend types from the live backend contract |
+| `npm run api:types` | Generate frontend types from `backend/openapi.yaml` |

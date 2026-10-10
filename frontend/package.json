@@ -11,7 +11,8 @@
     "typecheck": "tsc --noEmit",
     "api:types": "openapi-typescript https://ea-gather-app.vercel.app/openapi/openapi.json -o ./lib/api/schema.d.ts",
     "test": "vitest run",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "data:constituencies": "node scripts/export-constituencies.mjs"
   },
   "dependencies": {
     "@googlemaps/js-api-loader": "^2.1.3",

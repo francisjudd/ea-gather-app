@@ -1,26 +1,26 @@
 // Plain-language wording for the MP letter. Edit the text here; no logic needed.
 // Chunk markers ("@@ template|data|personal|outcome") drive the review-screen highlights.
 // Variables are the LetterInput fields (see ../letter.ts) plus a few helpers:
-//   greeting_name, sender.role_lower, has_activities, activities[].line, is.<outcome type> (is.visit_any covers visit and visit_photo)
+//   greeting_name, has_activities, activities[].line, is.<outcome type> (is.visit_any covers visit and visit_photo)
 
 export const letterTemplate = `
 @@ template
 Dear {{greeting_name}},
 
 @@ data
-I am {{#sender.role_lower}}the {{.}} at {{/sender.role_lower}}{{^sender.role_lower}}part of {{/sender.role_lower}}{{church.name}}{{#church.postcode}} ({{.}}){{/church.postcode}}{{#church.area}}, in {{.}}{{/church.area}}, and I am writing as one of your constituents.
+{{#sender.role}}I'm writing as {{.}} at {{church.name}}{{/sender.role}}{{^sender.role}}I'm writing from {{church.name}}{{/sender.role}}, a church in your constituency.
+
+@@ template
+I wanted to share a brief picture of what we do in {{#mp.constituency}}{{.}}{{/mp.constituency}}{{^mp.constituency}}your constituency{{/mp.constituency}} week-to-week in case it's useful as you represent us in parliament.
 
 @@ data
 {{#has_activities}}
-{{#totals.people_per_week_text}}
-Each week we welcome {{.}} through our community activities:
-
-{{/totals.people_per_week_text}}
+Each week, our team and volunteers run:
 {{#activities}}
-- {{line}}
+* {{line}}
 {{/activities}}
-{{/has_activities}}
 
+{{/has_activities}}
 @@ personal
 {{#message.personal_note}}
 {{.}}
@@ -31,14 +31,21 @@ Each week we welcome {{.}} through our community activities:
 We are one of {{church_count}} churches in {{mp.constituency}} running at least {{activity_count}} community activities. You can see them all here: {{rollup_url}}
 
 {{/constituency_rollup}}
+@@ template
+{{#message.mention_evangelical_alliance}}
+The Evangelical Alliance, who help coordinate UK churches' engagement with parliament, would welcome the chance to meet with you and discuss how churches in your constituency are supporting the community. If that's something you'd be open to, you can contact them on advocacy@eauk.org.
+
+{{/message.mention_evangelical_alliance}}
+Thank you for the work you do for our area.{{#message.include_prayer_line}} We pray for you and your team regularly.{{/message.include_prayer_line}}
+
 @@ outcome
-{{#is.visit_any}}We would love you to visit{{#outcome.details.activity}} our {{.}}{{/outcome.details.activity}}{{#outcome.details.day}} on {{.}}{{/outcome.details.day}}, whenever suits you.{{#is.visit_photo}} It could also be a good moment for a photo with our volunteers.{{/is.visit_photo}}
+{{#is.visit_any}}We'd love to host you at our {{#outcome.details.activity}}{{.}}{{/outcome.details.activity}}{{^outcome.details.activity}}church{{/outcome.details.activity}}{{#outcome.details.day}} on {{.}}{{/outcome.details.day}} at a time that suited you.{{#is.visit_photo}} It could also be a good moment for a photo with our volunteers.{{/is.visit_photo}}
 {{/is.visit_any}}
 {{#is.missed_anything}}
 I would be grateful to know whether your office sees needs in your casework that local churches could help with, as we would like to serve where the gaps are.
 {{/is.missed_anything}}
 {{#is.signposting}}
-I would be grateful if you would share our services with your constituency caseworkers so they can refer constituents. Our contact details are on the page linked above.
+I would be grateful if you would share our services with your constituency caseworkers so they can refer constituents. Our contact details are below.
 {{/is.signposting}}
 {{#is.meeting}}
 I would welcome a short meeting, or a slot at one of your surgeries, to talk about our work{{#outcome.details.availability}}. {{.}}{{/outcome.details.availability}}.
@@ -48,19 +55,10 @@ We would be glad to keep you updated on our work and to be a point of contact fo
 {{/is.keep_informed}}
 
 @@ template
-{{#message.mention_evangelical_alliance}}
-The Evangelical Alliance, which helps coordinate churches' engagement with Parliament, would welcome the chance to meet you and hear how churches in your constituency are supporting the community.
-
-{{/message.mention_evangelical_alliance}}
-Thank you for all you do for our community.{{#message.include_prayer_line}} We pray for you and your team regularly.{{/message.include_prayer_line}}
-
 With every good wish,
 @@ data
 {{sender.name}}
-{{#sender.role}}
-{{.}}
-{{/sender.role}}
-{{church.name}}
+{{#sender.role}}{{.}}, {{/sender.role}}{{church.name}}
 {{#church.address}}
 {{.}}
 {{/church.address}}
