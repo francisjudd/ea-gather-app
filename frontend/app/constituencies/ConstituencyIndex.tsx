@@ -77,7 +77,7 @@ export default function ConstituencyIndex({ constituencies }: { constituencies: 
           <ul className={churches.churchList}>
             {matches.map((item) => (
               <li key={item.slug}>
-                <Link className={churches.churchRow} href={`/constituency/${item.slug}`}>
+                <Link className={churches.churchRow} href={`/constituencies/${item.slug}`}>
                   <span>
                     <strong>{item.name}</strong>
                     <span className={styles.rowCounts}>

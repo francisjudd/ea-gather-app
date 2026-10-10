@@ -151,7 +151,7 @@ export default function ContactMpFlow({ step }: { step: string }) {
       try {
         const saved = window.localStorage.getItem(storageKey)
         if (saved) setDraft(readDraft(saved))
-        // Prefill the postcode when arriving from the "Your area" view
+        // Prefill the postcode when arriving from a constituency page
         // (?postcode=...) so the letter tool starts on the right area.
         const urlPostcode = new URLSearchParams(window.location.search).get('postcode')
         if (urlPostcode) setDraft((previous) => ({ ...previous, postcode: urlPostcode }))

@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import styles from '../app/your-area/your-area.module.css'
+import styles from './TalkingPoints.module.css'
 
 interface TalkingPointsProps {
   talkingPoints: string[];

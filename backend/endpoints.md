@@ -2,7 +2,7 @@
 
 The frontend currently renders from three sources:
 
-- **Hardcoded sample data** — `app/churches/ChurchFinder.tsx`, `app/your-area/area-data.ts`
+- **Hardcoded sample data** — `app/churches/ChurchFinder.tsx`, the retired `app/your-area/area-data.ts`
 - **localStorage** — `lib/churchStore.ts`, the contact-MP draft
 - **One Next.js route** — `app/api/parish-dashboards/route.ts`
 
@@ -53,7 +53,7 @@ The endpoints below replace those sources. Status legend: **✅ implemented**,
 > **in-memory** and not wired to the frontend — the submit form still writes to
 > localStorage via `lib/churchStore.ts`.
 
-## Your area — `/your-area`
+## Your constituency — `/constituencies`
 
 | # | Method | Path | Status | Purpose | Key request params | Response shape |
 |---|--------|------|--------|---------|-------------------|----------------|
