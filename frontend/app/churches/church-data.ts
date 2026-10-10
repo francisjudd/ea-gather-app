@@ -286,8 +286,11 @@ export function getChurchById(id: string): ChurchProfile | undefined {
   const extras = churchProfiles[id]
   const activities = extras?.activities ?? buildFallbackActivities(church.initiatives)
   const attendance = extras?.attendance ?? null
-  const daysOpenPerWeek =
-    extras?.daysOpenPerWeek ?? Math.max(1, openDaysOf(church.operatingHours).length)
+
+  // Days the church is open, derived from the days its activities run; if no
+  // activities have day data, fall back to the days parsed from operatingHours.
+  const activityDays = [...new Set(activities.flatMap((activity) => activity.days))]
+  const daysOpenPerWeek = Math.max(1, activityDays.length || openDaysOf(church.operatingHours).length)
 
   return {
     ...church,
