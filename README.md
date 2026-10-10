@@ -35,14 +35,39 @@ This runs `openapi-typescript` and writes `frontend/lib/api/schema.d.ts`. Commit
 the generated file with the updated contract; do not hand-edit generated types.
 The current placeholder intentionally defines no API endpoints.
 
-## Deploying the frontend to Vercel
+## Deploying Next.js and FastAPI to Vercel
 
-Create a Vercel project from this repository and set **Root Directory** to
-`frontend/`. Use the Next.js framework defaults and set the Vercel **Node.js
-Version** to 22.x (22.13 or newer). The OpenAPI contract and generated types are
-checked into the repository, so Vercel can build the frontend without access to
-a running backend. Configure a backend URL in Vercel only after the API host
-and frontend integration are defined.
+The root `vercel.json` uses Vercel Services (Beta) to deploy both applications
+in one project, under the project's existing domain:
+
+- `/openapi` and `/openapi/*` route to FastAPI in `backend/`.
+- All other paths route to Next.js in `frontend/`, including the existing
+  `/api/parish-dashboards` endpoint.
+- FastAPI's health response is at `/openapi`, interactive docs at
+  `/openapi/docs`, and OpenAPI schema at `/openapi/openapi.json`.
+
+Before merging this configuration, open the existing Vercel project's
+**Settings → Build and Deployment**, change **Root Directory** from `frontend`
+to the repository root (leave the field empty), and save. Keep the existing
+Node.js version and framework defaults; remove any custom project-level build,
+install, or output overrides if present so each service uses its own defaults.
+No domain or DNS changes are needed.
+
+After the PR preview deploys, verify `/`, `/api/parish-dashboards`, `/openapi`,
+and `/openapi/docs` on its preview URL before merging. Merging to `main` then
+uses the project's normal production deployment workflow.
+
+For local development of both services, install the Python requirements and
+run the Vercel CLI from the repository root:
+
+```sh
+python -m pip install -r backend/requirements.txt
+npx vercel dev --local
+```
+
+Add future FastAPI endpoints under `/openapi/...`: service routing preserves
+the public request path rather than stripping the prefix. The OpenAPI types
+remain placeholders until the real backend contract is supplied.
 
 ## Common commands
 
