@@ -170,7 +170,7 @@
 }
 
 .panel h2 {
-  margin: 0;
+  margin: 0 0 20px;
   font-size: 1.45rem;
   font-weight: 700;
   color: var(--color-text-strong);
