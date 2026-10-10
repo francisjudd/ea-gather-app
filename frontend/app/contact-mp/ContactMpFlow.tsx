@@ -211,6 +211,10 @@ export default function ContactMpFlow({ step }: { step: string }) {
       try {
         const saved = window.localStorage.getItem(storageKey)
         if (saved) setDraft(readDraft(saved))
+        // Prefill the postcode when arriving from the "Your area" view
+        // (?postcode=...) so the letter tool starts on the right area.
+        const urlPostcode = new URLSearchParams(window.location.search).get('postcode')
+        if (urlPostcode) setDraft((previous) => ({ ...previous, postcode: urlPostcode }))
       } catch {
         setStorageError('We could not load your saved draft. You can still continue, but your progress may not be saved.')
       }
@@ -312,7 +316,12 @@ export default function ContactMpFlow({ step }: { step: string }) {
         <Link className="brand-lockup" href="/contact-mp" aria-label="More Than Sunday — start again">
           <span className="brand-name">More Than <strong>Sunday</strong></span>
         </Link>
-        <span className="header-caption">An initiative from the Evangelical Alliance</span>
+        <div className="site-actions">
+          <span className="header-caption">An initiative from the Evangelical Alliance</span>
+          <nav aria-label="Primary">
+            <Link className="site-nav-link" href="/your-area">Your area</Link>
+          </nav>
+        </div>
       </header>
 
       <div className="flow-layout">

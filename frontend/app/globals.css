@@ -72,6 +72,27 @@ a {
   font-size: var(--text-sm);
 }
 
+.site-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 26px;
+}
+
+.site-nav-link,
+.site-actions nav a {
+  color: var(--color-link);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.site-nav-link:hover,
+.site-actions nav a:hover {
+  color: var(--color-link-hover);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 .flow-layout {
   width: min(1120px, calc(100% - 48px));
   flex: 1;
