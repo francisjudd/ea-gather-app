@@ -12,8 +12,8 @@ const lato = Lato({
 })
 
 export const metadata: Metadata = {
-  title: 'EA Gathering App',
-  description: 'Evangelical Alliance Gathering Church Action',
+  title: 'More Than Sunday | Evangelical Alliance',
+  description: 'Let your MP know what your church is doing in your community.',
 }
 
 export default function RootLayout({
