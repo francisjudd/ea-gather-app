@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import SiteNav from '../../components/SiteNav'
 import BrandLockup from '../../components/BrandLockup'
@@ -8,21 +8,17 @@ import MapView from '../churches/MapView'
 import type { ConstituencyDetail } from '@/lib/constituencies/types'
 import churches from '../churches/churches.module.css'
 import { ChurchMark } from '../churches/icons'
+import { ChurchCard, ChurchCompact, ChurchDialog } from './ChurchCard'
 import styles from './constituency.module.css'
 
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
 const SERVICES_PAGE_SIZE = 12
+type View = 'map' | 'cards'
+// Inlined at build time, so server and browser agree. Without a key the map can't render,
+// so we start on Cards instead.
+const hasMapKey = Boolean(process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY)
 // An A–Z filter is only useful once there are enough churches to scroll through.
 const ALPHABET_THRESHOLD = 12
-
-function PinIcon() {
-  return (
-    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
-      <path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z" />
-      <circle cx="12" cy="10" r="2.2" />
-    </svg>
-  )
-}
 
 function StatCard({ value, label, note }: { value: number; label: string; note: string }) {
   return (
@@ -37,8 +33,9 @@ function StatCard({ value, label, note }: { value: number; label: string; note: 
 }
 
 export default function ConstituencyView({ detail }: { detail: ConstituencyDetail }) {
-  const [mobileView, setMobileView] = useState<'map' | 'list'>('list')
-  const [selected, setSelected] = useState('')
+  const [view, setView] = useState<View>(hasMapKey ? 'map' : 'cards')
+  const [highlighted, setHighlighted] = useState('') // set by clicking a map pin
+  const [detailId, setDetailId] = useState('') // church shown in the details dialog
   const [letter, setLetter] = useState('All')
   const [category, setCategory] = useState('')
   const [showAllServices, setShowAllServices] = useState(false)
@@ -56,6 +53,13 @@ export default function ConstituencyView({ detail }: { detail: ConstituencyDetai
       ),
     [visibleChurches],
   )
+
+  const detailChurch = detail.churches.find((church) => church.id === detailId) ?? null
+
+  // A map pin click highlights the matching card and scrolls it into view.
+  useEffect(() => {
+    if (highlighted) document.getElementById(`church-${highlighted}`)?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
+  }, [highlighted])
 
   const categories = Object.entries(detail.servicesByCategory).sort((a, b) => b[1] - a[1])
   const filteredServices = detail.services.filter((service) => !category || service.category === category)
@@ -120,75 +124,86 @@ export default function ConstituencyView({ detail }: { detail: ConstituencyDetai
             <p className={styles.empty}>We don&rsquo;t have any churches listed in {detail.name} yet.</p>
           ) : (
             <>
-              <div className={styles.mobileToggle} role="group" aria-label="Show churches as a list or a map">
-                <button type="button" aria-pressed={mobileView === 'list'} onClick={() => setMobileView('list')}>List</button>
-                <button type="button" aria-pressed={mobileView === 'map'} onClick={() => setMobileView('map')}>Map</button>
+              <div className={styles.viewBar}>
+                <div className={styles.viewSwitch} role="group" aria-label="Show churches on a map or as cards">
+                  {(['map', 'cards'] as const).map((option) => (
+                    <button key={option} type="button" aria-pressed={view === option} onClick={() => setView(option)}>
+                      {option === 'map' ? 'Map' : 'Cards'}
+                    </button>
+                  ))}
+                </div>
+                <span className={styles.viewCount} aria-live="polite">
+                  {detail.churches.length} {detail.churches.length === 1 ? 'church' : 'churches'}
+                </span>
               </div>
 
-              <div className={styles.split} data-mobile-view={mobileView}>
-                <div className={styles.listCol}>
-                  {detail.churches.length > ALPHABET_THRESHOLD && (
-                    <div className={styles.alphabet} role="group" aria-label="Filter churches by first letter">
-                      {['All', ...alphabet].map((item) => (
-                        <button
-                          key={item}
-                          type="button"
-                          aria-pressed={letter === item}
-                          onClick={() => { setLetter(item); setSelected('') }}
-                        >
-                          {item}
-                        </button>
+              {!detail.churches.some((church) => church.programmes.length > 0) && (
+                <p className={styles.programmesNote}>
+                  We don&rsquo;t have programme details for these churches yet.{' '}
+                  <Link href="/submit">Tell us what your church does</Link>
+                </p>
+              )}
+
+              {detail.churches.length > ALPHABET_THRESHOLD && (
+                <div className={styles.alphabet} role="group" aria-label="Filter churches by first letter">
+                  {['All', ...alphabet].map((item) => (
+                    <button key={item} type="button" aria-pressed={letter === item} onClick={() => { setLetter(item); setHighlighted('') }}>
+                      {item}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {view === 'map' ? (
+                <>
+                  <div className={styles.split}>
+                    <ul className={styles.sideList} aria-label="Churches">
+                      {visibleChurches.map((church) => (
+                        <ChurchCompact
+                          key={church.id}
+                          church={church}
+                          selected={highlighted === church.id}
+                          onSelect={() => setHighlighted(highlighted === church.id ? '' : church.id)}
+                          onOpen={() => setDetailId(church.id)}
+                        />
                       ))}
+                      {visibleChurches.length === 0 && (
+                        <li className={styles.empty}>No churches start with &ldquo;{letter}&rdquo;.</li>
+                      )}
+                    </ul>
+                    <div className={styles.mapWrap}>
+                      <MapView
+                        churches={mapChurches}
+                        selectedChurch={highlighted}
+                        onSelectChurch={setHighlighted}
+                        canvasClassName={styles.mapCanvasTall}
+                        focusSelected
+                      />
                     </div>
-                  )}
-                  <ul className={styles.churchList}>
-                    {visibleChurches.map((church) => {
-                      const open = selected === church.id
-                      return (
-                        <li key={church.id} className={styles.churchItem} data-selected={open}>
-                          <button
-                            type="button"
-                            className={styles.churchButton}
-                            aria-expanded={open}
-                            onClick={() => setSelected(open ? '' : church.id)}
-                          >
-                            <span className={styles.churchName}>{church.name}</span>
-                            {church.denomination && <span className={styles.churchMeta}>{church.denomination}</span>}
-                            {church.address && (
-                              <span className={styles.churchAddress}>
-                                <PinIcon />
-                                {church.address}
-                              </span>
-                            )}
-                          </button>
-                          {open && (church.website || church.phone) && (
-                            <ul className={styles.contactList}>
-                              {church.website && (
-                                <li><a href={church.website} rel="noopener noreferrer" target="_blank">Visit website</a></li>
-                              )}
-                              {church.phone && <li><a href={`tel:${church.phone.replace(/\s/g, '')}`}>{church.phone}</a></li>}
-                            </ul>
-                          )}
-                        </li>
-                      )
-                    })}
-                    {visibleChurches.length === 0 && <li className={styles.empty}>No churches start with &ldquo;{letter}&rdquo;.</li>}
+                  </div>
+                  <p className={styles.mapNote}>
+                    Addresses are where the churches meet, not necessarily their correspondence address. Please contact
+                    the individual churches for that.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <ul className={styles.cardGrid}>
+                    {visibleChurches.map((church) => (
+                      <ChurchCard
+                        key={church.id}
+                        church={church}
+                        highlighted={highlighted === church.id}
+                        onOpen={() => { setHighlighted(church.id); setDetailId(church.id) }}
+                      />
+                    ))}
                   </ul>
-                </div>
-
-                <div className={styles.mapCol}>
-                  <MapView
-                    churches={mapChurches}
-                    selectedChurch={selected}
-                    onSelectChurch={setSelected}
-                    canvasClassName={styles.mapCanvasTall}
-                  />
-                </div>
-              </div>
-              <p className={styles.mapNote}>
-                Addresses are where the churches meet, not necessarily their correspondence address. Please contact the
-                individual churches for that.
-              </p>
+                  {visibleChurches.length === 0 && (
+                    <p className={styles.empty}>No churches start with &ldquo;{letter}&rdquo;.</p>
+                  )}
+                </>
+              )}
+              <ChurchDialog church={detailChurch} onClose={() => setDetailId('')} />
             </>
           )}
         </section>

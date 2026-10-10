@@ -12,6 +12,12 @@ export type ConstituencySummary = {
   serviceCount: number
 }
 
+// A community programme linked to a church (from the church_services table).
+export type ConstituencyProgramme = {
+  name: string
+  category: string
+}
+
 export type ConstituencyChurch = {
   id: string
   name: string
@@ -22,6 +28,7 @@ export type ConstituencyChurch = {
   lng: number | null
   website: string | null
   phone: string | null
+  programmes: ConstituencyProgramme[]
 }
 
 export type ConstituencyService = {

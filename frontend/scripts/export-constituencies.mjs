@@ -63,13 +63,27 @@ const db = new DatabaseSync(join(root, 'data-source', 'combined.db'), { readOnly
 const nz = (v) => (v === '' || v === undefined ? null : v)
 
 const churches = db.prepare(
-  `SELECT slug, name, denomination, address, postcode, lat, lng, website, phone, constituency, constituency_code
+  `SELECT id, slug, name, denomination, address, postcode, lat, lng, website, phone, constituency, constituency_code
    FROM churches WHERE constituency IS NOT NULL AND constituency != '' AND constituency NOT LIKE '(%' ORDER BY name`,
 ).all()
 const services = db.prepare(
   `SELECT id, category, name, address, postcode, lat, lng, website, phone, constituency, constituency_code
    FROM services WHERE constituency IS NOT NULL AND constituency != '' AND constituency NOT LIKE '(%' ORDER BY name`,
 ).all()
+
+// Programmes linked to each church (church_services), de-duplicated by name + category.
+const programmesByChurch = new Map()
+for (const row of db.prepare(
+  `SELECT cs.church_id, s.name, s.category
+   FROM church_services cs JOIN services s ON s.id = cs.service_id
+   WHERE s.name IS NOT NULL ORDER BY s.name`,
+).all()) {
+  const list = programmesByChurch.get(row.church_id) ?? []
+  if (!list.some((p) => p.name === row.name && p.category === row.category)) {
+    list.push({ name: row.name, category: row.category ?? 'Other' })
+  }
+  programmesByChurch.set(row.church_id, list)
+}
 
 const byName = new Map()
 const entry = (name, code) => {
@@ -84,6 +98,7 @@ for (const c of churches) {
   entry(c.constituency, c.constituency_code).churches.push({
     id: c.slug, name: c.name, denomination: nz(c.denomination), address: nz(c.address),
     postcode: nz(c.postcode), lat: c.lat, lng: c.lng, website: nz(c.website), phone: nz(c.phone),
+    programmes: programmesByChurch.get(c.id) ?? [],
   })
 }
 for (const s of services) {
