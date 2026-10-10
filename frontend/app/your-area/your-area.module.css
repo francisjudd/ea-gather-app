@@ -383,7 +383,7 @@
 }
 
 .letterPanel .eyebrow {
-  color: var(--ea-lime);
+  color: #fff;
   margin-bottom: 11px;
 }
 
@@ -425,7 +425,8 @@
 }
 
 .letterPanel .button-quiet:hover {
-  color: var(--ea-lime);
+  color: #fff;
+  text-decoration: underline;
 }
 
 .letterNote {

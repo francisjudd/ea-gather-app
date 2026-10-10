@@ -53,7 +53,7 @@
 
 .kicker {
   margin: 0;
-  color: var(--ea-lime);
+  color: var(--color-text-on-panel);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.15em;
@@ -67,6 +67,10 @@
   font-weight: 700;
   letter-spacing: -0.03em;
   line-height: 1.05;
+}
+
+.hero .kicker {
+  color: var(--ea-lime); /* lime only on navy; on light cards the kicker uses feature dark */
 }
 
 .meta {
