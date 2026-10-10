@@ -76,7 +76,10 @@ export default function ConstituencyView({ detail }: { detail: ConstituencyDetai
 
   // A map pin click highlights the matching item and scrolls it into view.
   useEffect(() => {
-    if (highlighted) document.getElementById(`item-${highlighted}`)?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
+    if (highlighted) {
+      const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
+      document.getElementById(`item-${highlighted}`)?.scrollIntoView({ block: 'nearest', behavior })
+    }
   }, [highlighted])
 
   const categories = Object.entries(detail.servicesByCategory).sort((a, b) => b[1] - a[1])
@@ -126,7 +129,7 @@ export default function ConstituencyView({ detail }: { detail: ConstituencyDetai
         </div>
       </section>
 
-      <main className={styles.container}>
+      <main id="main-content" className={styles.container} tabIndex={-1}>
         <dl className={styles.stats} aria-label={`${detail.name} at a glance`}>
           <StatCard value={detail.churchCount} label="Churches" note={`listed in ${detail.name}`} />
           <StatCard value={detail.serviceCount} label="Community services" note="across the constituency" />

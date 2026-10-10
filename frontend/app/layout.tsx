@@ -53,6 +53,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={lato.variable}>
       <body>
+        <a className="skip-link" href="#main-content">
+          Skip to main content
+        </a>
         {children}
         <CookieConsent />
       </body>

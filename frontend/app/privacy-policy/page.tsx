@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyPolicyPage() {
   return (
-    <main className="app-shell">
+    <main id="main-content" className="app-shell" tabIndex={-1}>
       <header className="site-header">
         <Link className="brand-lockup" href="/contact-mp" aria-label="More Than Sunday — start again">
           <span className="brand-name">More Than <strong>Sunday</strong></span>

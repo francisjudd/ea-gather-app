@@ -5,17 +5,25 @@ import Link from 'next/link'
 import FullNav from '../../components/FullNavigation'
 import BrandLockup from '../../components/BrandLockup'
 import type { ConstituencySummary } from '@/lib/constituencies/types'
+import { useInfiniteList } from '@/lib/useInfiniteList'
 import churches from '../churches/churches.module.css'
 import { SearchIcon } from '../churches/icons'
 import styles from './constituency.module.css'
-
-const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
 
 const plural = (count: number, one: string, many: string) => `${count} ${count === 1 ? one : many}`
 
 export default function ConstituencyIndex({ constituencies }: { constituencies: ConstituencySummary[] }) {
   const [query, setQuery] = useState('')
   const [letter, setLetter] = useState('All')
+  const availableLetters = useMemo(
+    () =>
+      [...new Set(
+        constituencies
+          .map(({ name }) => name.trim().charAt(0).toLocaleUpperCase('en-GB'))
+          .filter((initial) => /^[A-Z]$/.test(initial)),
+      )].sort(),
+    [constituencies],
+  )
 
   const matches = useMemo(() => {
     const needle = query.trim().toLowerCase()
@@ -25,6 +33,10 @@ export default function ConstituencyIndex({ constituencies }: { constituencies: 
         (!needle || item.name.toLowerCase().includes(needle)),
     )
   }, [constituencies, query, letter])
+  const { visibleItems, visibleCount, hasMore, loadMore, sentinelRef } = useInfiniteList(matches, {
+    batchSize: 40,
+    resetKey: `${letter}:${query.trim().toLocaleLowerCase('en-GB')}`,
+  })
 
   return (
     <div className={churches.page}>
@@ -60,13 +72,13 @@ export default function ConstituencyIndex({ constituencies }: { constituencies: 
         </div>
       </section>
 
-      <main className={`${styles.container} ${styles.indexMain}`}>
+      <main id="main-content" className={`${styles.container} ${styles.indexMain}`} tabIndex={-1}>
         <div className={styles.indexBar}>
           <span className={styles.indexCount} aria-live="polite">
             {plural(matches.length, 'constituency', 'constituencies')}
           </span>
           <div className={styles.alphabet} role="group" aria-label="Filter constituencies by first letter">
-            {['All', ...alphabet].map((item) => (
+            {['All', ...availableLetters].map((item) => (
               <button key={item} type="button" aria-pressed={letter === item} onClick={() => setLetter(item)}>
                 {item}
               </button>
@@ -75,7 +87,7 @@ export default function ConstituencyIndex({ constituencies }: { constituencies: 
         </div>
 
         <ul className={styles.indexGrid} aria-label="Constituencies">
-          {matches.map((item) => (
+          {visibleItems.map((item) => (
             <li key={item.slug}>
               <Link className={styles.indexCard} href={`/constituencies/${item.slug}`}>
                 <span className={styles.indexName}>{item.name}</span>
@@ -87,6 +99,18 @@ export default function ConstituencyIndex({ constituencies }: { constituencies: 
           ))}
         </ul>
         {matches.length === 0 && <p className={styles.empty}>No constituencies match your search.</p>}
+        <div className="infinite-list-controls">
+          <p className="infinite-list-status" role="status" aria-live="polite">
+            Showing {visibleCount} of {matches.length}{' '}
+            {matches.length === 1 ? 'constituency' : 'constituencies'}.
+          </p>
+          {hasMore && (
+            <button className="infinite-list-button" type="button" onClick={loadMore}>
+              Load more constituencies
+            </button>
+          )}
+        </div>
+        {hasMore && <div className="infinite-list-sentinel" ref={sentinelRef} aria-hidden="true" />}
       </main>
 
       <footer className={churches.footer}>

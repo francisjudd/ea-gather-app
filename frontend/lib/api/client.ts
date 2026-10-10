@@ -10,12 +10,24 @@ import type { components } from './schema'
 type Church = components['schemas']['Church']
 type ChurchSubmission = components['schemas']['ChurchSubmission']
 type ChurchSubmissionIn = components['schemas']['ChurchSubmissionIn']
+type ConstituencyDetail = components['schemas']['ConstituencyDetail']
+type ConstituencySummary = components['schemas']['ConstituencySummary']
 type GeocodeResult = components['schemas']['GeocodeResult']
 type Initiative = components['schemas']['Initiative']
 type Mp = components['schemas']['Mp']
 type SubmissionUpdate = components['schemas']['SubmissionUpdate']
 
-export type { Church, ChurchSubmission, ChurchSubmissionIn, GeocodeResult, Initiative, Mp, SubmissionUpdate }
+export type {
+  Church,
+  ChurchSubmission,
+  ChurchSubmissionIn,
+  ConstituencyDetail,
+  ConstituencySummary,
+  GeocodeResult,
+  Initiative,
+  Mp,
+  SubmissionUpdate,
+}
 
 export type ListChurchesParams = {
   q?: string
@@ -97,6 +109,18 @@ export const api = {
 
   listInitiatives(): Promise<Initiative[]> {
     return request<Initiative[]>('/openapi/initiatives')
+  },
+
+  listConstituencies(): Promise<ConstituencySummary[]> {
+    return request<ConstituencySummary[]>('/openapi/areas')
+  },
+
+  listConstituencyDetails(): Promise<ConstituencyDetail[]> {
+    return request<ConstituencyDetail[]>('/openapi/areas/details')
+  },
+
+  getConstituency(slug: string): Promise<ConstituencyDetail> {
+    return request<ConstituencyDetail>(`/openapi/areas/${encodeURIComponent(slug)}`)
   },
 
   geocode(q: string): Promise<GeocodeResult> {

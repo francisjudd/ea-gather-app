@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 import SiteNav from '../../components/SiteNav'
+import LoadingSpinner from '../../components/LoadingSpinner'
 import {
   getPendingSubmissions,
   approveChurch,
@@ -107,7 +108,7 @@ function SubmissionCard({
 export default function AdminReview() {
   const [token, setToken] = useState('')
   const [submissions, setSubmissions] = useState<ChurchSubmission[]>([])
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
   const refresh = useCallback(async (adminToken: string) => {
@@ -147,7 +148,7 @@ export default function AdminReview() {
   }
 
   return (
-    <main className="app-shell">
+    <main id="main-content" className="app-shell" tabIndex={-1}>
       <header className="site-header">
         <Link className="brand-lockup" href="/" aria-label="Evangelical Alliance home">
           <span className="brand-name">evangelical <strong>alliance</strong></span>
@@ -165,7 +166,7 @@ export default function AdminReview() {
           </p>
           <div className="admin-stats">
             <div className="admin-stat">
-              <span className="admin-stat-value">{submissions.length}</span>
+              <span className="admin-stat-value">{token ? submissions.length : '—'}</span>
               <span className="admin-stat-label">Awaiting review</span>
             </div>
           </div>
@@ -175,10 +176,15 @@ export default function AdminReview() {
               id="admin-token"
               type="password"
               value={token}
-              onChange={(event) => setToken(event.target.value)}
+              onChange={(event) => {
+                const nextToken = event.target.value
+                setToken(nextToken)
+                setLoading(Boolean(nextToken))
+              }}
               placeholder="Paste the admin token"
               autoComplete="off"
             />
+            <p className="admin-token-help">Your token is used only to load and review pending submissions.</p>
           </div>
         </aside>
 
@@ -190,9 +196,17 @@ export default function AdminReview() {
           </div>
           <h2 className="ea-underline" id="admin-title">Unapproved submissions.</h2>
 
-          {loading ? (
+          {!token ? (
+            <div className="admin-empty admin-auth-prompt">
+              <span className="admin-prompt-number" aria-hidden="true">01</span>
+              <p className="admin-empty-title">Enter your admin token</p>
+              <p className="admin-empty-copy">
+                Add your token in the panel to securely load the submissions waiting for review.
+              </p>
+            </div>
+          ) : loading ? (
             <div className="admin-empty">
-              <p className="admin-empty-title">Loading submissions…</p>
+              <LoadingSpinner label="Loading submissions…" />
             </div>
           ) : error ? (
             <div className="admin-empty">

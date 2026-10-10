@@ -32,6 +32,8 @@ class BackendRoutingTests(unittest.TestCase):
             "/openapi/mp/lookup",
             "/openapi/admin/submissions",
             "/openapi/admin/submissions/{submission_id}",
+            "/openapi/areas",
+            "/openapi/areas/{slug}",
         ):
             with self.subTest(path=path):
                 self.assertIn(path, paths)

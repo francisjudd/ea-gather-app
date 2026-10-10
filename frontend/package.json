@@ -12,8 +12,7 @@
     "api:types": "openapi-typescript http://localhost:8000/openapi.json -o ./lib/api/schema.d.ts",
     "api:types:prod": "openapi-typescript https://ea-gather-app.vercel.app/openapi/openapi.json -o ./lib/api/schema.d.ts",
     "test": "vitest run",
-    "test:coverage": "vitest run --coverage",
-    "data:constituencies": "node scripts/export-constituencies.mjs"
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@googlemaps/js-api-loader": "^2.1.3",

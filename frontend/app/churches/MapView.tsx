@@ -149,6 +149,7 @@ export default function MapView({
     if (!map || !marker || !position) return
     map.panTo(position)
     if ((map.getZoom() ?? 0) < 14) map.setZoom(14)
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     marker.setAnimation(google.maps.Animation.BOUNCE)
     const timeout = window.setTimeout(() => marker.setAnimation(null), 1400)
     return () => window.clearTimeout(timeout)
@@ -157,8 +158,12 @@ export default function MapView({
   if (!apiKey) {
     return (
       <div className={styles.mapPanel}>
-        <div className={`${styles.mapCanvas} ${canvasClassName ?? ''}`} />
-        <div className={styles.mapError}>
+        <div
+          className={`${styles.mapCanvas} ${canvasClassName ?? ''}`}
+          role="region"
+          aria-label="Church map. Switch to list view for text results."
+        />
+        <div className={styles.mapError} role="alert">
           Google Maps is not configured. Add NEXT_PUBLIC_GOOGLE_MAPS_API_KEY to your .env file.
         </div>
       </div>
@@ -167,8 +172,13 @@ export default function MapView({
 
   return (
     <div className={styles.mapPanel}>
-      <div ref={containerRef} className={`${styles.mapCanvas} ${canvasClassName ?? ''}`} />
-      {error && <div className={styles.mapError}>{error}</div>}
+      <div
+        ref={containerRef}
+        className={`${styles.mapCanvas} ${canvasClassName ?? ''}`}
+        role="region"
+        aria-label="Church map. Switch to list view for text results."
+      />
+      {error && <div className={styles.mapError} role="alert">{error}</div>}
     </div>
   )
 }

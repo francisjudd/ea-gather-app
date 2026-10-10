@@ -4,9 +4,11 @@ import { useEffect, useMemo, useState, type FormEvent } from 'react'
 import Link from 'next/link'
 import FullNav from '../../components/FullNavigation'
 import BrandLockup from '../../components/BrandLockup'
+import LoadingSpinner, { SpinnerIcon } from '../../components/LoadingSpinner'
 import MapView from './MapView'
 import ChurchProfileCard from './ChurchProfileCard'
 import { useInitiatives } from '../../lib/useInitiatives'
+import { useInfiniteList } from '../../lib/useInfiniteList'
 import { api, type Church } from '../../lib/api/client'
 import { dayKeys, dayShortLabels, parseChurchHours, type DayKey } from '../../lib/churchHours'
 import { distanceMiles, formatDistance, type LatLng } from '../../lib/geo'
@@ -18,8 +20,6 @@ import { PinIcon, SearchIcon } from './icons'
 type ScoredChurch = Church & { distanceMiles?: number | null }
 
 const DEFAULT_RADIUS_MILES = 15
-
-const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
 
 export default function ChurchFinder() {
   const [query, setQuery] = useState('')
@@ -33,13 +33,30 @@ export default function ChurchFinder() {
   const [myCoords, setMyCoords] = useState<LatLng | null>(null)
   const [radius, setRadius] = useState(DEFAULT_RADIUS_MILES)
   const [churches, setChurches] = useState<Church[]>([])
+  const [churchesLoading, setChurchesLoading] = useState(true)
+  const [churchesError, setChurchesError] = useState('')
   const initiatives = useInitiatives()
+  const hasNumberInitial = useMemo(
+    () => churches.some(({ name }) => /^\d/.test(name.trim())),
+    [churches],
+  )
+  const availableLetters = useMemo(
+    () =>
+      [...new Set(
+        churches
+          .map(({ name }) => name.trim().charAt(0).toLocaleUpperCase('en-GB'))
+          .filter((initial) => /^[A-Z]$/.test(initial)),
+      )].sort(),
+    [churches],
+  )
 
   // Load the directory from the API. The backend returns distance-sorted results
   // when lat/lng are supplied, so we refetch when the search center changes.
   useEffect(() => {
     let cancelled = false
     const load = async () => {
+      setChurchesLoading(true)
+      setChurchesError('')
       try {
         const params: Parameters<typeof api.listChurches>[0] = { limit: 5000 }
         if (myCoords) {
@@ -50,7 +67,12 @@ export default function ChurchFinder() {
         const data = await api.listChurches(params)
         if (!cancelled) setChurches(data)
       } catch {
-        if (!cancelled) setChurches([])
+        if (!cancelled) {
+          setChurches([])
+          setChurchesError('We could not load churches. Please refresh and try again.')
+        }
+      } finally {
+        if (!cancelled) setChurchesLoading(false)
       }
     }
     void load()
@@ -69,8 +91,10 @@ export default function ChurchFinder() {
     const base: Church[] = churches.filter((church) => {
       const matchesQuery = !normalizedQuery
         || `${church.name} ${church.address} ${church.place}`.toLocaleLowerCase('en-GB').includes(normalizedQuery)
-      const initial = church.name.match(/[a-z]/i)?.[0]?.toLocaleUpperCase('en-GB')
-      const matchesLetter = letter === 'All' || initial === letter
+      const initial = church.name.trim().charAt(0).toLocaleUpperCase('en-GB')
+      const matchesLetter =
+        letter === 'All'
+        || (letter === '#' ? /^\d/.test(initial) : initial === letter)
       const matchesInitiatives = initiativeSet.length === 0
         || initiativeSet.every((initiative) => church.initiatives.includes(initiative))
       const matchesDays = daySet.size === 0
@@ -92,6 +116,19 @@ export default function ChurchFinder() {
 
     return base
   }, [letter, selectedInitiatives, selectedDays, submittedQuery, activeCenter, radius, churches])
+  const churchResetKey = JSON.stringify([
+    churches.length,
+    letter,
+    selectedInitiatives,
+    selectedDays,
+    submittedQuery,
+    activeCenter,
+    radius,
+  ])
+  const { visibleItems: visibleChurches, visibleCount, hasMore, loadMore, sentinelRef } = useInfiniteList(
+    filteredChurches,
+    { batchSize: 30, resetKey: churchResetKey },
+  )
 
   function submitSearch(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -221,7 +258,7 @@ export default function ChurchFinder() {
         </div>
       </section>
 
-      <main className={styles.main}>
+      <main id="main-content" className={styles.main} tabIndex={-1}>
         <section className={styles.searchSection} aria-label="Search options and filters">
           {activeCenter && (
             <div className={styles.locationBar} role="group" aria-label="Location search options">
@@ -338,11 +375,20 @@ export default function ChurchFinder() {
               </button>
             </div>
             <span className={styles.resultCount} aria-live="polite">
-              {filteredChurches.length} {filteredChurches.length === 1 ? 'church' : 'churches'}
+              {churchesLoading ? (
+                <span className="loading-indicator">
+                  <SpinnerIcon />
+                  Loading churches…
+                </span>
+              ) : (
+                `${filteredChurches.length} ${filteredChurches.length === 1 ? 'church' : 'churches'}`
+              )}
             </span>
           </div>
+          {churchesError && <p className={styles.locationMessage} role="alert">{churchesError}</p>}
         </section>
 
+        {churchesLoading && <LoadingSpinner label="Loading church directory…" />}
         {view === 'map' ? (
           <>
             <MapView
@@ -372,7 +418,18 @@ export default function ChurchFinder() {
               >
                 All
               </button>
-              {alphabet.map((item) => (
+              {hasNumberInitial && (
+                <button
+                  className={letter === '#' ? styles.alphabetActive : ''}
+                  type="button"
+                  aria-label="Names beginning with a number"
+                  aria-pressed={letter === '#'}
+                  onClick={() => chooseLetter('#')}
+                >
+                  #
+                </button>
+              )}
+              {availableLetters.map((item) => (
                 <button
                   key={item}
                   className={letter === item ? styles.alphabetActive : ''}
@@ -385,7 +442,7 @@ export default function ChurchFinder() {
               ))}
             </div>
             <ul className={styles.churchList}>
-              {filteredChurches.map((church) => (
+              {visibleChurches.map((church) => (
                 <li key={church.id}>
                   <button
                     className={styles.churchRow}
@@ -423,6 +480,18 @@ export default function ChurchFinder() {
                 </li>
               )}
             </ul>
+            <div className="infinite-list-controls">
+              <p className="infinite-list-status" role="status" aria-live="polite">
+                Showing {visibleCount} of {filteredChurches.length}{' '}
+                {filteredChurches.length === 1 ? 'church' : 'churches'}.
+              </p>
+              {hasMore && (
+                <button className="infinite-list-button" type="button" onClick={loadMore}>
+                  Load more churches
+                </button>
+              )}
+            </div>
+            {hasMore && <div className="infinite-list-sentinel" ref={sentinelRef} aria-hidden="true" />}
           </section>
         )}
 

@@ -1,14 +1,10 @@
 // The ONLY place that knows where constituency data comes from.
 //
 // Pages and components call `constituencies.list()` / `constituencies.get(slug)` and never
-// touch files or URLs. To move to the FastAPI backend, write an `apiRepository` that
-// implements ConstituencyRepository with fetch() calls and export it as `constituencies`.
-// Nothing else changes (types.ts will be replaced by types from lib/api/schema.d.ts).
-//
-// Today: JSON generated from data-source/combined.db (npm run data:constituencies).
+// touch files or URLs. Data is fetched at runtime from the FastAPI backend
+// (/openapi/areas and /openapi/areas/{slug}), so it always reflects the live database.
 
-import { readFile } from 'node:fs/promises'
-import { join } from 'node:path'
+import { api } from '@/lib/api/client'
 import type { ConstituencyDetail, ConstituencySummary } from './types'
 
 export interface ConstituencyRepository {
@@ -16,21 +12,16 @@ export interface ConstituencyRepository {
   get(slug: string): Promise<ConstituencyDetail | null>
 }
 
-const dir = join(process.cwd(), 'lib', 'constituencies', 'generated')
-
-function createFileRepository(): ConstituencyRepository {
-  let indexCache: Promise<ConstituencySummary[]> | undefined
-
+function createApiRepository(): ConstituencyRepository {
   return {
     list() {
-      indexCache ??= readFile(join(dir, 'index.json'), 'utf8').then((text) => JSON.parse(text))
-      return indexCache
+      return api.listConstituencies()
     },
     async get(slug) {
-      // Slugs are [a-z0-9-] only; reject anything else before touching the filesystem.
+      // Slugs are [a-z0-9-] only; reject anything else before hitting the API.
       if (!/^[a-z0-9-]+$/.test(slug)) return null
       try {
-        return JSON.parse(await readFile(join(dir, 'by-slug', `${slug}.json`), 'utf8'))
+        return await api.getConstituency(slug)
       } catch {
         return null
       }
@@ -38,4 +29,4 @@ function createFileRepository(): ConstituencyRepository {
   }
 }
 
-export const constituencies: ConstituencyRepository = createFileRepository()
+export const constituencies: ConstituencyRepository = createApiRepository()

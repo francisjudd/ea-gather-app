@@ -6,6 +6,7 @@ import FullNav from '../../components/FullNavigation'
 import { submitChurch } from '../../lib/churchStore'
 import { useInitiatives } from '../../lib/useInitiatives'
 import SiteFooter from '../../components/SiteFooter'
+import { SpinnerIcon } from '../../components/LoadingSpinner'
 
 type FormState = {
   name: string
@@ -109,7 +110,7 @@ export default function SubmitChurchForm() {
   }
 
   return (
-    <main className="app-shell">
+    <main id="main-content" className="app-shell" tabIndex={-1}>
       <FullNav />
 
       <div className="flow-layout">
@@ -198,7 +199,8 @@ export default function SubmitChurchForm() {
                 <div className="action-row action-row-split">
                   <Link className="button button-quiet" href="/churches">← Back to directory</Link>
                   <button className="button button-primary" type="submit" disabled={submitting}>
-                    {submitting ? 'Submitting…' : 'Submit for review'} <span aria-hidden="true">→</span>
+                    {submitting && <SpinnerIcon />}
+                    {submitting ? 'Submitting…' : <>Submit for review <span aria-hidden="true">→</span></>}
                   </button>
                 </div>
               </form>
