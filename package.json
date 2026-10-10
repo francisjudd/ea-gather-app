@@ -1,0 +1,18 @@
+{
+  "name": "ea-gather-app",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "frontend"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace frontend",
+    "build": "npm run build --workspace frontend",
+    "lint": "npm run lint --workspace frontend",
+    "typecheck": "npm run typecheck --workspace frontend",
+    "api:types": "npm run api:types --workspace frontend"
+  },
+  "engines": {
+    "node": ">=22.13.0"
+  }
+}
