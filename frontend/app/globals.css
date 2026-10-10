@@ -173,7 +173,6 @@ a {
   border-color: var(--ea-navy);
   background: var(--ea-navy);
   color: white;
-  box-shadow: 0 0 0 4px rgb(36 48 95 / 10%);
 }
 
 .is-complete .progress-number {
@@ -919,31 +918,37 @@ a {
     display: none;
   }
 
+  /* On mobile the circles looked like tappable buttons, so the strip is
+     restyled as a segmented progress bar: completed + current segments fill
+     in (teal / current-navy), the rest stay light. Step text is provided by
+     the "STEP X OF 7" line in the form panel below. */
   .progress-list {
+    display: grid;
     grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 6px;
     margin-top: 21px;
   }
 
   .progress-list li {
-    min-height: 32px;
+    min-height: 8px;
     justify-content: center;
-  }
-
-  .progress-list li > span:last-child {
-    position: absolute;
-    width: 1px;
-    height: 1px;
+    border-radius: 999px;
+    background: var(--color-border);
     overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    clip-path: inset(50%);
   }
 
+  .progress-list li.is-current {
+    background: var(--ea-navy);
+  }
+
+  .progress-list li.is-complete {
+    background: var(--ea-teal);
+  }
+
+  /* Hide the numbered circles, labels and connector line. */
+  .progress-list li > span,
   .progress-list li:not(:last-child)::after {
-    top: 15px;
-    left: calc(50% + 15px);
-    width: calc(100% - 30px);
-    height: 1px;
+    display: none;
   }
 
   .site-footer {
@@ -987,19 +992,6 @@ a {
 
   .progress-list {
     margin-top: 16px;
-  }
-
-  .progress-number {
-    width: 25px;
-    height: 25px;
-    flex-basis: 25px;
-    font-size: 10px;
-  }
-
-  .progress-list li:not(:last-child)::after {
-    top: 12px;
-    left: calc(50% + 13px);
-    width: calc(100% - 26px);
   }
 
   .form-panel {
