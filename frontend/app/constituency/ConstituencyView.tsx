@@ -5,38 +5,43 @@ import Link from 'next/link'
 import SiteNav from '../../components/SiteNav'
 import BrandLockup from '../../components/BrandLockup'
 import MapView from '../churches/MapView'
-import type { ConstituencyChurch, ConstituencyDetail } from '@/lib/constituencies/types'
+import type { ConstituencyDetail } from '@/lib/constituencies/types'
 import churches from '../churches/churches.module.css'
-import { ChurchMark, PinIcon } from '../churches/icons'
+import { ChurchMark } from '../churches/icons'
 import styles from './constituency.module.css'
 
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
+const SERVICES_PAGE_SIZE = 12
+// An A–Z filter is only useful once there are enough churches to scroll through.
+const ALPHABET_THRESHOLD = 12
 
-function ChurchCard({ church }: { church: ConstituencyChurch }) {
+function PinIcon() {
   return (
-    <article className={churches.profileCard} aria-label={`${church.name} profile`}>
-      <div className={churches.profileHeader}>
-        <div>
-          <h3>{church.name}</h3>
-          {church.denomination && <p className={churches.profileMeta}>{church.denomination}</p>}
-        </div>
-      </div>
-      {church.address && <p className={churches.profileAddress}>{church.address}</p>}
-      <ul className={styles.contactList}>
-        {church.website && (
-          <li><a href={church.website} rel="noopener noreferrer" target="_blank">Website</a></li>
-        )}
-        {church.phone && <li><a href={`tel:${church.phone.replace(/\s/g, '')}`}>{church.phone}</a></li>}
-      </ul>
-    </article>
+    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
+      <path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z" />
+      <circle cx="12" cy="10" r="2.2" />
+    </svg>
+  )
+}
+
+function StatCard({ value, label, note }: { value: number; label: string; note: string }) {
+  return (
+    <div className={styles.statCard}>
+      <dt>{label}</dt>
+      <dd>
+        <span className={styles.statValue}>{value.toLocaleString('en-GB')}</span>
+        <span className={styles.statNote}>{note}</span>
+      </dd>
+    </div>
   )
 }
 
 export default function ConstituencyView({ detail }: { detail: ConstituencyDetail }) {
-  const [view, setView] = useState<'map' | 'list'>('map')
+  const [mobileView, setMobileView] = useState<'map' | 'list'>('list')
   const [selected, setSelected] = useState('')
   const [letter, setLetter] = useState('All')
   const [category, setCategory] = useState('')
+  const [showAllServices, setShowAllServices] = useState(false)
 
   const visibleChurches = useMemo(
     () => detail.churches.filter((church) => letter === 'All' || church.name.toUpperCase().startsWith(letter)),
@@ -51,9 +56,10 @@ export default function ConstituencyView({ detail }: { detail: ConstituencyDetai
       ),
     [visibleChurches],
   )
-  const selectedChurch = detail.churches.find((church) => church.id === selected)
+
   const categories = Object.entries(detail.servicesByCategory).sort((a, b) => b[1] - a[1])
-  const services = detail.services.filter((service) => !category || service.category === category)
+  const filteredServices = detail.services.filter((service) => !category || service.category === category)
+  const services = showAllServices ? filteredServices : filteredServices.slice(0, SERVICES_PAGE_SIZE)
   const writeHref = `/contact-mp${detail.churches[0]?.postcode ? `?postcode=${encodeURIComponent(detail.churches[0].postcode)}` : ''}`
 
   return (
@@ -65,127 +71,177 @@ export default function ConstituencyView({ detail }: { detail: ConstituencyDetai
         <SiteNav />
       </header>
 
-      <main className={churches.main}>
-        <section className={churches.searchSection} aria-labelledby="page-title">
-          <p className={churches.eyebrow}>
-            <Link href="/constituency">CONSTITUENCIES</Link> / {detail.name.toUpperCase()}
-          </p>
-          <h1 id="page-title">{detail.name}</h1>
+      <section className={`ea-hero on-dark ${styles.hero}`} aria-labelledby="page-title">
+        <div className={styles.container}>
+          <nav aria-label="Breadcrumb" className={styles.breadcrumb}>
+            <ol>
+              <li><Link href="/">Home</Link></li>
+              <li><Link href="/constituency">Constituencies</Link></li>
+              <li aria-current="page">{detail.name}</li>
+            </ol>
+          </nav>
 
-          <div className={styles.summaryRow}>
-            <dl className={styles.stats}>
-              <div><dt>Churches</dt><dd>{detail.churchCount}</dd></div>
-              <div><dt>Community services</dt><dd>{detail.serviceCount}</dd></div>
-            </dl>
+          <div className={styles.heroGrid}>
+            <div>
+              <p className={styles.eyebrow}>Parliamentary constituency</p>
+              <h1 id="page-title" className={`ea-underline ${styles.title}`}>{detail.name}</h1>
+              <p className={styles.lede}>
+                The churches and community services serving {detail.name}, and the people who represent it.
+              </p>
+            </div>
+
             {detail.mp && (
               <aside className={styles.mpCard} aria-label="Member of Parliament">
                 <p className={styles.mpLabel}>Your MP</p>
                 <p className={styles.mpName}>{detail.mp.name}</p>
                 {detail.mp.party && <p className={styles.mpParty}>{detail.mp.party}</p>}
-                <Link className={styles.mpCta} href={writeHref}>Write to {detail.mp.name.split(' ')[0]}</Link>
+                <Link className={styles.mpCta} href={writeHref}>
+                  Write to {detail.mp.name.split(' ')[0]}
+                </Link>
               </aside>
             )}
           </div>
+        </div>
+      </section>
 
-          <div className={churches.viewToolbar}>
-            <span className={churches.viewLabel}>View:</span>
-            <div className={churches.viewSwitch} role="group" aria-label="Display churches as a map or a list">
-              <button className={view === 'map' ? churches.viewActive : ''} type="button" aria-pressed={view === 'map'} onClick={() => setView('map')}>
-                <PinIcon />
-                Map
-              </button>
-              <button className={view === 'list' ? churches.viewActive : ''} type="button" aria-pressed={view === 'list'} onClick={() => setView('list')}>
-                <svg aria-hidden="true" viewBox="0 0 20 20" fill="none">
-                  <path d="M7 5h10M7 10h10M7 15h10" />
-                  <circle cx="3" cy="5" r=".8" />
-                  <circle cx="3" cy="10" r=".8" />
-                  <circle cx="3" cy="15" r=".8" />
-                </svg>
-                List
-              </button>
-            </div>
-            <span className={churches.resultCount} aria-live="polite">
-              {visibleChurches.length} {visibleChurches.length === 1 ? 'church' : 'churches'}
-            </span>
-          </div>
-        </section>
+      <main className={styles.container}>
+        <dl className={styles.stats} aria-label={`${detail.name} at a glance`}>
+          <StatCard value={detail.churchCount} label="Churches" note={`listed in ${detail.name}`} />
+          <StatCard value={detail.serviceCount} label="Community services" note="across the constituency" />
+          <StatCard value={categories.length} label="Types of support" note="from food to debt advice" />
+        </dl>
 
-        {detail.churches.length === 0 ? (
-          <p className={styles.empty}>We don&rsquo;t have any churches listed in {detail.name} yet.</p>
-        ) : view === 'map' ? (
-          <>
-            <MapView churches={mapChurches} selectedChurch={selected} onSelectChurch={setSelected} />
-            {selectedChurch && (
-              <div className={churches.profilePanel}>
-                <ChurchCard church={selectedChurch} />
+        <section className={styles.section} aria-labelledby="churches-title">
+          <h2 id="churches-title" className="ea-underline" style={{ ['--bleed' as string]: 'var(--page-bleed)' }}>
+            Churches in {detail.name}
+          </h2>
+
+          {detail.churches.length === 0 ? (
+            <p className={styles.empty}>We don&rsquo;t have any churches listed in {detail.name} yet.</p>
+          ) : (
+            <>
+              <div className={styles.mobileToggle} role="group" aria-label="Show churches as a list or a map">
+                <button type="button" aria-pressed={mobileView === 'list'} onClick={() => setMobileView('list')}>List</button>
+                <button type="button" aria-pressed={mobileView === 'map'} onClick={() => setMobileView('map')}>Map</button>
               </div>
-            )}
-            <p className={churches.mapNote}>
-              The addresses shown on this map are where the churches meet, and not necessarily the correspondence
-              address. Please contact the individual churches for the correspondence address.
-            </p>
-          </>
-        ) : (
-          <section className={churches.listPanel} aria-label="Churches in this constituency">
-            <div className={churches.alphabet} role="group" aria-label="Filter churches by first letter">
-              {['All', ...alphabet].map((item) => (
-                <button key={item} className={letter === item ? churches.alphabetActive : ''} type="button" aria-pressed={letter === item} onClick={() => { setLetter(item); setSelected('') }}>
-                  {item}
-                </button>
-              ))}
-            </div>
-            <ul className={churches.churchList}>
-              {visibleChurches.map((church) => (
-                <li key={church.id}>
-                  <button className={churches.churchRow} type="button" aria-expanded={selected === church.id} onClick={() => setSelected(selected === church.id ? '' : church.id)}>
-                    <span>
-                      <strong>{church.name}</strong>
-                      {church.address && (
-                        <span className={churches.address}>
-                          <PinIcon />
-                          {church.address}
-                        </span>
-                      )}
-                    </span>
-                    <span className={churches.rowMeta}><span className={churches.rowChevron} aria-hidden="true">›</span></span>
-                  </button>
-                  {selected === church.id && (
-                    <div className={churches.profileInline}>
-                      <ChurchCard church={church} />
+
+              <div className={styles.split} data-mobile-view={mobileView}>
+                <div className={styles.listCol}>
+                  {detail.churches.length > ALPHABET_THRESHOLD && (
+                    <div className={styles.alphabet} role="group" aria-label="Filter churches by first letter">
+                      {['All', ...alphabet].map((item) => (
+                        <button
+                          key={item}
+                          type="button"
+                          aria-pressed={letter === item}
+                          onClick={() => { setLetter(item); setSelected('') }}
+                        >
+                          {item}
+                        </button>
+                      ))}
                     </div>
                   )}
-                </li>
-              ))}
-              {visibleChurches.length === 0 && <li className={churches.emptyList}>No churches start with &ldquo;{letter}&rdquo;.</li>}
-            </ul>
-          </section>
-        )}
+                  <ul className={styles.churchList}>
+                    {visibleChurches.map((church) => {
+                      const open = selected === church.id
+                      return (
+                        <li key={church.id} className={styles.churchItem} data-selected={open}>
+                          <button
+                            type="button"
+                            className={styles.churchButton}
+                            aria-expanded={open}
+                            onClick={() => setSelected(open ? '' : church.id)}
+                          >
+                            <span className={styles.churchName}>{church.name}</span>
+                            {church.denomination && <span className={styles.churchMeta}>{church.denomination}</span>}
+                            {church.address && (
+                              <span className={styles.churchAddress}>
+                                <PinIcon />
+                                {church.address}
+                              </span>
+                            )}
+                          </button>
+                          {open && (church.website || church.phone) && (
+                            <ul className={styles.contactList}>
+                              {church.website && (
+                                <li><a href={church.website} rel="noopener noreferrer" target="_blank">Visit website</a></li>
+                              )}
+                              {church.phone && <li><a href={`tel:${church.phone.replace(/\s/g, '')}`}>{church.phone}</a></li>}
+                            </ul>
+                          )}
+                        </li>
+                      )
+                    })}
+                    {visibleChurches.length === 0 && <li className={styles.empty}>No churches start with &ldquo;{letter}&rdquo;.</li>}
+                  </ul>
+                </div>
+
+                <div className={styles.mapCol}>
+                  <MapView
+                    churches={mapChurches}
+                    selectedChurch={selected}
+                    onSelectChurch={setSelected}
+                    canvasClassName={styles.mapCanvasTall}
+                  />
+                </div>
+              </div>
+              <p className={styles.mapNote}>
+                Addresses are where the churches meet, not necessarily their correspondence address. Please contact the
+                individual churches for that.
+              </p>
+            </>
+          )}
+        </section>
 
         {detail.serviceCount > 0 && (
-          <section className={styles.services} aria-labelledby="services-title">
-            <h2 id="services-title">Community services in {detail.name}</h2>
-            <div className={churches.facetChips} role="group" aria-label="Filter services by type">
-              {categories.map(([name, count]) => (
-                <button
-                  key={name}
-                  className={`${churches.facetChip} ${category === name ? churches.facetChipActive : ''}`}
-                  type="button"
-                  aria-pressed={category === name}
-                  onClick={() => setCategory(category === name ? '' : name)}
-                >
-                  {name} ({count})
+          <>
+            <hr className={`ea-dotted ${styles.divider}`} />
+            <section className={styles.section} aria-labelledby="services-title">
+              <h2 id="services-title" className="ea-underline" style={{ ['--bleed' as string]: 'var(--page-bleed)' }}>
+                Community services in {detail.name}
+              </h2>
+              <p className={styles.sectionIntro}>
+                Support available locally, including warm spaces, food banks and debt advice.
+              </p>
+
+              <div className={styles.chips} role="group" aria-label="Filter services by type">
+                <button type="button" aria-pressed={category === ''} onClick={() => { setCategory(''); setShowAllServices(false) }}>
+                  All ({detail.serviceCount})
                 </button>
-              ))}
-            </div>
-            <ul className={styles.serviceList}>
-              {services.map((service) => (
-                <li key={service.id}>
-                  <strong>{service.name}</strong>
-                  <span>{[service.category, service.address ?? service.postcode].filter(Boolean).join(' · ')}</span>
-                </li>
-              ))}
-            </ul>
-          </section>
+                {categories.map(([name, count]) => (
+                  <button
+                    key={name}
+                    type="button"
+                    aria-pressed={category === name}
+                    onClick={() => { setCategory(category === name ? '' : name); setShowAllServices(false) }}
+                  >
+                    {name} ({count})
+                  </button>
+                ))}
+              </div>
+
+              <ul className={styles.serviceGrid}>
+                {services.map((service) => (
+                  <li key={service.id} className={styles.serviceCard}>
+                    <span className={styles.serviceTag}>{service.category}</span>
+                    <strong>{service.name}</strong>
+                    {(service.address ?? service.postcode) && (
+                      <span className={styles.serviceAddress}>{service.address ?? service.postcode}</span>
+                    )}
+                    {service.website && (
+                      <a href={service.website} rel="noopener noreferrer" target="_blank">Visit website</a>
+                    )}
+                  </li>
+                ))}
+              </ul>
+
+              {filteredServices.length > SERVICES_PAGE_SIZE && (
+                <button type="button" className={styles.showMore} onClick={() => setShowAllServices((value) => !value)}>
+                  {showAllServices ? 'Show fewer' : `Show all ${filteredServices.length}`}
+                </button>
+              )}
+            </section>
+          </>
         )}
       </main>
 

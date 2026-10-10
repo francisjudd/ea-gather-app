@@ -21,10 +21,12 @@ export default function MapView({
   churches,
   selectedChurch,
   onSelectChurch,
+  canvasClassName,
 }: {
   churches: Church[]
   selectedChurch: string
   onSelectChurch: (id: string) => void
+  canvasClassName?: string
 }) {
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<google.maps.Map | null>(null)
@@ -129,7 +131,7 @@ export default function MapView({
 
   return (
     <div className={styles.mapPanel}>
-      <div ref={containerRef} className={styles.mapCanvas} />
+      <div ref={containerRef} className={`${styles.mapCanvas} ${canvasClassName ?? ''}`} />
       {error && <div className={styles.mapError}>{error}</div>}
     </div>
   )
