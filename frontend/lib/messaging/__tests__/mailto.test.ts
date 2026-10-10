@@ -113,10 +113,9 @@ describe('buildMailtoUrl', () => {
       expect(decoded.replace(/\r\n/g, '\n')).toBe(body)
     })
 
-    // Quirk: a bare CR (classic Mac line ending) is not matched by /\r?\n/, so it
-    // stays as %0D rather than becoming %0D%0A.
-    it.fails('turns a bare CR into %0D%0A', () => {
+    it('turns a bare CR (classic Mac line ending) into %0D%0A', () => {
       expect(buildMailtoUrl({ to: 'a@b.co', body: 'a\rb' })).toBe('mailto:a@b.co?body=a%0D%0Ab')
+      expect(buildMailtoUrl({ to: 'a@b.co', body: 'a\r\rb' })).toBe('mailto:a@b.co?body=a%0D%0A%0D%0Ab')
     })
   })
 
@@ -149,9 +148,10 @@ describe('buildMailtoUrl', () => {
     })
   })
 
-  it('treats a comma-joined string as one (encoded) address, not several', () => {
-    // Callers must pass an array for multiple recipients.
-    expect(buildMailtoUrl({ to: 'a@b.co,c@d.co' })).toBe('mailto:a@b.co%2Cc@d.co')
+  it('treats a comma-separated string as several addresses', () => {
+    expect(buildMailtoUrl({ to: 'a@b.co,c@d.co', cc: 'e@f.co, g@h.co,' })).toBe(
+      'mailto:a@b.co,c@d.co?cc=e@f.co,g@h.co',
+    )
   })
 })
 
@@ -170,8 +170,8 @@ describe('isMailtoTooLong', () => {
 
 describe('buildGmailUrl', () => {
   it('uses su for the subject and plain LF newlines', () => {
-    expect(buildGmailUrl({ to: 'a@b.co', cc: 'c@d.co', subject: "St Mark's", body: 'a\r\nb\nc' })).toBe(
-      "https://mail.google.com/mail/?view=cm&fs=1&to=a@b.co&cc=c@d.co&su=St%20Mark's&body=a%0Ab%0Ac",
+    expect(buildGmailUrl({ to: 'a@b.co', cc: 'c@d.co', subject: "St Mark's", body: 'a\r\nb\nc\rd' })).toBe(
+      "https://mail.google.com/mail/?view=cm&fs=1&to=a@b.co&cc=c@d.co&su=St%20Mark's&body=a%0Ab%0Ac%0Ad",
     )
   })
 

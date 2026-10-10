@@ -12,7 +12,7 @@ describe('full letter', () => {
     expect(renderLetterFallback(putney).body).toMatchInlineSnapshot(`
       "Dear Sarah,
 
-      I am the community Outreach Lead at St Mark's Putney (SW15 1AA), in Putney, and I am writing as one of your constituents.
+      I am the community outreach lead at St Mark's Putney (SW15 1AA), in Putney, and I am writing as one of your constituents.
 
       Each week we welcome around 120 people through our community activities:
 
@@ -187,9 +187,8 @@ describe('activities', () => {
     expect(lines([{ name: 'Food bank', count: null, unit: 'people' }])).toEqual(['- Food bank'])
   })
 
-  // KNOWN QUIRK: a zero count is falsy, so "around 0 people" is dropped as if no count was given.
-  it('treats count: 0 as no count (known quirk)', () => {
-    expect(lines([{ name: 'Food bank', count: 0, unit: 'people' }])).toEqual(['- Food bank'])
+  it('keeps count: 0 rather than treating it as no count', () => {
+    expect(lines([{ name: 'Food bank', count: 0, unit: 'people' }])).toEqual(['- Food bank: around 0 people'])
   })
 
   it('renders the totals line only when provided', () => {
@@ -213,24 +212,30 @@ describe('greeting and sender', () => {
     }
   })
 
-  it('lower-cases the first letter of the role only', () => {
+  it('lower-cases the role', () => {
     const intro = (role?: string | null) =>
       render({ sender: { ...lean.sender, role } }, lean).body.split('\n')[2]
-    expect(intro('Community Outreach Lead')).toContain('I am the community Outreach Lead at Grace Church')
+    expect(intro('Community Outreach Lead')).toContain('I am the community outreach lead at Grace Church')
     expect(intro('Pastor')).toContain('I am the pastor at Grace Church')
     expect(intro(undefined)).toContain('I am part of Grace Church')
     expect(intro(null)).toContain('I am part of Grace Church')
     expect(intro('')).toContain('I am part of Grace Church')
   })
 
-  // Quirk: only the first character is lower-cased, giving "the community Outreach Lead".
-  it.fails('lower-cases a multi-word role throughout', () => {
-    const body = render({ sender: { ...lean.sender, role: 'Community Outreach Lead' } }, lean).body
-    expect(body).toContain('I am the community outreach lead at Grace Church')
+  it.each([
+    ['Church Administrator', 'church administrator'],
+    ['CEO', 'CEO'],
+    ['Youth Pastor and DBS Officer', 'youth pastor and DBS officer'],
+    ["Vicar of St Mark's", "vicar of St Mark's"],
+    ['Warden at All Saints', 'warden at All Saints'],
+    ['  Pastor', '  pastor'],
+  ])('lower-cases %j to %j, keeping acronyms and names', (role, expected) => {
+    const body = render({ sender: { ...lean.sender, role } }, lean).body
+    expect(body).toContain(`I am the ${expected} at Grace Church`)
   })
 
   it('includes postcode and area in the intro when present', () => {
-    expect(render({}).body).toContain("I am the community Outreach Lead at St Mark's Putney (SW15 1AA), in Putney, and")
+    expect(render({}).body).toContain("I am the community outreach lead at St Mark's Putney (SW15 1AA), in Putney, and")
     expect(render({ church: { ...putney.church, area: null } }).body).toContain('(SW15 1AA), and I am writing')
   })
 
@@ -435,7 +440,7 @@ describe('invariants over generated inputs', () => {
     church: {
       name: pick(['Grace Church', "St Mark's", 'A & B <Church>']),
       address: pick([undefined, null, '', '1 High Street']),
-      postcode: 'SW15 1AA', // empty place is covered separately below
+      postcode: pick(['SW15 1AA', '']),
       area: pick([undefined, null, '', 'Putney']),
     },
     mp: {
@@ -472,20 +477,15 @@ describe('invariants over generated inputs', () => {
     },
   })
 
-  // The totals sentence introduces the list, so it only makes sense with activities (see quirk below).
-  const inputs = Array.from({ length: 300 }, generate).map((input) =>
-    input.activities.length ? input : { ...input, totals: undefined },
-  )
+  const inputs = Array.from({ length: 300 }, generate)
 
-  // Quirk: totals text with no activities leaves a dangling "...activities:" and a doubled blank line.
-  it.fails('does not introduce an empty activity list', () => {
+  it('does not introduce an empty activity list', () => {
     const { body } = renderLetterFallback({ ...lean, activities: [], totals: { people_per_week_text: 'around 50 people' } })
     expect(body).not.toContain('activities:')
     expect(body).not.toMatch(/\n\n\n/)
   })
 
-  // Quirk: with no area, constituency or postcode the activity subject ends in "in ".
-  it.fails('does not leave a dangling "in" when there is no place', () => {
+  it('does not leave a dangling "in" when there is no place', () => {
     const { subjects } = renderLetterFallback({
       ...lean,
       church: { ...lean.church, postcode: '' },

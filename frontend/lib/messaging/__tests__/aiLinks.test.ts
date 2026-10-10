@@ -27,9 +27,10 @@ describe('isAiPromptTooLong', () => {
     expect(isAiPromptTooLong('x'.repeat(AI_PROMPT_SAFE_LENGTH + 1))).toBe(true)
   })
 
-  // Quirk: the limit is on the raw prompt, but the URL carries the encoded one.
-  // 3000 spaces is a ~9000-char URL once encoded, yet is not flagged.
-  it.fails('flags a prompt whose encoded URL is over the limit', () => {
-    expect(isAiPromptTooLong(' '.repeat(3000))).toBe(true)
+  it('measures the encoded prompt, which is what the URL carries', () => {
+    const spaced = (n: number) => `a${' '.repeat(n)}a` // 2 + 3n characters once encoded
+    expect(isAiPromptTooLong(spaced(1999))).toBe(false)
+    expect(isAiPromptTooLong(spaced(2000))).toBe(true)
+    expect(isAiPromptTooLong(`  ${spaced(1999)}  `)).toBe(false) // trimmed, like the URL builder
   })
 })

@@ -1,7 +1,7 @@
 // Plain-language wording for the MP letter. Edit the text here; no logic needed.
 // Chunk markers ("@@ template|data|personal|outcome") drive the review-screen highlights.
 // Variables are the LetterInput fields (see ../letter.ts) plus a few helpers:
-//   greeting_name, sender.role_lower, activities[].line, is.<outcome type> (is.visit_any covers visit and visit_photo)
+//   greeting_name, sender.role_lower, has_activities, activities[].line, is.<outcome type> (is.visit_any covers visit and visit_photo)
 
 export const letterTemplate = `
 @@ template
@@ -11,6 +11,7 @@ Dear {{greeting_name}},
 I am {{#sender.role_lower}}the {{.}} at {{/sender.role_lower}}{{^sender.role_lower}}part of {{/sender.role_lower}}{{church.name}}{{#church.postcode}} ({{.}}){{/church.postcode}}{{#church.area}}, in {{.}}{{/church.area}}, and I am writing as one of your constituents.
 
 @@ data
+{{#has_activities}}
 {{#totals.people_per_week_text}}
 Each week we welcome {{.}} through our community activities:
 
@@ -18,6 +19,7 @@ Each week we welcome {{.}} through our community activities:
 {{#activities}}
 - {{line}}
 {{/activities}}
+{{/has_activities}}
 
 @@ personal
 {{#message.personal_note}}
@@ -70,5 +72,5 @@ With every good wish,
 // Subject lines: max 60 characters (enforced in code), place name early.
 export const subjectTemplates = {
   invitation: 'Invitation to visit {{church.name}}{{#church.area}}, {{.}}{{/church.area}}',
-  activity: '{{first_activity}} in {{place}}',
+  activity: '{{first_activity}}{{#place}} in {{.}}{{/place}}',
 }

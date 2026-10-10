@@ -74,7 +74,7 @@ export function toLetterInput(draft: Draft): LetterInput {
         return {
           name: activity.label,
           days: activity.frequency ?? null,
-          count: Number.isFinite(count) && count > 0 ? count : null,
+          count: Number.isInteger(count) && count > 0 ? count : null,
           unit: 'people',
         }
       }),

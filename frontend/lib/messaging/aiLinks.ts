@@ -15,4 +15,6 @@ export function buildAiChatUrl(provider: AiProvider, prompt: string): string {
   return `${aiProviders[provider].url}?q=${encodeURIComponent(prompt.trim())}`
 }
 
-export const isAiPromptTooLong = (prompt: string) => prompt.length > AI_PROMPT_SAFE_LENGTH
+// Measured on the encoded prompt, since that is what ends up in the URL.
+export const isAiPromptTooLong = (prompt: string) =>
+  encodeURIComponent(prompt.trim()).length > AI_PROMPT_SAFE_LENGTH

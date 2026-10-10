@@ -16,8 +16,9 @@ export const MAILTO_SAFE_LENGTH = 2000
 
 const singleLine = (value: string) => value.replace(/[\r\n]+/g, ' ').trim()
 
+// A string may hold several comma-separated addresses; an array is one address per item.
 const encodeAddresses = (value: string | string[] | undefined) =>
-  (Array.isArray(value) ? value : value ? [value] : [])
+  (Array.isArray(value) ? value : value ? value.split(',') : [])
     .map((address) => encodeURIComponent(singleLine(address)).replace(/%40/g, '@'))
     .filter(Boolean)
     .join(',')
@@ -29,7 +30,7 @@ export function buildMailtoUrl({ to, cc, bcc, subject, body }: MailtoOptions): s
   add('cc', encodeAddresses(cc))
   add('bcc', encodeAddresses(bcc))
   if (subject) add('subject', encodeURIComponent(singleLine(subject)))
-  if (body) add('body', encodeURIComponent(body.replace(/\r?\n/g, '\r\n')))
+  if (body) add('body', encodeURIComponent(body.replace(/\r\n|\r|\n/g, '\r\n')))
 
   return `mailto:${encodeAddresses(to)}${params.length ? `?${params.join('&')}` : ''}`
 }
@@ -44,7 +45,7 @@ export function buildGmailUrl({ to, cc, bcc, subject, body }: MailtoOptions): st
   add('cc', encodeAddresses(cc))
   add('bcc', encodeAddresses(bcc))
   if (subject) add('su', encodeURIComponent(singleLine(subject)))
-  if (body) add('body', encodeURIComponent(body.replace(/\r?\n/g, '\n')))
+  if (body) add('body', encodeURIComponent(body.replace(/\r\n|\r|\n/g, '\n')))
 
   return `https://mail.google.com/mail/?${params.join('&')}`
 }
