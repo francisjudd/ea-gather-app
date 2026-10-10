@@ -18,7 +18,11 @@ export interface LetterInput {
     partner?: string | null
   }[]
   totals?: { people_per_week_text?: string | null }
-  message?: { personal_note?: string | null; include_prayer_line?: boolean }
+  message?: {
+    personal_note?: string | null
+    include_prayer_line?: boolean
+    mention_evangelical_alliance?: boolean
+  }
   constituency_rollup?: { church_count: number; activity_count: number; rollup_url: string } | null
   outcome: {
     type: 'visit' | 'visit_photo' | 'missed_anything' | 'signposting' | 'meeting' | 'keep_informed'
@@ -67,7 +71,7 @@ export function renderLetterFallback(input: LetterInput) {
   const subjectView = {
     ...view,
     first_activity: input.activities[0]?.name ?? '',
-    place: input.church.area || input.mp.constituency,
+    place: input.church.area || input.mp.constituency || input.church.postcode,
   }
   const subjects = [
     renderTemplate(subjectTemplates.invitation, subjectView),

@@ -8,7 +8,7 @@ export const letterTemplate = `
 Dear {{greeting_name}},
 
 @@ data
-I am {{#sender.role_lower}}the {{.}} at {{/sender.role_lower}}{{^sender.role_lower}}part of {{/sender.role_lower}}{{church.name}} ({{church.postcode}}){{#church.area}}, in {{.}}{{/church.area}}, and I am writing as one of your constituents.
+I am {{#sender.role_lower}}the {{.}} at {{/sender.role_lower}}{{^sender.role_lower}}part of {{/sender.role_lower}}{{church.name}}{{#church.postcode}} ({{.}}){{/church.postcode}}{{#church.area}}, in {{.}}{{/church.area}}, and I am writing as one of your constituents.
 
 @@ data
 {{#totals.people_per_week_text}}
@@ -46,6 +46,10 @@ We would be glad to keep you updated on our work and to be a point of contact fo
 {{/is.keep_informed}}
 
 @@ template
+{{#message.mention_evangelical_alliance}}
+The Evangelical Alliance, which helps coordinate churches' engagement with Parliament, would welcome the chance to meet you and hear how churches in your constituency are supporting the community.
+
+{{/message.mention_evangelical_alliance}}
 Thank you for all you do for our community.{{#message.include_prayer_line}} We pray for you and your team regularly.{{/message.include_prayer_line}}
 
 With every good wish,
