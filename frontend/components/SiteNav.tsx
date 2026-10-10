@@ -3,6 +3,7 @@ import Link from 'next/link'
 const navItems = [
   { href: '/churches', label: 'Church directory' },
   { href: '/constituencies', label: 'Your constituency' },
+  { href: '/services', label: 'Community services' },
   { href: '/contact-mp', label: 'Write to your MP' },
   { href: '/submit', label: 'Submit a church' },
 ]
