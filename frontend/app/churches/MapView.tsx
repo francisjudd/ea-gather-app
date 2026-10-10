@@ -11,7 +11,11 @@ type Church = {
   place: string
   lat: number
   lng: number
+  /** When set, the pin is a plain coloured circle (navy = church, teal = community service). */
+  kind?: 'church' | 'service'
 }
+
+const PIN_COLOURS = { church: '#24305F', service: '#449AAE' } as const
 
 const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
 
@@ -61,6 +65,16 @@ export default function MapView({
           position,
           map,
           title: church.name,
+          ...(church.kind && {
+            icon: {
+              path: core.SymbolPath.CIRCLE,
+              fillColor: PIN_COLOURS[church.kind],
+              fillOpacity: 1,
+              strokeColor: '#ffffff',
+              strokeWeight: 2,
+              scale: 9,
+            },
+          }),
         })
         markerInstance.addListener('click', () => {
           onSelectChurch(church.id)

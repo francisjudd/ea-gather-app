@@ -5,20 +5,20 @@ import Link from 'next/link'
 import SiteNav from '../../components/SiteNav'
 import BrandLockup from '../../components/BrandLockup'
 import MapView from '../churches/MapView'
-import type { ConstituencyDetail } from '@/lib/constituencies/types'
+import type { ConstituencyChurch, ConstituencyDetail, ConstituencyService } from '@/lib/constituencies/types'
 import churches from '../churches/churches.module.css'
 import { ChurchMark } from '../churches/icons'
-import { ChurchCard, ChurchCompact, ChurchDialog } from './ChurchCard'
+import { ChurchCard, ChurchCompact, ChurchDialog, ServiceCard, ServiceCompact } from './ChurchCard'
 import styles from './constituency.module.css'
 
-const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
-const SERVICES_PAGE_SIZE = 12
 type View = 'map' | 'cards'
+type TypeFilter = 'all' | 'churches' | 'services'
+type Item =
+  | { kind: 'church'; key: string; name: string; church: ConstituencyChurch }
+  | { kind: 'service'; key: string; name: string; service: ConstituencyService }
 // Inlined at build time, so server and browser agree. Without a key the map can't render,
 // so we start on Cards instead.
 const hasMapKey = Boolean(process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY)
-// An A–Z filter is only useful once there are enough churches to scroll through.
-const ALPHABET_THRESHOLD = 12
 
 function StatCard({ value, label, note }: { value: number; label: string; note: string }) {
   return (
@@ -34,36 +34,44 @@ function StatCard({ value, label, note }: { value: number; label: string; note: 
 
 export default function ConstituencyView({ detail }: { detail: ConstituencyDetail }) {
   const [view, setView] = useState<View>(hasMapKey ? 'map' : 'cards')
-  const [highlighted, setHighlighted] = useState('') // set by clicking a map pin
+  const [type, setType] = useState<TypeFilter>('all')
+  const [highlighted, setHighlighted] = useState('') // item key, set by a card or a map pin
   const [detailId, setDetailId] = useState('') // church shown in the details dialog
-  const [letter, setLetter] = useState('All')
-  const [category, setCategory] = useState('')
-  const [showAllServices, setShowAllServices] = useState(false)
 
-  const visibleChurches = useMemo(
-    () => detail.churches.filter((church) => letter === 'All' || church.name.toUpperCase().startsWith(letter)),
-    [detail.churches, letter],
-  )
-  const mapChurches = useMemo(
+  // One merged set of content; the type toggle just filters it.
+  const allItems = useMemo<Item[]>(() => {
+    const out: Item[] = []
+    if (type !== 'services') {
+      detail.churches.forEach((church) => out.push({ kind: 'church', key: church.id, name: church.name, church }))
+    }
+    if (type !== 'churches') {
+      detail.services.forEach((service) =>
+        out.push({ kind: 'service', key: `svc-${service.id}`, name: service.name, service }),
+      )
+    }
+    return out
+  }, [detail.churches, detail.services, type])
+
+  const mapItems = useMemo(
     () =>
-      visibleChurches.flatMap((church) =>
-        church.lat != null && church.lng != null
-          ? [{ id: church.id, name: church.name, address: church.address ?? '', place: church.postcode ?? '', lat: church.lat, lng: church.lng }]
-          : [],
-      ),
-    [visibleChurches],
+      allItems.flatMap((item) => {
+        const source = item.kind === 'church' ? item.church : item.service
+        return source.lat != null && source.lng != null
+          ? [{ id: item.key, name: item.name, address: source.address ?? '', place: source.postcode ?? '', lat: source.lat, lng: source.lng, kind: item.kind }]
+          : []
+      }),
+    [allItems],
   )
 
   const detailChurch = detail.churches.find((church) => church.id === detailId) ?? null
 
-  // A map pin click highlights the matching card and scrolls it into view.
+  // A map pin click highlights the matching item and scrolls it into view.
   useEffect(() => {
-    if (highlighted) document.getElementById(`church-${highlighted}`)?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
+    if (highlighted) document.getElementById(`item-${highlighted}`)?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
   }, [highlighted])
 
   const categories = Object.entries(detail.servicesByCategory).sort((a, b) => b[1] - a[1])
-  const filteredServices = detail.services.filter((service) => !category || service.category === category)
-  const services = showAllServices ? filteredServices : filteredServices.slice(0, SERVICES_PAGE_SIZE)
+  const total = detail.churches.length + detail.services.length
   const writeHref = `/contact-mp${detail.churches[0]?.postcode ? `?postcode=${encodeURIComponent(detail.churches[0].postcode)}` : ''}`
 
   return (
@@ -115,65 +123,80 @@ export default function ConstituencyView({ detail }: { detail: ConstituencyDetai
           <StatCard value={categories.length} label="Types of support" note="from food to debt advice" />
         </dl>
 
-        <section className={styles.section} aria-labelledby="churches-title">
-          <h2 id="churches-title" className="ea-underline" style={{ ['--bleed' as string]: 'var(--page-bleed)' }}>
-            Churches in {detail.name}
+        <section className={styles.section} aria-labelledby="browse-title">
+          <h2 id="browse-title" className="ea-underline" style={{ ['--bleed' as string]: 'var(--page-bleed)' }}>
+            Churches and community services in {detail.name}
           </h2>
 
-          {detail.churches.length === 0 ? (
-            <p className={styles.empty}>We don&rsquo;t have any churches listed in {detail.name} yet.</p>
+          {total === 0 ? (
+            <p className={styles.empty}>We don&rsquo;t have any churches or community services listed in {detail.name} yet.</p>
           ) : (
             <>
-              <div className={styles.viewBar}>
-                <div className={styles.viewSwitch} role="group" aria-label="Show churches on a map or as cards">
+              <div className={styles.controlBar}>
+                <div className={styles.viewSwitch} role="group" aria-label="Show as a map or as cards">
                   {(['map', 'cards'] as const).map((option) => (
                     <button key={option} type="button" aria-pressed={view === option} onClick={() => setView(option)}>
                       {option === 'map' ? 'Map' : 'Cards'}
                     </button>
                   ))}
                 </div>
-                <span className={styles.viewCount} aria-live="polite">
-                  {detail.churches.length} {detail.churches.length === 1 ? 'church' : 'churches'}
-                </span>
+                <div className={styles.viewSwitch} role="group" aria-label="Choose what to show">
+                  {([
+                    ['all', 'All', total],
+                    ['churches', 'Churches', detail.churches.length],
+                    ['services', 'Community services', detail.services.length],
+                  ] as const).map(([value, label, count]) => (
+                    <button
+                      key={value}
+                      type="button"
+                      aria-pressed={type === value}
+                      onClick={() => { setType(value); setHighlighted('') }}
+                    >
+                      {label} <span className={styles.toggleCount}>{count}</span>
+                    </button>
+                  ))}
+                </div>
               </div>
 
-              {!detail.churches.some((church) => church.programmes.length > 0) && (
+              {type !== 'services' && detail.churches.length > 0 && !detail.churches.some((church) => church.programmes.length > 0) && (
                 <p className={styles.programmesNote}>
                   We don&rsquo;t have programme details for these churches yet.{' '}
                   <Link href="/submit">Tell us what your church does</Link>
                 </p>
               )}
 
-              {detail.churches.length > ALPHABET_THRESHOLD && (
-                <div className={styles.alphabet} role="group" aria-label="Filter churches by first letter">
-                  {['All', ...alphabet].map((item) => (
-                    <button key={item} type="button" aria-pressed={letter === item} onClick={() => { setLetter(item); setHighlighted('') }}>
-                      {item}
-                    </button>
-                  ))}
-                </div>
-              )}
-
-              {view === 'map' ? (
+              {allItems.length === 0 ? (
+                <p className={styles.empty}>
+                  {type === 'churches'
+                    ? `We don’t have any churches listed in ${detail.name} yet.`
+                    : `We don’t have any community services listed in ${detail.name} yet.`}
+                </p>
+              ) : view === 'map' ? (
                 <>
                   <div className={styles.split}>
-                    <ul className={styles.sideList} aria-label="Churches">
-                      {visibleChurches.map((church) => (
-                        <ChurchCompact
-                          key={church.id}
-                          church={church}
-                          selected={highlighted === church.id}
-                          onSelect={() => setHighlighted(highlighted === church.id ? '' : church.id)}
-                          onOpen={() => setDetailId(church.id)}
-                        />
-                      ))}
-                      {visibleChurches.length === 0 && (
-                        <li className={styles.empty}>No churches start with &ldquo;{letter}&rdquo;.</li>
+                    <ul className={styles.sideList} aria-label="Churches and community services">
+                      {allItems.map((item) =>
+                        item.kind === 'church' ? (
+                          <ChurchCompact
+                            key={item.key}
+                            church={item.church}
+                            selected={highlighted === item.key}
+                            onSelect={() => setHighlighted(highlighted === item.key ? '' : item.key)}
+                            onOpen={() => setDetailId(item.church.id)}
+                          />
+                        ) : (
+                          <ServiceCompact
+                            key={item.key}
+                            service={item.service}
+                            selected={highlighted === item.key}
+                            onSelect={() => setHighlighted(highlighted === item.key ? '' : item.key)}
+                          />
+                        ),
                       )}
                     </ul>
                     <div className={styles.mapWrap}>
                       <MapView
-                        churches={mapChurches}
+                        churches={mapItems}
                         selectedChurch={highlighted}
                         onSelectChurch={setHighlighted}
                         canvasClassName={styles.mapCanvasTall}
@@ -189,75 +212,30 @@ export default function ConstituencyView({ detail }: { detail: ConstituencyDetai
               ) : (
                 <>
                   <ul className={styles.cardGrid}>
-                    {visibleChurches.map((church) => (
-                      <ChurchCard
-                        key={church.id}
-                        church={church}
-                        highlighted={highlighted === church.id}
-                        onOpen={() => { setHighlighted(church.id); setDetailId(church.id) }}
-                      />
-                    ))}
+                    {allItems.map((item) =>
+                      item.kind === 'church' ? (
+                        <ChurchCard
+                          key={item.key}
+                          church={item.church}
+                          highlighted={highlighted === item.key}
+                          onOpen={() => { setHighlighted(item.key); setDetailId(item.church.id) }}
+                        />
+                      ) : (
+                        <ServiceCard
+                          key={item.key}
+                          service={item.service}
+                          highlighted={highlighted === item.key}
+                          onSelect={() => setHighlighted(highlighted === item.key ? '' : item.key)}
+                        />
+                      ),
+                    )}
                   </ul>
-                  {visibleChurches.length === 0 && (
-                    <p className={styles.empty}>No churches start with &ldquo;{letter}&rdquo;.</p>
-                  )}
                 </>
               )}
               <ChurchDialog church={detailChurch} onClose={() => setDetailId('')} />
             </>
           )}
         </section>
-
-        {detail.serviceCount > 0 && (
-          <>
-            <hr className={`ea-dotted ${styles.divider}`} />
-            <section className={styles.section} aria-labelledby="services-title">
-              <h2 id="services-title" className="ea-underline" style={{ ['--bleed' as string]: 'var(--page-bleed)' }}>
-                Community services in {detail.name}
-              </h2>
-              <p className={styles.sectionIntro}>
-                Support available locally, including warm spaces, food banks and debt advice.
-              </p>
-
-              <div className={styles.chips} role="group" aria-label="Filter services by type">
-                <button type="button" aria-pressed={category === ''} onClick={() => { setCategory(''); setShowAllServices(false) }}>
-                  All ({detail.serviceCount})
-                </button>
-                {categories.map(([name, count]) => (
-                  <button
-                    key={name}
-                    type="button"
-                    aria-pressed={category === name}
-                    onClick={() => { setCategory(category === name ? '' : name); setShowAllServices(false) }}
-                  >
-                    {name} ({count})
-                  </button>
-                ))}
-              </div>
-
-              <ul className={styles.serviceGrid}>
-                {services.map((service) => (
-                  <li key={service.id} className={styles.serviceCard}>
-                    <span className={styles.serviceTag}>{service.category}</span>
-                    <strong>{service.name}</strong>
-                    {(service.address ?? service.postcode) && (
-                      <span className={styles.serviceAddress}>{service.address ?? service.postcode}</span>
-                    )}
-                    {service.website && (
-                      <a href={service.website} rel="noopener noreferrer" target="_blank">Visit website</a>
-                    )}
-                  </li>
-                ))}
-              </ul>
-
-              {filteredServices.length > SERVICES_PAGE_SIZE && (
-                <button type="button" className={styles.showMore} onClick={() => setShowAllServices((value) => !value)}>
-                  {showAllServices ? 'Show fewer' : `Show all ${filteredServices.length}`}
-                </button>
-              )}
-            </section>
-          </>
-        )}
       </main>
 
       <footer className={churches.footer}>

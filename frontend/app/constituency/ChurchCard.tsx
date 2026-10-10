@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 import Link from 'next/link'
-import type { ConstituencyChurch } from '@/lib/constituencies/types'
+import type { ConstituencyChurch, ConstituencyService } from '@/lib/constituencies/types'
 import styles from './constituency.module.css'
 
 const MAX_PILLS = 3
@@ -49,7 +49,7 @@ export function ChurchCard({
   const extra = categories.length - MAX_PILLS
 
   return (
-    <li className={styles.card} data-highlighted={highlighted} id={`church-${church.id}`}>
+    <li className={styles.card} data-highlighted={highlighted} id={`item-${church.id}`}>
       <button type="button" className={styles.cardButton} aria-haspopup="dialog" onClick={onOpen}>
         <span className={styles.cardName}>{church.name}</span>
         {church.denomination && <span className={styles.cardMeta}>{church.denomination}</span>}
@@ -92,7 +92,7 @@ export function ChurchCompact({
   const categories = categoriesOf(church)
 
   return (
-    <li className={styles.compact} data-selected={selected} id={`church-${church.id}`}>
+    <li className={styles.compact} data-selected={selected} id={`item-${church.id}`}>
       <button type="button" className={styles.compactButton} aria-pressed={selected} onClick={onSelect}>
         <span className={styles.compactTop}>
           <span className={styles.compactName}>{church.name}</span>
@@ -116,6 +116,73 @@ export function ChurchCompact({
           <button type="button" className={styles.compactDetails} aria-haspopup="dialog" onClick={onOpen}>
             View details <ArrowIcon />
           </button>
+        </div>
+      )}
+    </li>
+  )
+}
+
+// Services have no details dialog: address and website are shown on the item itself.
+export function ServiceCard({
+  service,
+  highlighted,
+  onSelect,
+}: {
+  service: ConstituencyService
+  highlighted: boolean
+  onSelect: () => void
+}) {
+  return (
+    <li className={styles.card} data-highlighted={highlighted} id={`item-svc-${service.id}`}>
+      <button type="button" className={styles.cardButton} aria-pressed={highlighted} onClick={onSelect}>
+        <span className={styles.cardName}>{service.name}</span>
+        <span className={styles.pills}>
+          <span className={styles.pill}>{service.category}</span>
+        </span>
+        <span className={styles.cardAddress}>
+          <PinIcon />
+          <span>{service.address ?? service.postcode ?? 'Address not listed'}</span>
+        </span>
+        {service.website && (
+          <span className={styles.cardFooter}>
+            <a className={styles.cardMore} href={service.website} rel="noopener noreferrer" target="_blank" onClick={(event) => event.stopPropagation()}>
+              Visit website <ArrowIcon />
+            </a>
+          </span>
+        )}
+      </button>
+    </li>
+  )
+}
+
+export function ServiceCompact({
+  service,
+  selected,
+  onSelect,
+}: {
+  service: ConstituencyService
+  selected: boolean
+  onSelect: () => void
+}) {
+  return (
+    <li className={styles.compact} data-selected={selected} id={`item-svc-${service.id}`}>
+      <button type="button" className={styles.compactButton} aria-pressed={selected} onClick={onSelect}>
+        <span className={styles.compactTop}>
+          <span className={styles.compactName}>{service.name}</span>
+        </span>
+        <span className={styles.pills}>
+          <span className={styles.pill}>{service.category}</span>
+        </span>
+        <span className={styles.cardAddress}>
+          <PinIcon />
+          <span>{service.address ?? service.postcode ?? 'Address not listed'}</span>
+        </span>
+      </button>
+      {selected && service.website && (
+        <div className={styles.compactMore}>
+          <a className={styles.compactDetails} href={service.website} rel="noopener noreferrer" target="_blank">
+            Visit website <ArrowIcon />
+          </a>
         </div>
       )}
     </li>
