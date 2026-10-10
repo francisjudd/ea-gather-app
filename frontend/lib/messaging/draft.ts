@@ -1,4 +1,5 @@
 // Maps the contact-MP form state to the LetterInput the letter templates use.
+import { slugifyConstituency } from '@/lib/constituencies/slug'
 import type { LetterInput } from './letter'
 
 export type SendMethod = 'mailto' | 'download' | ''
@@ -49,8 +50,13 @@ export const activities: Activity[] = [
   { id: 'eco-church', label: 'Environmental / Eco Church work' },
 ]
 
-export function toLetterInput(draft: Draft): LetterInput {
+// `siteUrl` is the site's origin (e.g. https://example.org). It is only known in the browser,
+// so it is passed in; without it, or without a constituency, the letter has no link.
+export function toLetterInput(draft: Draft, siteUrl = ''): LetterInput {
   const mpName = draft.mpName.trim()
+  const constituency = draft.mpConstituency.trim()
+  const constituencyUrl =
+    siteUrl && constituency ? `${siteUrl.replace(/\/+$/, '')}/constituencies/${slugifyConstituency(constituency)}` : null
   return {
     sender: {
       name: draft.senderName.trim(),
@@ -85,5 +91,6 @@ export function toLetterInput(draft: Draft): LetterInput {
       mention_evangelical_alliance: draft.advocacyFollowUp,
     },
     outcome: { type: 'visit' },
+    ...(constituencyUrl && { constituency_url: constituencyUrl }),
   }
 }

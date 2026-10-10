@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState, type FormEvent } from 'react'
+import { useEffect, useMemo, useState, useSyncExternalStore, type FormEvent } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import EmailButton from '@/components/messaging/EmailButton'
@@ -181,7 +181,14 @@ export default function ContactMpFlow({ step }: { step: string }) {
   const onChange = (name: keyof Draft, value: string) => {
     setDraft((previous) => ({ ...previous, [name]: value }))
   }
-  const letterInput = useMemo(() => toLetterInput(draft), [draft])
+  // The site's origin, for the constituency link in the letter. Empty on the server, so the
+  // first render matches; the letter gains the link once this runs in the browser.
+  const siteUrl = useSyncExternalStore(
+    () => () => {},
+    () => window.location.origin,
+    () => '',
+  )
+  const letterInput = useMemo(() => toLetterInput(draft, siteUrl), [draft, siteUrl])
   const letter = useMemo(() => renderLetterFallback(letterInput), [letterInput])
   const emailBody = letter.body
   const emailSubject = letter.subjects[0]

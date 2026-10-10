@@ -191,3 +191,31 @@ describe('toLetterInput', () => {
     expect(renderLetterFallback(input).body).not.toContain('jo@x.org')
   })
 })
+
+describe('constituency link', () => {
+  const site = 'https://example.org'
+
+  it.each([
+    ['Putney', 'https://example.org/constituencies/putney'],
+    ['Cardiff South & Penarth', 'https://example.org/constituencies/cardiff-south-and-penarth'],
+    ['Ynys Môn', 'https://example.org/constituencies/ynys-mon'],
+  ])('links %s to its page', (name, expected) => {
+    expect(toLetterInput(draft({ mpConstituency: name }), site).constituency_url).toBe(expected)
+  })
+
+  it('ignores a trailing slash on the site URL', () => {
+    expect(toLetterInput(draft({ mpConstituency: 'Putney' }), `${site}/`).constituency_url).toBe(
+      'https://example.org/constituencies/putney',
+    )
+  })
+
+  it('has no link without a constituency or a site URL', () => {
+    expect(toLetterInput(draft({ mpConstituency: '' }), site)).not.toHaveProperty('constituency_url')
+    expect(toLetterInput(draft({ mpConstituency: 'Putney' }))).not.toHaveProperty('constituency_url')
+  })
+
+  it('puts the link in the rendered letter', () => {
+    const { body } = renderLetterFallback(toLetterInput(draft({ mpConstituency: 'Putney' }), site))
+    expect(body).toContain('here: https://example.org/constituencies/putney')
+  })
+})

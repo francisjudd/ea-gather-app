@@ -310,6 +310,28 @@ describe('constituency rollup', () => {
   })
 })
 
+describe('constituency page link', () => {
+  const url = 'https://example.org/constituencies/putney'
+
+  it('appears once, after the request and before the sign-off', () => {
+    const body = render({ constituency_url: url }).body
+    expect(body.split(url)).toHaveLength(2)
+    expect(body).toContain(`You can see the churches and community services in Putney here: ${url}\n`)
+    expect(body.indexOf(url)).toBeGreaterThan(body.indexOf("We'd love to host you"))
+    expect(body.indexOf(url)).toBeLessThan(body.indexOf('With every good wish,'))
+  })
+
+  it('is a data segment', () => {
+    const segment = render({ constituency_url: url }).segments.find((s) => s.text.includes(url))
+    expect(segment?.kind).toBe('data')
+  })
+
+  it.each([undefined, null, ''])('is omitted when %j', (constituency_url) => {
+    const body = render({ constituency_url }).body
+    expect(body).not.toContain('You can see the churches and community services')
+  })
+})
+
 describe('subjects', () => {
   const subjects = (patch: Partial<LetterInput>, base = putney) => render(patch, base).subjects
 
