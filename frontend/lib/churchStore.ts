@@ -22,6 +22,10 @@ export type ChurchSubmission = {
 
 const storageKey = 'ea-church-submissions-v1'
 
+const listeners = new Set<() => void>()
+
+let cached: ChurchSubmission[] | null = null
+
 function readStore(): ChurchSubmission[] {
   if (typeof window === 'undefined') return []
   try {
@@ -35,9 +39,29 @@ function readStore(): ChurchSubmission[] {
   }
 }
 
+let pendingCached: ChurchSubmission[] | null = null
+
+function getSnapshot(): ChurchSubmission[] {
+  if (cached === null) cached = readStore()
+  return cached
+}
+
+function getPendingSnapshot(): ChurchSubmission[] {
+  if (pendingCached === null) pendingCached = getSnapshot().filter((submission) => submission.status === 'pending')
+  return pendingCached
+}
+
 function writeStore(submissions: ChurchSubmission[]) {
   if (typeof window === 'undefined') return
   window.localStorage.setItem(storageKey, JSON.stringify(submissions))
+  cached = submissions
+  pendingCached = submissions.filter((submission) => submission.status === 'pending')
+  listeners.forEach((listener) => listener())
+}
+
+export function subscribeToSubmissions(listener: () => void): () => void {
+  listeners.add(listener)
+  return () => listeners.delete(listener)
 }
 
 function isSubmission(value: unknown): value is ChurchSubmission {
@@ -53,7 +77,7 @@ export function getSubmissions(): ChurchSubmission[] {
 }
 
 export function getPendingSubmissions(): ChurchSubmission[] {
-  return readStore().filter((submission) => submission.status === 'pending')
+  return getPendingSnapshot()
 }
 
 export function submitChurch(input: Omit<ChurchSubmission, 'id' | 'status' | 'submittedAt'>): ChurchSubmission {

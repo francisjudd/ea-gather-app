@@ -1,9 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useSyncExternalStore } from 'react'
 import Link from 'next/link'
 import {
   getPendingSubmissions,
+  subscribeToSubmissions,
   approveChurch,
   rejectChurch,
   updateSubmissionInitiatives,
@@ -102,15 +103,21 @@ function SubmissionCard({
   )
 }
 
+const emptySubmissions: ChurchSubmission[] = []
+
 export default function AdminReview() {
-  const [submissions, setSubmissions] = useState<ChurchSubmission[]>(() => getPendingSubmissions())
+  const submissions = useSyncExternalStore(
+    subscribeToSubmissions,
+    getPendingSubmissions,
+    () => emptySubmissions,
+  )
 
   const handleApprove = (id: string) => {
-    setSubmissions(approveChurch(id))
+    approveChurch(id)
   }
 
   const handleReject = (id: string) => {
-    setSubmissions(rejectChurch(id))
+    rejectChurch(id)
   }
 
   const handleToggleInitiative = (id: string, initiative: string) => {
@@ -119,7 +126,7 @@ export default function AdminReview() {
     const next = current.initiatives.includes(initiative)
       ? current.initiatives.filter((item) => item !== initiative)
       : [...current.initiatives, initiative]
-    setSubmissions(updateSubmissionInitiatives(id, next))
+    updateSubmissionInitiatives(id, next)
   }
 
   return (
