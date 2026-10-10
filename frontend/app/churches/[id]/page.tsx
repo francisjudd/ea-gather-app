@@ -13,6 +13,8 @@ import {
   type ChurchProfile,
 } from '../church-data'
 import { dayLabels, dayShortLabels, type DayKey } from '../../../lib/churchHours'
+import { constituencies } from '@/lib/constituencies/source'
+import { slugifyConstituency } from '@/lib/constituencies/slug'
 import CopyPointsButton from './CopyPointsButton'
 import styles from './church-profile.module.css'
 
@@ -154,6 +156,12 @@ const items: Item[] = church.talkingPoints;
 
 const points: string[] = items.map(({ label, figure, text }) => `${figure} ${label}. ${text}`);
 
+  // Link to the constituency page only when one exists (a church with no constituency falls back
+  // to its place name, which has no page).
+  const constituencySlugs = new Set((await constituencies.list()).map((item) => item.slug))
+  const constituencySlug = slugifyConstituency(church.constituency)
+  const constituencyHref = constituencySlugs.has(constituencySlug) ? `/constituencies/${constituencySlug}` : null
+
   const attendanceText =
     church.attendance != null ? `${church.attendance.toLocaleString('en-GB')} on Sundays` : 'Sunday meeting'
 
@@ -176,7 +184,7 @@ const points: string[] = items.map(({ label, figure, text }) => `${figure} ${lab
                   <path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11Z" />
                   <circle cx="12" cy="10" r="2.5" />
                 </svg>
-                {church.constituency}
+                {constituencyHref ? <Link href={constituencyHref}>{church.constituency}</Link> : church.constituency}
               </span>
               <span>{church.denomination}</span>
               <span>{attendanceText}</span>

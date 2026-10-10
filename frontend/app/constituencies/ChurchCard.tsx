@@ -252,6 +252,10 @@ export function ChurchDialog({ church, onClose }: { church: ConstituencyChurch |
             </>
           )}
 
+          <Link className={styles.compactDetails} href={`/churches/${church.id}`}>
+            View church profile <ArrowIcon />
+          </Link>
+
           {(church.website || church.phone) && (
             <>
               <h4 className={styles.dialogHeading}>Get in touch</h4>
