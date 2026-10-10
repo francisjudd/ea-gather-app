@@ -533,7 +533,6 @@ export default function ContactMpFlow({ step }: { step: string }) {
                     value={draft.personalNote}
                     onChange={(event) => onChange('personalNote', event.target.value)}
                     placeholder="We’re seeing more working families come to our food bank than ever before. We’d love your help keeping the school holiday clubs running in our area."
-                    required
                   />
                 </label>
                 <div className="message-hint"><span>Suggested length: 100–400 characters</span><span>{draft.personalNote.length} characters</span></div>
