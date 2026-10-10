@@ -7,6 +7,7 @@ import EmailButton from '@/components/messaging/EmailButton'
 import GmailButton from '@/components/messaging/GmailButton'
 import { isMailtoTooLong, buildLetterMailto, renderLetterFallback, type LetterInput } from '@/lib/messaging'
 import SiteNav from '../../components/SiteNav'
+import BrandLockup from '../../components/BrandLockup'
 import { flowSteps, type StepSlug } from './steps'
 
 type SendMethod = 'mailto' | 'download' | ''
@@ -330,11 +331,10 @@ export default function ContactMpFlow({ step }: { step: string }) {
   return (
     <main className="app-shell">
       <header className="site-header">
-        <Link className="brand-lockup" href="/contact-mp" aria-label="More Than Sunday — start again">
-          <span className="brand-name">More Than <strong>Sunday</strong></span>
+        <Link className="brand-lockup" href="/" aria-label="Evangelical Alliance home">
+          <BrandLockup />
         </Link>
         <div className="site-actions">
-          <span className="header-caption">An initiative from the Evangelical Alliance</span>
           <SiteNav />
         </div>
       </header>

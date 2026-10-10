@@ -3,6 +3,7 @@
 import { useMemo, useState, type FormEvent } from 'react'
 import Link from 'next/link'
 import SiteNav from '../../components/SiteNav'
+import BrandLockup from '../../components/BrandLockup'
 import MapView from './MapView'
 import ChurchProfileCard from './ChurchProfileCard'
 import { initiativeTypes } from '../../lib/initiatives'
@@ -365,7 +366,7 @@ export default function ChurchFinder() {
     <div className={styles.page}>
       <header className={styles.header}>
         <Link className={styles.brandLink} href="/" aria-label="Evangelical Alliance home">
-          <ChurchMark />
+          <BrandLockup />
         </Link>
         <SiteNav />
       </header>

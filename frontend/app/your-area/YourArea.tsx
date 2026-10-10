@@ -3,6 +3,7 @@
 import { useMemo, useState, type FormEvent } from 'react'
 import Link from 'next/link'
 import SiteNav from '../../components/SiteNav'
+import BrandLockup from '../../components/BrandLockup'
 import styles from './your-area.module.css'
 import {
   sampleAreas,
@@ -81,8 +82,8 @@ export default function YourArea() {
   return (
     <main className="app-shell">
       <header className="site-header">
-        <Link className="brand-lockup" href="/your-area" aria-label="More Than Sunday — your area">
-          <span className="brand-name">More Than <strong>Sunday</strong></span>
+        <Link className="brand-lockup" href="/" aria-label="Evangelical Alliance home">
+          <BrandLockup />
         </Link>
         <SiteNav />
       </header>

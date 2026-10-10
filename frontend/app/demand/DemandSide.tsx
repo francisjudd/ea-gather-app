@@ -3,6 +3,7 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import Link from 'next/link'
 import SiteNav from '../../components/SiteNav'
+import BrandLockup from '../../components/BrandLockup'
 import styles from './demand.module.css'
 
 type ParishDashboard = {
@@ -122,7 +123,7 @@ export default function DemandSide() {
     <div className={styles.page}>
       <header className={styles.header}>
         <Link className={styles.brandLink} href="/" aria-label="Evangelical Alliance home">
-          <ChurchMark />
+          <BrandLockup />
         </Link>
         <SiteNav />
       </header>
