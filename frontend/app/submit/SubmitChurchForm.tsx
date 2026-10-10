@@ -2,7 +2,7 @@
 
 import { useState, type FormEvent } from 'react'
 import Link from 'next/link'
-import SiteNav from '../../components/SiteNav'
+import FullNav from '../../components/FullNavigation'
 import { submitChurch } from '../../lib/churchStore'
 import { initiativeTypes } from '../../lib/initiatives'
 
@@ -96,12 +96,7 @@ export default function SubmitChurchForm() {
 
   return (
     <main className="app-shell">
-      <header className="site-header">
-        <Link className="brand-lockup" href="/" aria-label="Evangelical Alliance home">
-          <span className="brand-name">evangelical <strong>alliance</strong></span>
-        </Link>
-        <SiteNav />
-      </header>
+      <FullNav />
 
       <div className="flow-layout">
         <aside className="flow-sidebar">
