@@ -51,6 +51,7 @@ def initiative_names(db: Connection) -> dict[str, str]:
 CHURCH_SELECT = """
 select c.slug, c.name, c.address, c.postcode, c.lat, c.lng, c.denomination,
        c.website, c.phone, c.constituency,
+       c.contact_first_name, c.contact_surname, c.contact_role, c.contact_email,
        coalesce(array_agg(distinct cat.name) filter (where cat.name is not null), '{{}}') as categories,
        {distance} as distance_miles
 from churches c
@@ -89,6 +90,10 @@ def to_church(row: dict) -> Church:
         website=row["website"],
         phone=row["phone"],
         constituency=row["constituency"],
+        contact_first_name=row["contact_first_name"],
+        contact_surname=row["contact_surname"],
+        contact_role=row["contact_role"],
+        contact_email=row["contact_email"],
         distance_miles=round(row["distance_miles"], 2) if row["distance_miles"] is not None else None,
     )
 

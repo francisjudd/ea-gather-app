@@ -4,7 +4,7 @@
  */
 
 export interface paths {
-    "/churches": {
+    "/openapi/churches": {
         parameters: {
             query?: never;
             header?: never;
@@ -12,20 +12,20 @@ export interface paths {
             cookie?: never;
         };
         /** List Churches */
-        get: operations["list_churches_churches_get"];
+        get: operations["list_churches_openapi_churches_get"];
         put?: never;
         /**
          * Submit Church
          * @description Submit a church for review. It appears in the directory only after an admin approves it.
          */
-        post: operations["submit_church_churches_post"];
+        post: operations["submit_church_openapi_churches_post"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/churches/{church_id}": {
+    "/openapi/churches/{church_id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -33,7 +33,7 @@ export interface paths {
             cookie?: never;
         };
         /** Get Church */
-        get: operations["get_church_churches__church_id__get"];
+        get: operations["get_church_openapi_churches__church_id__get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -42,7 +42,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/initiatives": {
+    "/openapi/initiatives": {
         parameters: {
             query?: never;
             header?: never;
@@ -50,7 +50,7 @@ export interface paths {
             cookie?: never;
         };
         /** List Initiatives */
-        get: operations["list_initiatives_initiatives_get"];
+        get: operations["list_initiatives_openapi_initiatives_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -59,7 +59,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/geocode": {
+    "/openapi/geocode": {
         parameters: {
             query?: never;
             header?: never;
@@ -67,7 +67,7 @@ export interface paths {
             cookie?: never;
         };
         /** Geocode Query */
-        get: operations["geocode_query_geocode_get"];
+        get: operations["geocode_query_openapi_geocode_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -76,7 +76,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/mp/lookup": {
+    "/openapi/mp/lookup": {
         parameters: {
             query?: never;
             header?: never;
@@ -84,7 +84,7 @@ export interface paths {
             cookie?: never;
         };
         /** Lookup Mp */
-        get: operations["lookup_mp_mp_lookup_get"];
+        get: operations["lookup_mp_openapi_mp_lookup_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -93,7 +93,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/admin/submissions": {
+    "/openapi/admin/submissions": {
         parameters: {
             query?: never;
             header?: never;
@@ -101,7 +101,7 @@ export interface paths {
             cookie?: never;
         };
         /** List Submissions */
-        get: operations["list_submissions_admin_submissions_get"];
+        get: operations["list_submissions_openapi_admin_submissions_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -110,7 +110,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/admin/submissions/{submission_id}": {
+    "/openapi/admin/submissions/{submission_id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -124,7 +124,7 @@ export interface paths {
         options?: never;
         head?: never;
         /** Update Submission */
-        patch: operations["update_submission_admin_submissions__submission_id__patch"];
+        patch: operations["update_submission_openapi_admin_submissions__submission_id__patch"];
         trace?: never;
     };
     "/": {
@@ -178,6 +178,14 @@ export interface components {
             phone: string | null;
             /** Constituency */
             constituency: string | null;
+            /** Contactfirstname */
+            contactFirstName: string | null;
+            /** Contactsurname */
+            contactSurname: string | null;
+            /** Contactrole */
+            contactRole: string | null;
+            /** Contactemail */
+            contactEmail: string | null;
             /** Distancemiles */
             distanceMiles?: number | null;
         };
@@ -311,7 +319,7 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    list_churches_churches_get: {
+    list_churches_openapi_churches_get: {
         parameters: {
             query?: {
                 /** @description Text match on name, address or constituency */
@@ -352,7 +360,7 @@ export interface operations {
             };
         };
     };
-    submit_church_churches_post: {
+    submit_church_openapi_churches_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -385,7 +393,7 @@ export interface operations {
             };
         };
     };
-    get_church_churches__church_id__get: {
+    get_church_openapi_churches__church_id__get: {
         parameters: {
             query?: never;
             header?: never;
@@ -416,7 +424,7 @@ export interface operations {
             };
         };
     };
-    list_initiatives_initiatives_get: {
+    list_initiatives_openapi_initiatives_get: {
         parameters: {
             query?: never;
             header?: never;
@@ -436,7 +444,7 @@ export interface operations {
             };
         };
     };
-    geocode_query_geocode_get: {
+    geocode_query_openapi_geocode_get: {
         parameters: {
             query: {
                 /** @description Postcode, postcode area or place name */
@@ -468,7 +476,7 @@ export interface operations {
             };
         };
     };
-    lookup_mp_mp_lookup_get: {
+    lookup_mp_openapi_mp_lookup_get: {
         parameters: {
             query: {
                 postcode: string;
@@ -499,7 +507,7 @@ export interface operations {
             };
         };
     };
-    list_submissions_admin_submissions_get: {
+    list_submissions_openapi_admin_submissions_get: {
         parameters: {
             query?: {
                 status?: "pending" | "approved" | "rejected";
@@ -532,7 +540,7 @@ export interface operations {
             };
         };
     };
-    update_submission_admin_submissions__submission_id__patch: {
+    update_submission_openapi_admin_submissions__submission_id__patch: {
         parameters: {
             query?: never;
             header?: {

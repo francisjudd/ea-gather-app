@@ -80,6 +80,10 @@ create table churches (
     phone               text,
     constituency        text,
     constituency_code   text,
+    contact_first_name  text,
+    contact_surname     text,
+    contact_role        text,
+    contact_email       text,
     created_at          timestamptz not null default now(),
     updated_at          timestamptz not null default now()
 );
