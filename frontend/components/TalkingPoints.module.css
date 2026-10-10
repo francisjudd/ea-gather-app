@@ -437,7 +437,7 @@
 }
 
 .letterPanel :focus-visible {
-  outline-color: var(--ea-lime);
+  outline-color: #fff;
 }
 
 @media (max-width: 820px) {
