@@ -184,6 +184,7 @@ export type ChurchMp = {
   name: string
   party: string
   constituency: string
+  email: string
 }
 
 export type ChurchContact = {
@@ -243,6 +244,7 @@ const defaultMp: ChurchMp = {
   name: 'Your local MP',
   party: '',
   constituency: 'your local constituency',
+  email: "Your MP's email",
 }
 
 const DAY_ORDER: DayKey[] = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
@@ -345,7 +347,7 @@ const churchProfiles: Record<string, Omit<ChurchProfileExtras, 'daysOpenPerWeek'
       author: 'Megan Rylance',
       role: 'Operations Director',
     },
-    mp: { name: 'Rebecca Long-Bailey MP', party: 'Labour', constituency: 'Salford & Eccles' },
+    mp: { name: 'Rebecca Long-Bailey MP', party: 'Labour', constituency: 'Salford & Eccles', email: 'Rebecca.L.B.office@parliament.uk' },
     contact: { name: 'Megan Rylance, Operations Director', address: 'Trinity Way, Salford, M3 7BB', email: 'hello@audacious.org.uk' },
   },
   'audacious-cardiff': {
@@ -370,7 +372,7 @@ const churchProfiles: Record<string, Omit<ChurchProfileExtras, 'daysOpenPerWeek'
       author: 'Dewi Morgan',
       role: 'Community Pastor',
     },
-    mp: { name: 'Stephen Doughty MP', party: 'Labour', constituency: 'Cardiff South & Penarth' },
+    mp: { name: 'Stephen Doughty MP', party: 'Labour', constituency: 'Cardiff South & Penarth', email: "Stephen.Doughty@parliament.uk" },
     contact: { name: 'Dewi Morgan, Community Pastor', address: 'Bute Terrace, Cardiff, CF10 2FL', email: 'hello@audaciouscardiff.org.uk' },
   },
   'audacious-chester': {
@@ -393,7 +395,7 @@ const churchProfiles: Record<string, Omit<ChurchProfileExtras, 'daysOpenPerWeek'
       author: 'Rev Joanne Price',
       role: 'Lead Pastor',
     },
-    mp: { name: 'Samantha Dixon MP', party: 'Labour', constituency: 'City of Chester' },
+    mp: { name: 'Samantha Dixon MP', party: 'Labour', constituency: 'City of Chester', email: "Samantha.Dixon.MP@parliament.uk" },
     contact: { name: 'Rev Joanne Price, Lead Pastor', address: '4 Sovereign Way, Chester, CH1 4QN', email: 'hello@audaciouschester.org.uk' },
   },
   'audacious-bury': {
@@ -418,7 +420,7 @@ const churchProfiles: Record<string, Omit<ChurchProfileExtras, 'daysOpenPerWeek'
       author: 'Amy Fletcher',
       role: 'Community Minster',
     },
-    mp: { name: 'James Daly MP', party: 'Conservative', constituency: 'Bury North' },
+    mp: { name: 'James Daly MP', party: 'Conservative', constituency: 'Bury North', email: "Duly.James@parliament.uk" },
     contact: { name: 'Amy Fletcher, Community Minister', address: 'The Rock, Bury, BL9 0YB', email: 'hello@audaciousbury.org.uk' },
   },
   'audacious-sheffield': {
@@ -442,7 +444,7 @@ const churchProfiles: Record<string, Omit<ChurchProfileExtras, 'daysOpenPerWeek'
       author: 'Rev Tom Hesketh',
       role: 'Pastor',
     },
-    mp: { name: 'Clive Betts MP', party: 'Labour', constituency: 'Sheffield South East' },
+    mp: { name: 'Clive Betts MP', party: 'Labour', constituency: 'Sheffield South East', email: "Clive.MP@parliament.uk" },
     contact: { name: 'Rev Tom Hesketh, Pastor', address: 'Victoria Quays, Sheffield, S4 7YA', email: 'hello@audacioussheffield.org.uk' },
   },
   '360-life': {
@@ -466,7 +468,7 @@ const churchProfiles: Record<string, Omit<ChurchProfileExtras, 'daysOpenPerWeek'
       author: 'Nicky Booth',
       role: 'Life Centre Manager',
     },
-    mp: { name: 'Lisa Smart MP', party: 'Liberal Democrat', constituency: 'Stockport' },
+    mp: { name: 'Lisa Smart MP', party: 'Liberal Democrat', constituency: 'Stockport', email: "Smart.office@parliament.uk" },
     contact: { name: 'Nicky Booth, Life Centre Manager', address: '71 Adswood Road, Stockport, SK3 8HR', email: 'hello@360life.org.uk' },
   },
   '3c-community': {
@@ -489,7 +491,7 @@ const churchProfiles: Record<string, Omit<ChurchProfileExtras, 'daysOpenPerWeek'
       author: 'Pastor Daniel Okoye',
       role: 'Community Pastor',
     },
-    mp: { name: 'Lisa Smart MP', party: 'Liberal Democrat', constituency: 'Stockport' },
+    mp: { name: 'Lisa Smart MP', party: 'Liberal Democrat', constituency: 'Stockport', email: "Smart.office@parliament.uk" },
     contact: { name: 'Pastor Daniel Okoye, Community Pastor', address: 'Stockport, Greater Manchester', email: 'hello@3ccommunity.org.uk' },
   },
   'abbey-chapel': {
@@ -514,7 +516,7 @@ const churchProfiles: Record<string, Omit<ChurchProfileExtras, 'daysOpenPerWeek'
       author: 'Rev Hannah Wells',
       role: 'Vicar',
     },
-    mp: { name: 'Example MP', party: 'Independent', constituency: 'Example Central' },
+    mp: { name: 'Example MP', party: 'Independent', constituency: 'Example Central', email: "office@example.com" },
     contact: { name: 'Rev Hannah Wells, Vicar', address: 'United Kingdom', email: 'hello@abbeychapel.org.uk' },
   },
 }
