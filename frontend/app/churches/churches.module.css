@@ -54,11 +54,11 @@
 }
 
 .brandDots i:nth-child(2) {
-  background: #168ea2;
+  background: #449aae; /* brand teal */
 }
 
 .brandDots i:nth-child(3) {
-  background: #d7d74b;
+  background: #dcda60; /* brand lime */
 }
 
 .headerCaption {

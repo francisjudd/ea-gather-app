@@ -1,0 +1,98 @@
+import type { Metadata } from 'next'
+import Link from 'next/link'
+
+export const metadata: Metadata = {
+  title: 'Cookie policy | Evangelical Alliance',
+  description: 'How the More Than Sunday site uses cookies and how you can control them.',
+}
+
+export default function CookiePolicyPage() {
+  return (
+    <main className="app-shell">
+      <header className="site-header">
+        <Link className="brand-lockup" href="/contact-mp" aria-label="More Than Sunday — start again">
+          <span className="brand-name">More Than <strong>Sunday</strong></span>
+        </Link>
+        <div className="site-actions">
+          <span className="header-caption">An initiative from the Evangelical Alliance</span>
+          <nav aria-label="Primary">
+            <Link className="site-nav-link" href="/churches">Church directory</Link>
+          </nav>
+        </div>
+      </header>
+
+      <div className="cookie-policy">
+        <p className="cookie-policy__kicker">COOKIE POLICY</p>
+        <h1>How we use cookies</h1>
+        <p className="cookie-policy__intro">
+          This page explains what cookies are, how the More Than Sunday site uses them, and how you
+          can control them.
+        </p>
+
+        <section className="cookie-policy__section">
+          <h2>What are cookies?</h2>
+          <p>
+            Cookies are small text files stored on your device when you visit a website. They help the
+            site remember your preferences and understand how it is used. Some cookies are essential
+            for the site to work; others help us improve it.
+          </p>
+        </section>
+
+        <section className="cookie-policy__section">
+          <h2>Essential cookies</h2>
+          <p>
+            These are required for the site to function. They include remembering your cookie
+            preferences and, where you are using the letter tool, saving your progress in your
+            browser. They cannot be switched off.
+          </p>
+        </section>
+
+        <section className="cookie-policy__section">
+          <h2>Analytics cookies</h2>
+          <p>
+            These help us understand how visitors use the site — which pages are visited and how
+            people move around it. The information is aggregated and does not identify you
+            personally. You can reject these by choosing &ldquo;Essential only&rdquo; in the cookie
+            banner.
+          </p>
+        </section>
+
+        <section className="cookie-policy__section">
+          <h2>Marketing cookies</h2>
+          <p>
+            These are used to show you relevant content and measure the effectiveness of our
+            campaigns. You can reject these by choosing &ldquo;Essential only&rdquo; in the cookie
+            banner.
+          </p>
+        </section>
+
+        <section className="cookie-policy__section">
+          <h2>Managing your preferences</h2>
+          <p>
+            When you first visit the site, a banner asks you to accept all cookies or allow only the
+            essential ones. You can change your choice at any time by clearing your browser&rsquo;s
+            stored data for this site, which will show the banner again on your next visit.
+          </p>
+        </section>
+
+        <section className="cookie-policy__section">
+          <h2>Contact us</h2>
+          <p>
+            If you have any questions about this cookie policy or how we handle your data, contact the
+            advocacy team at{' '}
+            <a href="mailto:advocacy@eauk.org">advocacy@eauk.org</a>.
+          </p>
+        </section>
+      </div>
+
+      <footer className="site-footer">
+        <span>MORE THAN SUNDAY · CHURCH ACTION</span>
+        <span>Questions? <a href="mailto:advocacy@eauk.org">Contact the advocacy team</a></span>
+        <div className="site-footer-legal">
+          The Evangelical Alliance. A company limited by guarantee registered in England and Wales No. 123448.
+          Registered Charity No England and Wales: 212325, Scotland: SC040576. Registered office: 176 Copenhagen Street, London, N1 0ST.
+        </div>
+      </footer>
+    </main>
+  )
+}

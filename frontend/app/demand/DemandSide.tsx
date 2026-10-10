@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type FormEvent } from 'react'
 import Link from 'next/link'
+import SiteNav from '../../components/SiteNav'
 import styles from './demand.module.css'
 
 type ParishDashboard = {
@@ -123,10 +124,7 @@ export default function DemandSide() {
         <Link className={styles.brandLink} href="/" aria-label="Evangelical Alliance home">
           <ChurchMark />
         </Link>
-        <nav className={styles.headerNav} aria-label="Primary">
-          <Link className={styles.headerNavLink} href="/your-area">Your area</Link>
-          <Link className={styles.headerNavLink} href="/demand">The demand side</Link>
-        </nav>
+        <SiteNav />
       </header>
 
       <main className={styles.main}>

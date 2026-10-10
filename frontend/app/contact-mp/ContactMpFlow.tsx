@@ -3,6 +3,9 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import EmailButton from '@/components/messaging/EmailButton'
+import { isMailtoTooLong, buildLetterMailto, renderLetterFallback, type LetterInput } from '@/lib/messaging'
+import SiteNav from '../../components/SiteNav'
 import { flowSteps, type StepSlug } from './steps'
 
 type SendMethod = 'mailto' | 'download' | ''
@@ -118,47 +121,43 @@ function readDraft(value: string): Draft {
   }
 }
 
-function getEmailBody(draft: Draft) {
-  const firstName = draft.mpName.trim().split(/\s+/)[0] || 'there'
-  const activitiesText = activities
-    .filter((activity) => draft.selectedActivities.includes(activity.id))
-    .map((activity) => {
-      const count = draft.activityCounts[activity.id]?.trim()
-      const amount = count ? ` — around ${count} people${activity.frequency ? `, ${activity.frequency}` : ''}` : ''
-      return `- ${activity.label}${amount}`
-    })
-  const churchName = draft.churchName.trim() || 'our church'
-  const constituency = draft.postcode.trim()
-    ? 'your constituency'
-    : 'our local area'
-  const roleAndChurch = [draft.senderRole.trim(), churchName].filter(Boolean).join(' at ')
-
-  return [
-    `Dear ${firstName},`,
-    '',
-    `I'm writing${roleAndChurch ? ` as ${roleAndChurch}` : ''}, a church in ${constituency}.`,
-    `I wanted to share a brief picture of what we do week-to-week — in case it's useful as you represent us in Parliament.`,
-    '',
-    ...(activitiesText.length > 0 ? ['Each week, our team and volunteers run:', ...activitiesText, ''] : []),
-    draft.personalNote.trim(),
-    ...(draft.advocacyFollowUp
-      ? [
-          '',
-          'The Evangelical Alliance would welcome the chance to meet with you and discuss how churches in your constituency are supporting the community.',
-        ]
-      : []),
-    '',
-    'Thank you for the work you do for our area. We pray for you regularly, and we would love to host you at the church should you ever like to visit.',
-    '',
-    'With every good wish,',
-    draft.senderName.trim(),
-    [draft.senderRole.trim(), churchName].filter(Boolean).join(', '),
-    draft.churchAddress.trim(),
-  ].filter((line, index, lines) => line !== '' || (index > 0 && lines[index - 1] !== '')).join('\n')
-}
-
-function getSubject(postcode: string) {
-  return `From a church in ${postcode.trim() || 'your constituency'} — what we're doing locally`
+function toLetterInput(draft: Draft): LetterInput {
+  const mpName = draft.mpName.trim()
+  return {
+    sender: {
+      name: draft.senderName.trim(),
+      role: draft.senderRole.trim() || null,
+      email: draft.senderEmail.trim() || null,
+    },
+    church: {
+      name: draft.churchName.trim() || 'our church',
+      address: draft.churchAddress.trim() || null,
+      postcode: draft.postcode.trim(),
+    },
+    mp: {
+      display_name: mpName ? `${mpName} MP` : 'there',
+      first_name: mpName.split(/\s+/)[0] || null,
+      email: draft.mpEmail.trim(),
+      constituency: '',
+    },
+    activities: activities
+      .filter((activity) => draft.selectedActivities.includes(activity.id))
+      .map((activity) => {
+        const count = Number(draft.activityCounts[activity.id])
+        return {
+          name: activity.label,
+          days: activity.frequency ?? null,
+          count: Number.isFinite(count) && count > 0 ? count : null,
+          unit: 'people',
+        }
+      }),
+    message: {
+      personal_note: draft.personalNote,
+      include_prayer_line: true,
+      mention_evangelical_alliance: draft.advocacyFollowUp,
+    },
+    outcome: { type: 'visit' },
+  }
 }
 
 function Field({
@@ -249,8 +248,11 @@ export default function ContactMpFlow({ step }: { step: string }) {
   const onChange = (name: keyof Draft, value: string) => {
     setDraft((previous) => ({ ...previous, [name]: value }))
   }
-  const emailBody = useMemo(() => getEmailBody(draft), [draft])
-  const emailSubject = getSubject(draft.postcode)
+  const letterInput = useMemo(() => toLetterInput(draft), [draft])
+  const letter = useMemo(() => renderLetterFallback(letterInput), [letterInput])
+  const emailBody = letter.body
+  const emailSubject = letter.subjects[0]
+  const mailtoTooLong = isMailtoTooLong(buildLetterMailto(letterInput, emailSubject, emailBody))
   const isDemoPostcode = draft.postcode.replace(/\s/g, '').toUpperCase() === 'DN13LN'
 
   if (!currentStep) return null
@@ -286,11 +288,7 @@ export default function ContactMpFlow({ step }: { step: string }) {
     navigateTo('mp-lookup')
   }
 
-  const handleSend = () => {
-    const recipient = encodeURIComponent(draft.mpEmail)
-    const cc = draft.senderEmail ? `&cc=${encodeURIComponent(draft.senderEmail)}` : ''
-    const mailto = `mailto:${recipient}?subject=${encodeURIComponent(emailSubject)}${cc}&body=${encodeURIComponent(emailBody)}`
-    window.open(mailto, '_self')
+  const handleSent = () => {
     setDraft((previous) => ({ ...previous, sendMethod: 'mailto' }))
     navigateTo('confirmation')
   }
@@ -336,9 +334,7 @@ export default function ContactMpFlow({ step }: { step: string }) {
         </Link>
         <div className="site-actions">
           <span className="header-caption">An initiative from the Evangelical Alliance</span>
-          <nav aria-label="Primary">
-            <Link className="site-nav-link" href="/your-area">Your area</Link>
-          </nav>
+          <SiteNav />
         </div>
       </header>
 
@@ -575,9 +571,20 @@ export default function ContactMpFlow({ step }: { step: string }) {
                 <button className="button button-quiet" type="button" onClick={() => navigateTo('message')}>← Back</button>
                 <div className="action-row">
                   <button className="button button-secondary" type="button" onClick={handleDownload}>Download .eml</button>
-                  <button className="button button-primary" type="button" disabled={!draft.mpEmail || !draft.senderEmail} onClick={handleSend}>Open in my email client <span aria-hidden="true">↗</span></button>
+                  <EmailButton
+                    label="Open in my email client"
+                    to={draft.mpEmail.trim()}
+                    cc={draft.senderEmail.trim()}
+                    subject={emailSubject}
+                    body={emailBody}
+                    disabled={!draft.mpEmail || !draft.senderEmail}
+                    onClick={handleSent}
+                  />
                 </div>
               </div>
+              {mailtoTooLong && (
+                <p className="send-note" role="status">This letter is long for some email apps and may be cut off. If it is, use “Download .eml” instead.</p>
+              )}
               <p className="send-note">Your email app will open with the letter ready to send. Nothing is sent until you press send there.</p>
             </>
           )}
