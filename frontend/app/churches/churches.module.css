@@ -867,3 +867,22 @@
   }
 }
 
+
+/* ---- Finder: location links under the big search box in the hero ------------ */
+.heroLinks {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2) var(--space-5);
+  margin-top: var(--space-4);
+}
+
+.heroLinks .locationButton,
+.heroLinks .viewAllLink {
+  color: rgb(255 255 255 / 92%);
+}
+
+.heroLinks .locationButton:hover,
+.heroLinks .viewAllLink:hover {
+  color: var(--ea-lime);
+}

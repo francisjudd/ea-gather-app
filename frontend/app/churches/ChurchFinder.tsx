@@ -11,6 +11,8 @@ import { api, type Church } from '../../lib/api/client'
 import { dayKeys, dayShortLabels, parseChurchHours, type DayKey } from '../../lib/churchHours'
 import { distanceMiles, formatDistance, type LatLng } from '../../lib/geo'
 import styles from './churches.module.css'
+import constituency from '../constituencies/constituency.module.css'
+import services from '../services/services.module.css'
 import { PinIcon, SearchIcon } from './icons'
 
 type ScoredChurch = Church & { distanceMiles?: number | null }
@@ -172,38 +174,54 @@ export default function ChurchFinder() {
     <div className={styles.page}>
       <FullNav />
 
-      <main className={styles.main}>
-        <section className={styles.searchSection} aria-labelledby="page-title">
-          <p className={styles.eyebrow}>EVANGELICAL ALLIANCE DIRECTORY</p>
-          <h1 id="page-title">Find a church</h1>
+      <section className={`ea-hero on-dark ${constituency.hero}`} aria-labelledby="page-title">
+        <div className={constituency.container}>
+          <nav aria-label="Breadcrumb" className={constituency.breadcrumb}>
+            <ol>
+              <li><Link href="/">Home</Link></li>
+              <li aria-current="page">Churches</li>
+            </ol>
+          </nav>
 
-          <form className={styles.searchForm} onSubmit={submitSearch} role="search">
-            <label className={styles.visuallyHidden} htmlFor="church-search">
-              Search by church name, postcode or place
-            </label>
-            <input
-              id="church-search"
-              type="search"
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder="Search by church name, postcode or place..."
-            />
-            <button className={styles.searchButton} type="submit">
-              <SearchIcon />
-              <span>Search</span>
-            </button>
-          </form>
+          <div className={services.heroBody}>
+            <p className={constituency.eyebrow}>Church directory</p>
+            <h1 id="page-title" className={services.heading}>Find a church</h1>
+            <p className={services.lede}>
+              Search Evangelical Alliance member churches by name or place, or use your location.
+            </p>
 
-          <div className={styles.searchLinks}>
-            <button className={styles.locationButton} type="button" onClick={useCurrentLocation}>
-              <PinIcon />
-              <span>Use my current location</span>
-            </button>
-            <button className={styles.viewAllLink} type="button" onClick={viewAllChurches}>
-              Or view all Evangelical Alliance member churches
-            </button>
+            <form className={services.searchBox} onSubmit={submitSearch} role="search">
+              <label className={styles.visuallyHidden} htmlFor="church-search">
+                Search by church name, postcode or place
+              </label>
+              <input
+                id="church-search"
+                type="search"
+                autoComplete="off"
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder="Enter a church name or place"
+              />
+              <button type="submit" aria-label="Search">
+                <SearchIcon />
+              </button>
+            </form>
+
+            <div className={styles.heroLinks}>
+              <button className={styles.locationButton} type="button" onClick={useCurrentLocation}>
+                <PinIcon />
+                <span>Use my current location</span>
+              </button>
+              <button className={styles.viewAllLink} type="button" onClick={viewAllChurches}>
+                Or view all Evangelical Alliance member churches
+              </button>
+            </div>
           </div>
+        </div>
+      </section>
 
+      <main className={styles.main}>
+        <section className={styles.searchSection} aria-label="Search options and filters">
           {activeCenter && (
             <div className={styles.locationBar} role="group" aria-label="Location search options">
               <span className={styles.locationBarLabel}>
