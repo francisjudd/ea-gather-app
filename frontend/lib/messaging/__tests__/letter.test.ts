@@ -12,28 +12,28 @@ describe('full letter', () => {
     expect(renderLetterFallback(putney).body).toMatchInlineSnapshot(`
       "Dear Sarah,
 
-      I am the community outreach lead at St Mark's Putney (SW15 1AA), in Putney, and I am writing as one of your constituents.
+      I'm writing as Community Outreach Lead at St Mark's Putney, a church in your constituency.
 
-      Each week we welcome around 120 people through our community activities:
+      I wanted to share a brief picture of what we do in Putney week-to-week in case it's useful as you represent us in parliament.
 
-      - Food bank: each Tuesday, around 40 people (with Trussell)
-      - Warm space: weekdays, around 25 visitors
-      - Debt advice: fortnightly (with StepChange)
+      Each week, our team and volunteers run:
+      * Food bank — around 40 people, each Tuesday (with Trussell)
+      * Warm space — around 25 visitors, weekdays
+      * Debt advice — fortnightly (with StepChange)
 
       Last winter a family told us the warm space "saved Christmas".
 
       We are one of 7 churches in Putney running at least 31 community activities. You can see them all here: https://example.org/putney?a=1&b=2
 
-      We would love you to visit our food bank on Tuesday, whenever suits you. It could also be a good moment for a photo with our volunteers.
+      The Evangelical Alliance, who help coordinate UK churches' engagement with parliament, would welcome the chance to meet with you and discuss how churches in your constituency are supporting the community. If that's something you'd be open to, you can contact them on advocacy@eauk.org.
 
-      The Evangelical Alliance, which helps coordinate churches' engagement with Parliament, would welcome the chance to meet you and hear how churches in your constituency are supporting the community.
+      Thank you for the work you do for our area. We pray for you and your team regularly.
 
-      Thank you for all you do for our community. We pray for you and your team regularly.
+      We'd love to host you at our food bank on Tuesday at a time that suited you. It could also be a good moment for a photo with our volunteers.
 
       With every good wish,
       Jo Bennett
-      Community Outreach Lead
-      St Mark's Putney
+      Community Outreach Lead, St Mark's Putney
       1 High Street, London
       020 7946 0000"
     `)
@@ -43,13 +43,16 @@ describe('full letter', () => {
     expect(renderLetterFallback(lean).body).toMatchInlineSnapshot(`
       "Dear Sarah Whitfield MP,
 
-      I am part of Grace Church (SW15 1AA), and I am writing as one of your constituents.
+      I'm writing from Grace Church, a church in your constituency.
 
-      - Food bank
+      I wanted to share a brief picture of what we do in Putney week-to-week in case it's useful as you represent us in parliament.
+
+      Each week, our team and volunteers run:
+      * Food bank
+
+      Thank you for the work you do for our area.
 
       We would be glad to keep you updated on our work and to be a point of contact for you in the community.
-
-      Thank you for all you do for our community.
 
       With every good wish,
       Jo Bennett
@@ -75,12 +78,12 @@ describe('full letter', () => {
 
 describe('outcomes', () => {
   it('visit', () => {
-    expect(withOutcome({ type: 'visit' })).toContain('We would love you to visit, whenever suits you.\n')
+    expect(withOutcome({ type: 'visit' })).toContain("We'd love to host you at our church at a time that suited you.\n")
     expect(withOutcome({ type: 'visit', details: { activity: 'food bank', day: 'Tuesday' } })).toContain(
-      'We would love you to visit our food bank on Tuesday, whenever suits you.\n',
+      "We'd love to host you at our food bank on Tuesday at a time that suited you.\n",
     )
     expect(withOutcome({ type: 'visit', details: { day: 'Tuesday' } })).toContain(
-      'visit on Tuesday, whenever',
+      'our church on Tuesday at a time',
     )
     expect(withOutcome({ type: 'visit' })).not.toContain('photo')
   })
@@ -88,7 +91,7 @@ describe('outcomes', () => {
   it('visit_photo adds the photo sentence', () => {
     const body = withOutcome({ type: 'visit_photo', details: { activity: 'food bank' } })
     expect(body).toContain(
-      'We would love you to visit our food bank, whenever suits you. It could also be a good moment for a photo with our volunteers.',
+      "We'd love to host you at our food bank at a time that suited you. It could also be a good moment for a photo with our volunteers.",
     )
   })
 
@@ -126,7 +129,7 @@ describe('outcomes', () => {
 
   it('shows only the chosen outcome wording', () => {
     const markers: Record<string, string> = {
-      visit: 'We would love you to visit',
+      visit: "We'd love to host you",
       missed_anything: 'whether your office sees needs',
       signposting: 'constituency caseworkers',
       meeting: 'short meeting',
@@ -146,11 +149,11 @@ describe('activities', () => {
   const lines = (activities: LetterInput['activities']) =>
     render({ activities }, lean)
       .body.split('\n')
-      .filter((l) => l.startsWith('- '))
+      .filter((l) => l.startsWith('* '))
 
   it('caps the list at 5', () => {
     const many = Array.from({ length: 8 }, (_, i) => ({ name: `Activity ${i + 1}` }))
-    expect(lines(many)).toEqual(['- Activity 1', '- Activity 2', '- Activity 3', '- Activity 4', '- Activity 5'])
+    expect(lines(many)).toEqual(['* Activity 1', '* Activity 2', '* Activity 3', '* Activity 4', '* Activity 5'])
     expect(render({ activities: many }, lean).body).not.toContain('Activity 6')
   })
 
@@ -159,44 +162,36 @@ describe('activities', () => {
   })
 
   it.each([
-    ['name only', { name: 'Food bank' }, '- Food bank'],
-    ['days', { name: 'Food bank', days: 'each Tuesday' }, '- Food bank: each Tuesday'],
-    ['count', { name: 'Food bank', count: 40 }, '- Food bank: around 40'],
-    ['count and unit', { name: 'Food bank', count: 40, unit: 'people' }, '- Food bank: around 40 people'],
-    ['unit without count', { name: 'Food bank', unit: 'people' }, '- Food bank'],
-    ['days and count', { name: 'Food bank', days: 'weekly', count: 40 }, '- Food bank: weekly, around 40'],
+    ['name only', { name: 'Food bank' }, '* Food bank'],
+    ['days', { name: 'Food bank', days: 'each Tuesday' }, '* Food bank — each Tuesday'],
+    ['count', { name: 'Food bank', count: 40 }, '* Food bank — around 40'],
+    ['count and unit', { name: 'Food bank', count: 40, unit: 'people' }, '* Food bank — around 40 people'],
+    ['unit without count', { name: 'Food bank', unit: 'people' }, '* Food bank'],
+    ['days and count', { name: 'Food bank', days: 'weekly', count: 40 }, '* Food bank — around 40, weekly'],
     [
       'days, count and unit',
       { name: 'Food bank', days: 'weekly', count: 40, unit: 'people' },
-      '- Food bank: weekly, around 40 people',
+      '* Food bank — around 40 people, weekly',
     ],
-    ['partner', { name: 'Food bank', partner: 'Trussell' }, '- Food bank (with Trussell)'],
+    ['partner', { name: 'Food bank', partner: 'Trussell' }, '* Food bank (with Trussell)'],
     [
       'everything',
       { name: 'Food bank', days: 'weekly', count: 40, unit: 'people', partner: 'Trussell' },
-      '- Food bank: weekly, around 40 people (with Trussell)',
+      '* Food bank — around 40 people, weekly (with Trussell)',
     ],
-    ['partner and count', { name: 'Food bank', count: 3, partner: 'Trussell' }, '- Food bank: around 3 (with Trussell)'],
-    ['empty strings', { name: 'Food bank', days: '', unit: '', partner: '' }, '- Food bank'],
-    ['null fields', { name: 'Food bank', days: null, count: null, unit: null, partner: null }, '- Food bank'],
+    ['partner and count', { name: 'Food bank', count: 3, partner: 'Trussell' }, '* Food bank — around 3 (with Trussell)'],
+    ['empty strings', { name: 'Food bank', days: '', unit: '', partner: '' }, '* Food bank'],
+    ['null fields', { name: 'Food bank', days: null, count: null, unit: null, partner: null }, '* Food bank'],
   ])('formats %s', (_label, activity, expected) => {
     expect(lines([activity])).toEqual([expected])
   })
 
   it('treats count: null as no count', () => {
-    expect(lines([{ name: 'Food bank', count: null, unit: 'people' }])).toEqual(['- Food bank'])
+    expect(lines([{ name: 'Food bank', count: null, unit: 'people' }])).toEqual(['* Food bank'])
   })
 
   it('keeps count: 0 rather than treating it as no count', () => {
-    expect(lines([{ name: 'Food bank', count: 0, unit: 'people' }])).toEqual(['- Food bank: around 0 people'])
-  })
-
-  it('renders the totals line only when provided', () => {
-    expect(putney.totals?.people_per_week_text).toBe('around 120 people')
-    expect(render({}).body).toContain('Each week we welcome around 120 people through our community activities:')
-    expect(render({ totals: {} }).body).not.toContain('Each week')
-    expect(render({ totals: { people_per_week_text: null } }).body).not.toContain('Each week')
-    expect(render({ totals: { people_per_week_text: '' } }).body).not.toContain('Each week')
+    expect(lines([{ name: 'Food bank', count: 0, unit: 'people' }])).toEqual(['* Food bank — around 0 people'])
   })
 })
 
@@ -212,41 +207,26 @@ describe('greeting and sender', () => {
     }
   })
 
-  it('lower-cases the role', () => {
+  it('uses the role as written in the intro, or falls back to "from"', () => {
     const intro = (role?: string | null) =>
       render({ sender: { ...lean.sender, role } }, lean).body.split('\n')[2]
-    expect(intro('Community Outreach Lead')).toContain('I am the community outreach lead at Grace Church')
-    expect(intro('Pastor')).toContain('I am the pastor at Grace Church')
-    expect(intro(undefined)).toContain('I am part of Grace Church')
-    expect(intro(null)).toContain('I am part of Grace Church')
-    expect(intro('')).toContain('I am part of Grace Church')
+    expect(intro('Vicar')).toBe("I'm writing as Vicar at Grace Church, a church in your constituency.")
+    expect(intro('Community Outreach Lead')).toContain("I'm writing as Community Outreach Lead at Grace Church")
+    for (const role of [undefined, null, '']) {
+      expect(intro(role)).toBe("I'm writing from Grace Church, a church in your constituency.")
+    }
   })
 
-  it.each([
-    ['Church Administrator', 'church administrator'],
-    ['CEO', 'CEO'],
-    ['Youth Pastor and DBS Officer', 'youth pastor and DBS officer'],
-    ["Vicar of St Mark's", "vicar of St Mark's"],
-    ['Warden at All Saints', 'warden at All Saints'],
-    ['  Pastor', '  pastor'],
-  ])('lower-cases %j to %j, keeping acronyms and names', (role, expected) => {
-    const body = render({ sender: { ...lean.sender, role } }, lean).body
-    expect(body).toContain(`I am the ${expected} at Grace Church`)
-  })
-
-  it('includes postcode and area in the intro when present', () => {
-    expect(render({}).body).toContain("I am the community outreach lead at St Mark's Putney (SW15 1AA), in Putney, and")
-    expect(render({ church: { ...putney.church, area: null } }).body).toContain('(SW15 1AA), and I am writing')
-  })
-
-  it('omits an empty postcode', () => {
-    const body = render({ church: { name: 'Grace Church', postcode: '' } }, lean).body
-    expect(body).toContain('part of Grace Church, and I am writing')
+  it('names the constituency in the overview, or falls back to "your constituency"', () => {
+    expect(render({}).body).toContain('what we do in Putney week-to-week')
+    expect(render({ mp: { ...putney.mp, constituency: '' } }).body).toContain(
+      'what we do in your constituency week-to-week',
+    )
   })
 
   it('signs off with only the contact lines that exist', () => {
     expect(render({}).body.endsWith(
-      "Jo Bennett\nCommunity Outreach Lead\nSt Mark's Putney\n1 High Street, London\n020 7946 0000",
+      "Jo Bennett\nCommunity Outreach Lead, St Mark's Putney\n1 High Street, London\n020 7946 0000",
     )).toBe(true)
     expect(renderLetterFallback(lean).body.endsWith('With every good wish,\nJo Bennett\nGrace Church')).toBe(true)
   })
@@ -261,19 +241,22 @@ describe('closing paragraphs', () => {
 
   it('prayer line on and off', () => {
     expect(closing({ include_prayer_line: true })).toContain(
-      'Thank you for all you do for our community. We pray for you and your team regularly.\n',
+      'Thank you for the work you do for our area. We pray for you and your team regularly.\n',
     )
     for (const message of [{ include_prayer_line: false }, {}, undefined]) {
       const body = closing(message)
-      expect(body).toContain('Thank you for all you do for our community.\n')
+      expect(body).toContain('Thank you for the work you do for our area.\n')
       expect(body).not.toContain('We pray')
     }
   })
 
   it('Evangelical Alliance paragraph on and off', () => {
-    expect(closing({ mention_evangelical_alliance: true })).toContain('The Evangelical Alliance, which helps')
+    const on = closing({ mention_evangelical_alliance: true })
+    expect(on).toContain('The Evangelical Alliance, who help coordinate UK churches')
+    expect(on).toContain('you can contact them on advocacy@eauk.org.')
     for (const message of [{ mention_evangelical_alliance: false }, {}, undefined]) {
       expect(closing(message)).not.toContain('Evangelical Alliance')
+      expect(closing(message)).not.toContain('advocacy@eauk.org')
     }
   })
 })
@@ -395,9 +378,11 @@ describe('segments', () => {
     expect(renderLetterFallback(putney).segments.map((s) => s.kind)).toEqual([
       'template',
       'data',
+      'template',
       'data',
       'personal',
       'data',
+      'template',
       'outcome',
       'template',
       'data',
@@ -408,7 +393,9 @@ describe('segments', () => {
     expect(renderLetterFallback(lean).segments.map((s) => s.kind)).toEqual([
       'template',
       'data',
+      'template',
       'data',
+      'template',
       'outcome',
       'template',
       'data',
