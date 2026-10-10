@@ -51,6 +51,57 @@ class Mp(ApiModel):
     postcode: str
 
 
+class ConstituencyProgramme(ApiModel):
+    name: str
+    category: str
+
+
+class ConstituencyChurch(ApiModel):
+    id: str
+    name: str
+    denomination: str | None
+    address: str | None
+    postcode: str | None
+    lat: float | None
+    lng: float | None
+    website: str | None
+    phone: str | None
+    programmes: list[ConstituencyProgramme]
+
+
+class ConstituencyService(ApiModel):
+    id: str
+    category: str
+    name: str
+    address: str | None
+    postcode: str | None
+    lat: float | None
+    lng: float | None
+    website: str | None
+    phone: str | None
+
+
+class ConstituencyMp(ApiModel):
+    name: str
+    party: str | None
+    email: str | None
+
+
+class ConstituencySummary(ApiModel):
+    slug: str
+    name: str
+    code: str | None
+    church_count: int
+    service_count: int
+
+
+class ConstituencyDetail(ConstituencySummary):
+    mp: ConstituencyMp | None
+    churches: list[ConstituencyChurch]
+    services: list[ConstituencyService]
+    services_by_category: dict[str, int]
+
+
 SubmissionStatus = Literal["pending", "approved", "rejected"]
 
 

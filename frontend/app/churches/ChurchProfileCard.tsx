@@ -1,5 +1,6 @@
 import Link from 'next/link'
-import { initiativeLabels } from '../../lib/initiatives'
+import { toInitiativeLabels } from '../../lib/initiatives'
+import { useInitiatives } from '../../lib/useInitiatives'
 import { dayLabels, parseChurchHours } from '../../lib/churchHours'
 import { formatDistance } from '../../lib/geo'
 import styles from './churches.module.css'
@@ -40,6 +41,7 @@ function ClockIcon() {
 
 export default function ChurchProfileCard({ church }: { church: Church }) {
   const hours = parseChurchHours(church.operatingHours)
+  const initiativeLabels = toInitiativeLabels(useInitiatives())
 
   return (
     <article className={styles.profileCard} aria-label={`${church.name} profile`}>

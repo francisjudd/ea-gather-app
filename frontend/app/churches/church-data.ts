@@ -206,7 +206,7 @@ export async function getChurchLinks(): Promise<{ id: string; name: string }[]> 
 // Rich, hand-authored impact profiles keyed by church id. Where a church is not
 // present, getChurchById fills in the gaps from the directory record.
 const churchProfiles: Record<string, Omit<ChurchProfileExtras, 'daysOpenPerWeek'>> = {
-  'audacious-salford': {
+  'audacious-church': {
     constituency: 'Salford & Eccles',
     attendance: 1200,
     verifiedDate: 'Sep 2026',
@@ -232,7 +232,7 @@ const churchProfiles: Record<string, Omit<ChurchProfileExtras, 'daysOpenPerWeek'
     mp: { name: 'Rebecca Long-Bailey MP', party: 'Labour', constituency: 'Salford & Eccles', email: 'Rebecca.L.B.office@parliament.uk' },
     contact: { name: 'Megan Rylance, Operations Director', address: 'Trinity Way, Salford, M3 7BB', email: 'hello@audacious.org.uk' },
   },
-  'audacious-cardiff': {
+  'audacious-church-cardiff': {
     constituency: 'Cardiff South & Penarth',
     attendance: 650,
     verifiedDate: 'Aug 2026',
@@ -257,7 +257,7 @@ const churchProfiles: Record<string, Omit<ChurchProfileExtras, 'daysOpenPerWeek'
     mp: { name: 'Stephen Doughty MP', party: 'Labour', constituency: 'Cardiff South & Penarth', email: "Stephen.Doughty@parliament.uk" },
     contact: { name: 'Dewi Morgan, Community Pastor', address: 'Bute Terrace, Cardiff, CF10 2FL', email: 'hello@audaciouscardiff.org.uk' },
   },
-  'audacious-chester': {
+  'audacious-church-chester': {
     constituency: 'City of Chester',
     attendance: 320,
     reachPerWeek: 130,
@@ -280,7 +280,7 @@ const churchProfiles: Record<string, Omit<ChurchProfileExtras, 'daysOpenPerWeek'
     mp: { name: 'Samantha Dixon MP', party: 'Labour', constituency: 'City of Chester', email: "Samantha.Dixon.MP@parliament.uk" },
     contact: { name: 'Rev Joanne Price, Lead Pastor', address: '4 Sovereign Way, Chester, CH1 4QN', email: 'hello@audaciouschester.org.uk' },
   },
-  'audacious-bury': {
+  'audacious-church-north-manchester': {
     constituency: 'Bury North',
     attendance: 900,
     verifiedDate: 'Jul 2026',
@@ -305,7 +305,7 @@ const churchProfiles: Record<string, Omit<ChurchProfileExtras, 'daysOpenPerWeek'
     mp: { name: 'James Daly MP', party: 'Conservative', constituency: 'Bury North', email: "Duly.James@parliament.uk" },
     contact: { name: 'Amy Fletcher, Community Minister', address: 'The Rock, Bury, BL9 0YB', email: 'hello@audaciousbury.org.uk' },
   },
-  'audacious-sheffield': {
+  'audacious-church-sheffield': {
     constituency: 'Sheffield South East',
     attendance: 700,
     reachPerWeek: 210,
@@ -329,7 +329,7 @@ const churchProfiles: Record<string, Omit<ChurchProfileExtras, 'daysOpenPerWeek'
     mp: { name: 'Clive Betts MP', party: 'Labour', constituency: 'Sheffield South East', email: "Clive.MP@parliament.uk" },
     contact: { name: 'Rev Tom Hesketh, Pastor', address: 'Victoria Quays, Sheffield, S4 7YA', email: 'hello@audacioussheffield.org.uk' },
   },
-  '360-life': {
+  '360-life-church': {
     constituency: 'Stockport',
     attendance: 180,
     reachPerWeek: 120,
@@ -353,7 +353,7 @@ const churchProfiles: Record<string, Omit<ChurchProfileExtras, 'daysOpenPerWeek'
     mp: { name: 'Lisa Smart MP', party: 'Liberal Democrat', constituency: 'Stockport', email: "Smart.office@parliament.uk" },
     contact: { name: 'Nicky Booth, Life Centre Manager', address: '71 Adswood Road, Stockport, SK3 8HR', email: 'hello@360life.org.uk' },
   },
-  '3c-community': {
+  '3c-community-church': {
     constituency: 'Stockport',
     attendance: 90,
     reachPerWeek: 100,

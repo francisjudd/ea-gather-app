@@ -6,7 +6,7 @@ import FullNav from '../../components/FullNavigation'
 import BrandLockup from '../../components/BrandLockup'
 import MapView from './MapView'
 import ChurchProfileCard from './ChurchProfileCard'
-import { initiativeTypes } from '../../lib/initiatives'
+import { useInitiatives } from '../../lib/useInitiatives'
 import { api, type Church } from '../../lib/api/client'
 import { dayKeys, dayShortLabels, parseChurchHours, type DayKey } from '../../lib/churchHours'
 import { distanceMiles, formatDistance, type LatLng } from '../../lib/geo'
@@ -33,6 +33,7 @@ export default function ChurchFinder() {
   const [myCoords, setMyCoords] = useState<LatLng | null>(null)
   const [radius, setRadius] = useState(DEFAULT_RADIUS_MILES)
   const [churches, setChurches] = useState<Church[]>([])
+  const initiatives = useInitiatives()
 
   // Load the directory from the API. The backend returns distance-sorted results
   // when lat/lng are supplied, so we refetch when the search center changes.
@@ -265,7 +266,7 @@ export default function ChurchFinder() {
               )}
             </div>
             <div className={styles.facetChips} role="group" aria-label="Filter churches by community initiative">
-              {initiativeTypes.map((initiative) => {
+              {initiatives.map((initiative) => {
                 const active = selectedInitiatives.includes(initiative.id)
                 return (
                   <button

@@ -4,7 +4,7 @@ import { useState, type FormEvent } from 'react'
 import Link from 'next/link'
 import FullNav from '../../components/FullNavigation'
 import { submitChurch } from '../../lib/churchStore'
-import { initiativeTypes } from '../../lib/initiatives'
+import { useInitiatives } from '../../lib/useInitiatives'
 import SiteFooter from '../../components/SiteFooter'
 
 type FormState = {
@@ -74,6 +74,7 @@ export default function SubmitChurchForm() {
   const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const initiatives = useInitiatives()
 
   const onChange = (name: keyof FormState, value: string) => {
     setForm((previous) => ({ ...previous, [name]: value }))
@@ -172,7 +173,7 @@ export default function SubmitChurchForm() {
 
                 <div className="section-rule"><span>COMMUNITY INITIATIVES</span></div>
                 <div className="activity-list">
-                  {initiativeTypes.map((initiative) => {
+                  {initiatives.map((initiative) => {
                     const checked = form.initiatives.includes(initiative.id)
                     return (
                       <div className={`activity-item ${checked ? 'activity-selected' : ''}`} key={initiative.id}>

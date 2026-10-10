@@ -10,7 +10,7 @@ import {
   updateSubmissionInitiatives,
   type ChurchSubmission,
 } from '../../lib/churchStore'
-import { initiativeTypes } from '../../lib/initiatives'
+import { useInitiatives } from '../../lib/useInitiatives'
 
 function formatDate(iso: string): string {
   try {
@@ -35,6 +35,7 @@ function SubmissionCard({
   onReject: (id: string) => void
   onToggleInitiative: (id: string, initiative: string) => void
 }) {
+  const initiatives = useInitiatives()
   return (
     <article className="admin-card">
       <header className="admin-card-header">
@@ -75,7 +76,7 @@ function SubmissionCard({
       <div className="admin-section">
         <p className="admin-section-label">INITIATIVES</p>
         <div className="admin-initiative-grid">
-          {initiativeTypes.map((initiative) => {
+          {initiatives.map((initiative) => {
             const checked = submission.initiatives.includes(initiative.id)
             return (
               <label className={`admin-initiative ${checked ? 'admin-initiative-checked' : ''}`} key={initiative.id}>
