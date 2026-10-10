@@ -3,6 +3,9 @@ import Link from 'next/link'
 export default function SiteNav() {
   return (
     <nav className="site-nav" aria-label="Primary">
+      <Link className="site-nav-link" href="/churches">
+        Churches
+      </Link>
       <Link className="site-nav-link" href="/your-area">
         Your area
       </Link>
