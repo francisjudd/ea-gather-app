@@ -7,6 +7,22 @@
 
 ---
 
+## MVP Readiness Status
+
+Status against the **Definition of Hackathon Success (MVP Deliverables)**. Legend:
+✅ **working** · ⚠️ **partial** · ❌ **not implemented**.
+
+| # | MVP Deliverable | Status | Notes |
+|:---|:---|:---|:---|
+| 1 | Working Map/Directory | ✅ | Searchable UI (`app/churches/ChurchFinder.tsx`) with map, filters by initiative/day. Uses **hardcoded sample data** (`church-data.ts`), not the DB. |
+| 2 | End-to-End Submission Flow | ⚠️ | Form (`app/submit/SubmitChurchForm.tsx`) captures initiatives and writes to **localStorage** (`lib/churchStore.ts`), not the backend DB. Backend `POST /churches` exists but is in-memory and unwired. |
+| 3 | Dynamic MP Advocate Tool | ⚠️ | 7-step flow (`app/contact-mp/ContactMpFlow.tsx`) with pre-filled, editable letter. Postcode→MP uses **hardcoded demo** (`demoMp` for `DN1 3LN`); no live lookup. |
+| 4 | Documented Endpoint | ⚠️ | Backend serves OpenAPI at `/openapi/openapi.json` with `GET/POST /churches`, `PATCH /churches/{id}`. Endpoints are **in-memory**, not DB-backed, and **unreachable in production** (routing mismatch — see `backend/endpoints.md`). |
+| — | Stewardship (handover-ready) | ⚠️ | README, AGENTS.md, USER_STORIES.md exist. README updated to reflect live backend. |
+| — | MP 'email click tracking' | ❌ | No click tracking implemented anywhere. |
+
+---
+
 ## 1. Church Admin (Pastor, Operations Manager, Volunteer)
 
 | ID | Priority | User Story | Acceptance / Notes |

@@ -90,13 +90,14 @@ type Props = {
   params: Promise<{ id: string }>
 }
 
-export function generateStaticParams() {
-  return getChurchIds().map((id) => ({ id }))
+export async function generateStaticParams() {
+  const ids = await getChurchIds()
+  return ids.map((id) => ({ id }))
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params
-  const church = getChurchById(id)
+  const church = await getChurchById(id)
   if (!church) return {}
   return {
     title: `${church.name} · Church impact profile | Evangelical Alliance`,
@@ -139,7 +140,7 @@ function ActivitiesPanel({ activities }: { activities: ChurchActivity[] }) {
 
 export default async function ChurchProfilePage({ params }: Props) {
   const { id } = await params
-  const church = getChurchById(id)
+  const church = await getChurchById(id)
   if (!church) notFound()
 
 

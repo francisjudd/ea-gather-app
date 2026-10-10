@@ -1,11 +1,10 @@
 'use client'
 
-import { useSyncExternalStore } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 import SiteNav from '../../components/SiteNav'
 import {
   getPendingSubmissions,
-  subscribeToSubmissions,
   approveChurch,
   rejectChurch,
   updateSubmissionInitiatives,
@@ -104,30 +103,46 @@ function SubmissionCard({
   )
 }
 
-const emptySubmissions: ChurchSubmission[] = []
-
 export default function AdminReview() {
-  const submissions = useSyncExternalStore(
-    subscribeToSubmissions,
-    getPendingSubmissions,
-    () => emptySubmissions,
-  )
+  const [token, setToken] = useState('')
+  const [submissions, setSubmissions] = useState<ChurchSubmission[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
 
-  const handleApprove = (id: string) => {
-    approveChurch(id)
+  const refresh = useCallback(async (adminToken: string) => {
+    try {
+      const data = await getPendingSubmissions(adminToken)
+      setSubmissions(data)
+      setError('')
+    } catch {
+      setError('We could not load submissions. Check the admin token and try again.')
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (token) void refresh(token)
+  }, [token, refresh])
+
+  const handleApprove = async (id: string) => {
+    await approveChurch(id, token)
+    await refresh(token)
   }
 
-  const handleReject = (id: string) => {
-    rejectChurch(id)
+  const handleReject = async (id: string) => {
+    await rejectChurch(id, token)
+    await refresh(token)
   }
 
-  const handleToggleInitiative = (id: string, initiative: string) => {
+  const handleToggleInitiative = async (id: string, initiative: string) => {
     const current = submissions.find((submission) => submission.id === id)
     if (!current) return
     const next = current.initiatives.includes(initiative)
       ? current.initiatives.filter((item) => item !== initiative)
       : [...current.initiatives, initiative]
-    updateSubmissionInitiatives(id, next)
+    await updateSubmissionInitiatives(id, next, token)
+    await refresh(token)
   }
 
   return (
@@ -153,6 +168,17 @@ export default function AdminReview() {
               <span className="admin-stat-label">Awaiting review</span>
             </div>
           </div>
+          <div className="admin-token">
+            <label className="field-label" htmlFor="admin-token">Admin token</label>
+            <input
+              id="admin-token"
+              type="password"
+              value={token}
+              onChange={(event) => setToken(event.target.value)}
+              placeholder="Paste the admin token"
+              autoComplete="off"
+            />
+          </div>
         </aside>
 
         <section className="admin-panel" aria-labelledby="admin-title">
@@ -163,7 +189,19 @@ export default function AdminReview() {
           </div>
           <h2 className="ea-underline" id="admin-title">Unapproved submissions.</h2>
 
-          {submissions.length === 0 ? (
+          {loading ? (
+            <div className="admin-empty">
+              <p className="admin-empty-title">Loading submissions…</p>
+            </div>
+          ) : error ? (
+            <div className="admin-empty">
+              <p className="admin-empty-title">Something went wrong.</p>
+              <p className="admin-empty-copy">{error}</p>
+              <button className="button button-quiet" type="button" onClick={() => { setLoading(true); void refresh(token) }}>
+                Try again
+              </button>
+            </div>
+          ) : submissions.length === 0 ? (
             <div className="admin-empty">
               <p className="admin-empty-title">Nothing to review.</p>
               <p className="admin-empty-copy">
