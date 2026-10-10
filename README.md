@@ -5,6 +5,7 @@ workspaces monorepo:
 
 - `frontend/` — Next.js App Router application and generated API types.
 - `backend/openapi.yaml` — placeholder for the backend's OpenAPI contract.
+- [`USER_STORIES.md`](./USER_STORIES.md) — Product objectives, user personas, MVP acceptance criteria, and demo flow.
 
 ## Prerequisites
 
