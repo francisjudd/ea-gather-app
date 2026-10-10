@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import EmailButton from '@/components/messaging/EmailButton'
 import { isMailtoTooLong, buildLetterMailto, renderLetterFallback, type LetterInput } from '@/lib/messaging'
+import SiteNav from '../../components/SiteNav'
 import { flowSteps, type StepSlug } from './steps'
 
 type SendMethod = 'mailto' | 'download' | ''
@@ -333,9 +334,7 @@ export default function ContactMpFlow({ step }: { step: string }) {
         </Link>
         <div className="site-actions">
           <span className="header-caption">An initiative from the Evangelical Alliance</span>
-          <nav aria-label="Primary">
-            <Link className="site-nav-link" href="/your-area">Your area</Link>
-          </nav>
+          <SiteNav />
         </div>
       </header>
 

@@ -2,6 +2,7 @@
 
 import { useMemo, useState, type FormEvent } from 'react'
 import Link from 'next/link'
+import SiteNav from '../../components/SiteNav'
 import MapView from './MapView'
 import ChurchProfileCard from './ChurchProfileCard'
 import { initiativeTypes } from '../../lib/initiatives'
@@ -254,10 +255,7 @@ export default function ChurchFinder() {
         <Link className={styles.brandLink} href="/" aria-label="Evangelical Alliance home">
           <ChurchMark />
         </Link>
-        <nav className={styles.headerNav} aria-label="Primary">
-          <Link className={styles.headerNavLink} href="/churches">Church directory</Link>
-          <Link className={styles.headerNavLink} href="/demand">The demand side</Link>
-        </nav>
+        <SiteNav />
       </header>
 
       <main className={styles.main}>
