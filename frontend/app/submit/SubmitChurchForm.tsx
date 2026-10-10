@@ -14,6 +14,7 @@ type FormState = {
   postcode: string
   operatingHours: string
   contactName: string
+  phoneNumber: string
   contactEmail: string
   initiatives: string[]
 }
@@ -25,6 +26,7 @@ const initialForm: FormState = {
   place: '',
   postcode: '',
   operatingHours: '',
+  phoneNumber: '',
   contactName: '',
   contactEmail: '',
   initiatives: [],
@@ -148,6 +150,7 @@ export default function SubmitChurchForm() {
                   <Field label="Town or place" name="place" value={form.place} onChange={onChange} placeholder="e.g. Doncaster" />
                   <Field label="Postcode" name="postcode" value={form.postcode} onChange={onChange} placeholder="e.g. DN1 3LN" autoComplete="postal-code" />
                   <Field label="Operating hours" name="operatingHours" value={form.operatingHours} onChange={onChange} placeholder="e.g. Sun 10:30am" />
+                  <Field label="Phone number" name="phoneNumber" value={form.phoneNumber} onChange={onChange} placeholder="012 3456 7890" />
                 </div>
 
                 <div className="section-rule"><span>CONTACT</span></div>
