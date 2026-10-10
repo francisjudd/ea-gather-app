@@ -19,6 +19,9 @@
 | **CA-06** | `Post-MVP` | **When** I add our activities, **I want to** choose what’s public and what stays private, **so** people can find our services without my personal details being published. | Clear privacy controls / toggle per field. |
 | **CA-07** | `Post-MVP` | **When** something changes (a new warm space, a youth club that’s paused), **I want to** update our listing quickly, **so** nobody turns up to something that’s stopped. | Lightweight claiming and edit link for verified contacts. |
 | **CA-08** | `Post-MVP` | **When** the yearly check-in email arrives, **I want to** confirm our details in one click, **so** our listing stays verified without extra admin. | Automated annual freshness token email. |
+| **CA-09** | `[MVP]` | **When** detailing our community support initiatives, **I want to** provide details such as service description, location, and contacts, **so I can** create a complete and useful record of our activity. | Intuitive form with validation and draft saving. |
+| **CA-10** | `[MVP]` | **When** I add a community initiative, **I want to** capture the service lead and contact information, **so I can** enable future engagement and verification. | The user can record initiative lead information alongside a generic church contact. |
+| **CA-11** | `[MVP]` | **When** I want to highlight a meaningful outcome, **I want to** provide testimonies or case studies, **so I can** show the human impact behind the statistics. | The user can add one or more case studies or testimonies to support impact reporting. |
 
 ---
 
