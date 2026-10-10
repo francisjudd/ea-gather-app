@@ -1,0 +1,223 @@
+'use client'
+
+import { useState, type FormEvent } from 'react'
+import Link from 'next/link'
+import { submitChurch } from '../../lib/churchStore'
+
+const initiativeTypes = [
+  { id: 'food-bank', label: 'Food bank or food pantry' },
+  { id: 'warm-space', label: 'Warm space / community lounge' },
+  { id: 'debt-advice', label: 'Debt advice & financial wellbeing' },
+  { id: 'clothing-bank', label: 'Clothing or baby bank' },
+  { id: 'family-groups', label: 'Parent / toddler & family groups' },
+  { id: 'youth', label: 'Youth clubs or mentoring' },
+  { id: 'holiday-clubs', label: 'Holiday clubs / school-holiday meals' },
+  { id: 'schools', label: 'Schools work or chaplaincy' },
+  { id: 'older-people', label: "Older people's lunches & visits" },
+  { id: 'mental-health', label: 'Mental health support groups' },
+  { id: 'esol', label: 'ESOL classes / refugee support' },
+  { id: 'recovery', label: 'Recovery / addiction support' },
+  { id: 'prison', label: 'Prison visiting or chaplaincy' },
+  { id: 'street-pastors', label: 'Street pastors or homelessness outreach' },
+  { id: 'community-groups', label: 'Hosting community groups in our building' },
+  { id: 'eco-church', label: 'Environmental / Eco Church work' },
+]
+
+type FormState = {
+  name: string
+  denomination: string
+  address: string
+  place: string
+  postcode: string
+  operatingHours: string
+  contactName: string
+  contactEmail: string
+  initiatives: string[]
+}
+
+const initialForm: FormState = {
+  name: '',
+  denomination: '',
+  address: '',
+  place: '',
+  postcode: '',
+  operatingHours: '',
+  contactName: '',
+  contactEmail: '',
+  initiatives: [],
+}
+
+function Field({
+  label,
+  name,
+  value,
+  onChange,
+  type = 'text',
+  required = false,
+  placeholder,
+  autoComplete,
+}: {
+  label: string
+  name: keyof FormState
+  value: string
+  onChange: (name: keyof FormState, value: string) => void
+  type?: string
+  required?: boolean
+  placeholder?: string
+  autoComplete?: string
+}) {
+  return (
+    <label className="field" htmlFor={name}>
+      <span className="field-label">{label}{required && <span aria-hidden="true"> *</span>}</span>
+      <input
+        id={name}
+        name={name}
+        type={type}
+        value={value}
+        required={required}
+        placeholder={placeholder}
+        autoComplete={autoComplete}
+        onChange={(event) => onChange(name, event.target.value)}
+      />
+    </label>
+  )
+}
+
+export default function SubmitChurchForm() {
+  const [form, setForm] = useState<FormState>(initialForm)
+  const [submitted, setSubmitted] = useState(false)
+
+  const onChange = (name: keyof FormState, value: string) => {
+    setForm((previous) => ({ ...previous, [name]: value }))
+  }
+
+  const toggleInitiative = (id: string) => {
+    setForm((previous) => ({
+      ...previous,
+      initiatives: previous.initiatives.includes(id)
+        ? previous.initiatives.filter((item) => item !== id)
+        : [...previous.initiatives, id],
+    }))
+  }
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    submitChurch(form)
+    setSubmitted(true)
+  }
+
+  const resetForm = () => {
+    setForm(initialForm)
+    setSubmitted(false)
+  }
+
+  return (
+    <main className="app-shell">
+      <header className="site-header">
+        <Link className="brand-lockup" href="/" aria-label="Evangelical Alliance home">
+          <span className="brand-name">evangelical <strong>alliance</strong></span>
+        </Link>
+        <span className="header-caption">Church directory</span>
+      </header>
+
+      <div className="flow-layout">
+        <aside className="flow-sidebar">
+          <p className="sidebar-kicker">ADD TO THE DIRECTORY</p>
+          <h1>Tell us about a church.</h1>
+          <p className="sidebar-copy">
+            Know a church running community initiatives? Share what it does so it can be added to the
+            Evangelical Alliance directory.
+          </p>
+          <div className="sidebar-note">
+            <span className="note-icon" aria-hidden="true">✳</span>
+            <p><strong>Small things count.</strong><br />Even a weekly food bank or a warm space is worth sharing.</p>
+          </div>
+        </aside>
+
+        <section className="form-panel" aria-labelledby="submit-title">
+          {submitted ? (
+            <div className="confirmation-content">
+              <div className="confirmation-icon" aria-hidden="true">✓</div>
+              <p className="confirmation-kicker">THANK YOU</p>
+              <h2 className="ea-underline" id="submit-title">Your submission has been received.</h2>
+              <p className="step-description">
+                It has been saved for review and will appear in the directory once it has been checked.
+              </p>
+              <div className="action-row confirmation-actions">
+                <button className="button button-primary" type="button" onClick={resetForm}>
+                  Submit another church <span aria-hidden="true">→</span>
+                </button>
+                <Link className="button button-quiet" href="/churches">Back to the directory</Link>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div className="step-meta">
+                <span>SUBMIT A CHURCH</span>
+                <span className="step-meta-divider" aria-hidden="true">·</span>
+                <span>NEW ENTRY</span>
+              </div>
+              <h2 className="ea-underline" id="submit-title">Add a church to the directory.</h2>
+              <p className="step-description">
+                Fill in what you know. Fields marked with an asterisk are required.
+              </p>
+
+              <form className="step-form" onSubmit={handleSubmit}>
+                <div className="form-grid">
+                  <Field label="Church name" name="name" value={form.name} onChange={onChange} placeholder="e.g. St Mark's Church" required />
+                  <Field label="Denomination or network" name="denomination" value={form.denomination} onChange={onChange} placeholder="e.g. Church of England" />
+                  <Field label="Church address" name="address" value={form.address} onChange={onChange} placeholder="Street, town and postcode" autoComplete="street-address" required />
+                  <Field label="Town or place" name="place" value={form.place} onChange={onChange} placeholder="e.g. Doncaster" />
+                  <Field label="Postcode" name="postcode" value={form.postcode} onChange={onChange} placeholder="e.g. DN1 3LN" autoComplete="postal-code" />
+                  <Field label="Operating hours" name="operatingHours" value={form.operatingHours} onChange={onChange} placeholder="e.g. Sun 10:30am" />
+                </div>
+
+                <div className="section-rule"><span>CONTACT</span></div>
+                <div className="form-grid">
+                  <Field label="Your name" name="contactName" value={form.contactName} onChange={onChange} autoComplete="name" required />
+                  <Field label="Your email" name="contactEmail" value={form.contactEmail} onChange={onChange} type="email" autoComplete="email" required />
+                </div>
+
+                <div className="section-rule"><span>COMMUNITY INITIATIVES</span></div>
+                <div className="activity-list">
+                  {initiativeTypes.map((initiative) => {
+                    const checked = form.initiatives.includes(initiative.id)
+                    return (
+                      <div className={`activity-item ${checked ? 'activity-selected' : ''}`} key={initiative.id}>
+                        <label className="activity-check">
+                          <input
+                            type="checkbox"
+                            checked={checked}
+                            onChange={() => toggleInitiative(initiative.id)}
+                          />
+                          <span>{initiative.label}</span>
+                        </label>
+                      </div>
+                    )
+                  })}
+                </div>
+                <p className="selection-summary">
+                  <span aria-hidden="true">✓</span> Selected {form.initiatives.length} {form.initiatives.length === 1 ? 'initiative' : 'initiatives'}
+                </p>
+
+                <div className="action-row action-row-split">
+                  <Link className="button button-quiet" href="/churches">← Back to directory</Link>
+                  <button className="button button-primary" type="submit">Submit for review <span aria-hidden="true">→</span></button>
+                </div>
+              </form>
+            </>
+          )}
+        </section>
+      </div>
+
+      <footer className="site-footer">
+        <span>MORE THAN SUNDAY · CHURCH ACTION</span>
+        <span>Questions? <a href="mailto:advocacy@eauk.org">Contact the advocacy team</a></span>
+        <div className="site-footer-legal">
+          The Evangelical Alliance. A company limited by guarantee registered in England and Wales No. 123448.
+          Registered Charity No England and Wales: 212325, Scotland: SC040576. Registered office: 176 Copenhagen Street, London, N1 0ST.
+        </div>
+      </footer>
+    </main>
+  )
+}
