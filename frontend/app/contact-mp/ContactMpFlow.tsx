@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState, type FormEvent } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import EmailButton from '@/components/messaging/EmailButton'
+import GmailButton from '@/components/messaging/GmailButton'
 import { isMailtoTooLong, buildLetterMailto, renderLetterFallback, type LetterInput } from '@/lib/messaging'
 import SiteNav from '../../components/SiteNav'
 import { flowSteps, type StepSlug } from './steps'
@@ -571,6 +572,14 @@ export default function ContactMpFlow({ step }: { step: string }) {
                 <button className="button button-quiet" type="button" onClick={() => navigateTo('message')}>← Back</button>
                 <div className="action-row">
                   <button className="button button-secondary" type="button" onClick={handleDownload}>Download .eml</button>
+                  <GmailButton
+                    to={draft.mpEmail.trim()}
+                    cc={draft.senderEmail.trim()}
+                    subject={emailSubject}
+                    body={emailBody}
+                    disabled={!draft.mpEmail || !draft.senderEmail}
+                    onClick={handleSent}
+                  />
                   <EmailButton
                     label="Open in my email client"
                     to={draft.mpEmail.trim()}

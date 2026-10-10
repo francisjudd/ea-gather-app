@@ -12,10 +12,13 @@
 | ID | Priority | User Story | Acceptance / Notes |
 |:---|:---|:---|:---|
 | **CA-01** | `[MVP]` | **When** I hear the Evangelical Alliance is mapping church social action, **I want to** find my church already listed with what’s known about us, **so I can** confirm or correct it in a few minutes rather than start a form from scratch. | Pre-filled lookup from known data / public registry. |
-| **CA-02** | `[MVP]` | **When** I write to my MP, **I want** the letter pre-filled with our activities and rough numbers, **so I can** send something credible without drafting it myself. | Automated constituent template incorporating selected initiatives and reach. |
-| **CA-03** | `Post-MVP` | **When** I add our activities, **I want to** choose what’s public and what stays private, **so** people can find our services without my personal details being published. | Clear privacy controls / toggle per field. |
-| **CA-04** | `Post-MVP` | **When** something changes (a new warm space, a youth club that’s paused), **I want to** update our listing quickly, **so** nobody turns up to something that’s stopped. | Lightweight claiming and edit link for verified contacts. |
-| **CA-05** | `Post-MVP` | **When** the yearly check-in email arrives, **I want to** confirm our details in one click, **so** our listing stays verified without extra admin. | Automated annual freshness token email. |
+| **CA-02** | `[MVP]` | **When** I enter my postcode, **I want to** see my local MP, map them to my church profile, and see a mini geofenced map view of the social actions my church has engaged in, **so I can** immediately visualize our local community footprint and parliamentary representation. | Postcode lookup via Parliament API with embedded geofenced map visualizer. |
+| **CA-03** | `[MVP]` | **When** registering or claiming our presence, **I want to** fill in our church profile (name, denomination, weekly attendance, address, and contact details), **so I can** establish our verified civic identity. | Intuitive profile form with validation and draft saving. |
+| **CA-04** | `[MVP]` | **When** detailing our community support, **I want to** select the social activities we engage in as a church (food banks, warm spaces, debt advice, youth clubs, etc.) along with rough participation numbers, **so I can** document our impact without administrative friction. | Categorized multi-select list with optional reach/frequency fields. |
+| **CA-05** | `[MVP]` | **When** I write to my MP, **I want** the letter pre-filled with our activities and rough numbers, **so I can** send something credible without drafting it myself. | Automated constituent template incorporating selected initiatives and reach. |
+| **CA-06** | `Post-MVP` | **When** I add our activities, **I want to** choose what’s public and what stays private, **so** people can find our services without my personal details being published. | Clear privacy controls / toggle per field. |
+| **CA-07** | `Post-MVP` | **When** something changes (a new warm space, a youth club that’s paused), **I want to** update our listing quickly, **so** nobody turns up to something that’s stopped. | Lightweight claiming and edit link for verified contacts. |
+| **CA-08** | `Post-MVP` | **When** the yearly check-in email arrives, **I want to** confirm our details in one click, **so** our listing stays verified without extra admin. | Automated annual freshness token email. |
 
 ---
 
@@ -83,7 +86,7 @@
 3. **Sends the letter** to their local MP.
 4. **MP’s office** clicks the link in the email and views the live constituency page (`/your-area`).
 
-*This demonstrates Church Admin 1 & 2, MP's Office 1, and touches all four MVP deliverables in a complete end-to-end loop.*
+*This demonstrates Church Admin (CA-01 through CA-05: postcode & MP lookup, profile, activity selection, letter builder), MP's Office 1, and touches all four MVP deliverables in a complete end-to-end loop.*
 
 ### High-Risk Stories to Watch
 1. **Super Admin 2 (Preventing False Claims):** Cheap to design for now, expensive to fix after launch. Ensure claim verification strategy is structured.

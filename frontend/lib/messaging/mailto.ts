@@ -1,4 +1,4 @@
-// Builds RFC 6068 mailto: links.
+// Builds RFC 6068 mailto: links (and the Gmail web-compose equivalent).
 // - encodeURIComponent (spaces as %20, never '+', which some clients show literally)
 // - newlines normalised to CRLF (%0D%0A), as mail clients expect
 // - CR/LF stripped from single-line fields to prevent header injection
@@ -32,6 +32,21 @@ export function buildMailtoUrl({ to, cc, bcc, subject, body }: MailtoOptions): s
   if (body) add('body', encodeURIComponent(body.replace(/\r?\n/g, '\r\n')))
 
   return `mailto:${encodeAddresses(to)}${params.length ? `?${params.join('&')}` : ''}`
+}
+
+// Gmail web compose: https://mail.google.com/mail/?view=cm&fs=1&to=…&su=…&body=…
+// Same fields and encoding rules as mailto, but the subject key is `su`.
+export function buildGmailUrl({ to, cc, bcc, subject, body }: MailtoOptions): string {
+  const params = ['view=cm', 'fs=1']
+  const add = (key: string, value: string) => value && params.push(`${key}=${value}`)
+
+  add('to', encodeAddresses(to))
+  add('cc', encodeAddresses(cc))
+  add('bcc', encodeAddresses(bcc))
+  if (subject) add('su', encodeURIComponent(singleLine(subject)))
+  if (body) add('body', encodeURIComponent(body.replace(/\r?\n/g, '\n')))
+
+  return `https://mail.google.com/mail/?${params.join('&')}`
 }
 
 export const isMailtoTooLong = (url: string) => url.length > MAILTO_SAFE_LENGTH
