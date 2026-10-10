@@ -218,6 +218,22 @@
   stroke-width: 2;
 }
 
+.cardLinks a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.externalIcon {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 .cardLinks {
   display: flex;
   flex-wrap: wrap;
@@ -226,4 +242,25 @@
   padding-top: var(--space-3);
   border-top: 1px dotted var(--color-border-strong);
   font-size: var(--text-sm);
+}
+
+/* Featured cards: constituency name on the left, clipped to one line; "View site" stays on the right. */
+.cardLinksSplit {
+  flex-wrap: nowrap;
+  gap: var(--space-3);
+}
+
+.cardLinksSplit > a:first-child {
+  display: block;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cardLinksSplit > a:last-child:not(:first-child) {
+  flex: none;
+  margin-left: auto;
+  white-space: nowrap;
 }

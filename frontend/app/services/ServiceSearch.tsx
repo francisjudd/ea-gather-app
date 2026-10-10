@@ -7,6 +7,7 @@ import FullNav from '../../components/FullNavigation'
 import BrandLockup from '../../components/BrandLockup'
 import { distanceMiles, formatDistance, type LatLng } from '../../lib/geo'
 import { slugifyConstituency } from '@/lib/constituencies/slug'
+import type { FeaturedService } from '@/lib/constituencies/featured'
 import type { ConstituencyDetail, ConstituencyService, ConstituencySummary } from '@/lib/constituencies/types'
 import churches from '../churches/churches.module.css'
 import c from '../constituencies/constituency.module.css'
@@ -31,6 +32,18 @@ function SearchIcon() {
   )
 }
 
+// Arrow leaving a box: marks a link that opens another site in a new tab.
+function ExternalIcon() {
+  return (
+    <>
+      <svg className={styles.externalIcon} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" />
+      </svg>
+      <span className={churches.visuallyHidden}>(opens in a new tab)</span>
+    </>
+  )
+}
+
 function PinIcon() {
   return (
     <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
@@ -40,7 +53,13 @@ function PinIcon() {
   )
 }
 
-export default function ServiceSearch({ constituencies }: { constituencies: ConstituencySummary[] }) {
+export default function ServiceSearch({
+  constituencies,
+  featured,
+}: {
+  constituencies: ConstituencySummary[]
+  featured: FeaturedService[]
+}) {
   const [query, setQuery] = useState('')
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -194,6 +213,37 @@ export default function ServiceSearch({ constituencies }: { constituencies: Cons
       </section>
 
       <main className={`${c.container} ${styles.resultsMain}`}>
+        {!results && featured.length > 0 && (
+          <section className={styles.results} aria-labelledby="featured-title">
+            <h2 id="featured-title" className={styles.resultsTitle}>Examples from the directory</h2>
+            <p className={styles.resultsNote}>
+              Search above to see what is near you. These are some of the services we list across the UK.
+            </p>
+            <ul className={styles.grid}>
+              {featured.map((service) => (
+                <li key={service.id} className={styles.card}>
+                  <span className={styles.cardTop}>
+                    <span className={styles.pill}>{service.category}</span>
+                  </span>
+                  <strong className={styles.cardName}>{service.name}</strong>
+                  <span className={styles.cardAddress}>
+                    <PinIcon />
+                    <span>{service.address ?? service.postcode ?? 'Address not listed'}</span>
+                  </span>
+                  <span className={`${styles.cardLinks} ${styles.cardLinksSplit}`}>
+                    <Link href={`/constituencies/${service.constituencySlug}`} title={service.constituencyName}>
+                      {service.constituencyName}
+                    </Link>
+                    {service.website && <a href={service.website} rel="noopener noreferrer" target="_blank">
+                      View site <ExternalIcon />
+                    </a>}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
         {results && (
           <section ref={resultsRef} className={styles.results} aria-labelledby="results-title">
             <h2 id="results-title" className={styles.resultsTitle}>
@@ -219,7 +269,9 @@ export default function ServiceSearch({ constituencies }: { constituencies: Cons
                   </span>
                   {(service.website || service.phone) && (
                     <span className={styles.cardLinks}>
-                      {service.website && <a href={service.website} rel="noopener noreferrer" target="_blank">Website</a>}
+                      {service.website && <a href={service.website} rel="noopener noreferrer" target="_blank">
+                      View site <ExternalIcon />
+                    </a>}
                       {service.phone && <a href={`tel:${service.phone.replace(/\s/g, '')}`}>{service.phone}</a>}
                     </span>
                   )}

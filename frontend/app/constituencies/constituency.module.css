@@ -336,6 +336,20 @@
   color: var(--color-text-strong);
   font-weight: 700;
   line-height: var(--leading-tight);
+  text-decoration: none;
+}
+
+.compactName:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.compactHead {
+  padding: var(--space-3) var(--space-4) 0;
+}
+
+.compactButtonBelow {
+  padding-top: var(--space-1);
 }
 
 .compactMore {
@@ -386,6 +400,7 @@
 
 .card {
   display: flex;
+  flex-direction: column;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   background: var(--color-surface);
@@ -426,6 +441,21 @@
   font-size: var(--text-lg);
   font-weight: 700;
   line-height: 1.2;
+}
+
+.cardNameLink {
+  padding: var(--space-5) var(--space-5) 0;
+  text-decoration: none;
+}
+
+.cardNameLink:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* The church name is a link above the card's button, so the button has no top padding of its own. */
+.cardButtonBelow {
+  padding-top: var(--space-2);
 }
 
 .cardMeta {

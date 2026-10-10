@@ -17,6 +17,7 @@ import { constituencies } from '@/lib/constituencies/source'
 import { slugifyConstituency } from '@/lib/constituencies/slug'
 import CopyPointsButton from './CopyPointsButton'
 import styles from './church-profile.module.css'
+import c from '../../constituencies/constituency.module.css'
 
 // Mockup shows the week Mon→Sun; the profile data stores days in the same order.
 const WEEK: DayKey[] = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
@@ -173,8 +174,19 @@ const points: string[] = items.map(({ label, figure, text }) => `${figure} ${lab
         {/* Hero band */}
         <section className={styles.hero}>
           <div className={styles.wrap}>
-            <nav className={styles.crumbs} aria-label="Breadcrumb">
-              <Link href="/churches">Church directory</Link> &nbsp;/&nbsp; Church profile
+            <nav className={c.breadcrumb} aria-label="Breadcrumb">
+              <ol>
+                <li><Link href="/">Home</Link></li>
+                {constituencyHref ? (
+                  <>
+                    <li><Link href="/constituencies">Constituencies</Link></li>
+                    <li><Link href={constituencyHref}>{church.constituency}</Link></li>
+                  </>
+                ) : (
+                  <li><Link href="/churches">Churches</Link></li>
+                )}
+                <li aria-current="page">{church.name}</li>
+              </ol>
             </nav>
             <p className={styles.kicker}>Church impact profile</p>
             <h1 className={styles.title}>{church.name}</h1>

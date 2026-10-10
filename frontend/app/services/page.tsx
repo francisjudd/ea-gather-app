@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { constituencies } from '@/lib/constituencies/source'
+import { getFeaturedServices } from '@/lib/constituencies/featured'
 import ServiceSearch from './ServiceSearch'
 
 export const metadata: Metadata = {
@@ -8,5 +9,6 @@ export const metadata: Metadata = {
 }
 
 export default async function ServicesPage() {
-  return <ServiceSearch constituencies={await constituencies.list()} />
+  const [list, featured] = await Promise.all([constituencies.list(), getFeaturedServices()])
+  return <ServiceSearch constituencies={list} featured={featured} />
 }
