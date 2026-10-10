@@ -51,27 +51,19 @@ export default function CookiePolicyPage() {
           <h2>Analytics cookies</h2>
           <p>
             These help us understand how visitors use the site — which pages are visited and how
-            people move around it. The information is aggregated and does not identify you
-            personally. You can reject these by choosing &ldquo;Essential only&rdquo; in the cookie
-            banner.
-          </p>
-        </section>
-
-        <section className="cookie-policy__section">
-          <h2>Marketing cookies</h2>
-          <p>
-            These are used to show you relevant content and measure the effectiveness of our
-            campaigns. You can reject these by choosing &ldquo;Essential only&rdquo; in the cookie
-            banner.
+            people move around it. You can reject these by choosing &ldquo;Reject all&rdquo; or
+            switch them off in the preferences center.
           </p>
         </section>
 
         <section className="cookie-policy__section">
           <h2>Managing your preferences</h2>
           <p>
-            When you first visit the site, a banner asks you to accept all cookies or allow only the
-            essential ones. You can change your choice at any time by clearing your browser&rsquo;s
-            stored data for this site, which will show the banner again on your next visit.
+            When you first visit the site, you can accept all cookies, reject optional cookies, or
+            manage your preferences. Strictly necessary cookies are always enabled. In the
+            preferences center, you can choose whether to allow analytics cookies before saving your
+            choice. To make a new choice later, clear your browser&rsquo;s stored data for this site;
+            the consent banner will appear again on your next visit.
           </p>
         </section>
 

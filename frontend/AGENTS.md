@@ -92,3 +92,28 @@ body text (use `--color-link` = feature-dark instead).
   `.button`, `.button-primary`, `.app-shell`, `.site-header`, `.site-footer`, etc.).
 - Keep the footer legal boilerplate verbatim.
 - Verify with `cmd /c "npm run typecheck"` and `cmd /c "npm run lint"`.
+
+## Cookie consent (GDPR)
+
+The app shows a GDPR cookie consent banner on every page. It is mounted once in
+`app/layout.tsx` (inside `<body>`), so it appears across all routes.
+
+- **Component**: `app/CookieConsent.tsx` — a client component using
+  `useSyncExternalStore` (not `useState` + `useEffect`; the
+  `react-hooks/set-state-in-effect` lint rule forbids synchronous `setState` in an
+  effect). It reads/writes consent to `localStorage` under the key
+  `ea-cookie-consent` as `{ essential, analytics }`.
+- **Choices**: the first view offers "Accept all", "Reject all", and "Manage
+  preferences". The preferences center keeps strictly necessary cookies enabled
+  and lets visitors switch analytics cookies on or off, then accept all, reject
+  all, or save their selection. The banner is hidden once a value is stored.
+- **Policy page**: `app/cookies/page.tsx` — a static server component with the
+  cookie policy content. The banner links to `/cookies`.
+- **Styling**: `.cookie-consent` and `.cookie-policy` classes live in
+  `globals.css`. The consent card uses the reference site's compact light panel
+  layout and the Evangelical Alliance feature-dark text and button tokens.
+- **Accessibility**: the banner is `role="dialog"` with `aria-modal="true"` and
+  `aria-labelledby` pointing at its heading.
+- **Hydration**: `getServerSnapshot` returns `null` (banner shown on first
+  render), and the client snapshot reads `localStorage`. This is the same
+  localStorage-backed pattern used by `lib/churchStore.ts`.
