@@ -1,27 +1,44 @@
 // Shared initiative taxonomy used across the church directory, submit form,
-// and admin review view. Keep this in one place so the labels stay consistent.
+// and admin review view. The backend (/openapi/initiatives) is the source of
+// truth; it returns the categories stored in the database. The static list below
+// mirrors that response so server components can render without a fetch, and
+// `loadInitiatives()` lets client components refresh it from the API.
 
-export const initiativeTypes = [
-  { id: 'food-bank', label: 'Food bank or food pantry' },
-  { id: 'warm-space', label: 'Warm space / community lounge' },
-  { id: 'debt-advice', label: 'Debt advice & financial wellbeing' },
-  { id: 'clothing-bank', label: 'Clothing or baby bank' },
-  { id: 'family-groups', label: 'Parent / toddler & family groups' },
-  { id: 'youth', label: 'Youth clubs or mentoring' },
-  { id: 'holiday-clubs', label: 'Holiday clubs / school-holiday meals' },
-  { id: 'schools', label: 'Schools work or chaplaincy' },
-  { id: 'older-people', label: "Older people's lunches & visits" },
-  { id: 'mental-health', label: 'Mental health support groups' },
-  { id: 'esol', label: 'ESOL classes / refugee support' },
-  { id: 'recovery', label: 'Recovery / addiction support' },
-  { id: 'prison', label: 'Prison visiting or chaplaincy' },
-  { id: 'street-pastors', label: 'Street pastors or homelessness outreach' },
-  { id: 'community-groups', label: 'Hosting community groups in our building' },
-  { id: 'eco-church', label: 'Environmental / Eco Church work' },
-] as const
+import { api } from './api/client'
+
+export type Initiative = {
+  id: string
+  label: string
+}
+
+export const initiativeTypes: Initiative[] = [
+  { id: 'centre', label: 'Centre' },
+  { id: 'charity-shop', label: 'Charity Shop' },
+  { id: 'debt-help', label: 'Debt help' },
+  { id: 'divisional-office', label: 'Divisional office' },
+  { id: 'early-intervention', label: 'Early Intervention' },
+  { id: 'employment-service', label: 'Employment Service' },
+  { id: 'foodbanks', label: 'Foodbanks' },
+  { id: 'homelessness-service', label: 'Homelessness Service' },
+  { id: 'job-clubs', label: 'Job clubs' },
+  { id: 'life-skills', label: 'Life skills' },
+  { id: 'make-lunch', label: 'Make Lunch' },
+  { id: 'older-people-service', label: 'Older People Service' },
+  { id: 'salvation-army-church', label: 'Salvation Army church' },
+  { id: 'warm-spaces', label: 'Warm spaces' },
+]
 
 export type InitiativeId = (typeof initiativeTypes)[number]['id']
 
 export const initiativeLabels: Record<string, string> = Object.fromEntries(
   initiativeTypes.map((initiative) => [initiative.id, initiative.label]),
 )
+
+/** Fetch the initiative taxonomy from the API, falling back to the static list. */
+export async function loadInitiatives(): Promise<Initiative[]> {
+  try {
+    return await api.listInitiatives()
+  } catch {
+    return initiativeTypes
+  }
+}

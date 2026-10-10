@@ -69,6 +69,8 @@ function Field({
 export default function SubmitChurchForm() {
   const [form, setForm] = useState<FormState>(initialForm)
   const [submitted, setSubmitted] = useState(false)
+  const [error, setError] = useState('')
+  const [submitting, setSubmitting] = useState(false)
 
   const onChange = (name: keyof FormState, value: string) => {
     setForm((previous) => ({ ...previous, [name]: value }))
@@ -83,10 +85,18 @@ export default function SubmitChurchForm() {
     }))
   }
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    submitChurch(form)
-    setSubmitted(true)
+    setError('')
+    setSubmitting(true)
+    try {
+      await submitChurch(form)
+      setSubmitted(true)
+    } catch {
+      setError('We could not save your submission. Please try again, or email advocacy@eauk.org for help.')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   const resetForm = () => {
@@ -178,9 +188,13 @@ export default function SubmitChurchForm() {
                   <span aria-hidden="true">✓</span> Selected {form.initiatives.length} {form.initiatives.length === 1 ? 'initiative' : 'initiatives'}
                 </p>
 
+                {error && <p className="form-error" role="alert">{error}</p>}
+
                 <div className="action-row action-row-split">
                   <Link className="button button-quiet" href="/churches">← Back to directory</Link>
-                  <button className="button button-primary" type="submit">Submit for review <span aria-hidden="true">→</span></button>
+                  <button className="button button-primary" type="submit" disabled={submitting}>
+                    {submitting ? 'Submitting…' : 'Submit for review'} <span aria-hidden="true">→</span>
+                  </button>
                 </div>
               </form>
             </>

@@ -11,26 +11,27 @@ from main import app
 
 
 class BackendRoutingTests(unittest.TestCase):
-    def test_public_routes_have_openapi_prefix(self):
-        # Included routers have no .path of their own; their routes are checked below.
+    def test_public_routes_are_served_without_openapi_prefix(self):
+        # vercel.json strips /openapi before forwarding to this service, so the
+        # FastAPI routes are defined without the prefix.
         paths = {getattr(route, "path", None) for route in app.routes}
-        for path in ("/openapi", "/openapi/", "/openapi/docs", "/openapi/redoc", "/openapi/openapi.json"):
+        for path in ("/docs", "/redoc", "/openapi.json"):
             with self.subTest(path=path):
                 self.assertIn(path, paths)
 
     def test_openapi_contains_public_health_route(self):
-        self.assertIn("/openapi", app.openapi()["paths"])
+        self.assertIn("/", app.openapi()["paths"])
 
-    def test_api_routes_are_served_under_openapi_prefix(self):
+    def test_api_routes_are_served_without_openapi_prefix(self):
         paths = app.openapi()["paths"]
         for path in (
-            "/openapi/churches",
-            "/openapi/churches/{church_id}",
-            "/openapi/initiatives",
-            "/openapi/geocode",
-            "/openapi/mp/lookup",
-            "/openapi/admin/submissions",
-            "/openapi/admin/submissions/{submission_id}",
+            "/churches",
+            "/churches/{church_id}",
+            "/initiatives",
+            "/geocode",
+            "/mp/lookup",
+            "/admin/submissions",
+            "/admin/submissions/{submission_id}",
         ):
             with self.subTest(path=path):
                 self.assertIn(path, paths)
@@ -65,14 +66,14 @@ class AdminAuthTests(unittest.TestCase):
 
     def test_refuses_when_token_not_configured(self):
         with mock.patch.dict(os.environ, {"ADMIN_TOKEN": ""}):
-            response = self.client.get("/openapi/admin/submissions")
+            response = self.client.get("/admin/submissions")
         self.assertEqual(response.status_code, 503)
 
     def test_rejects_missing_or_wrong_token(self):
         with mock.patch.dict(os.environ, {"ADMIN_TOKEN": "secret"}):
             for headers in ({}, {"Authorization": "Bearer wrong"}, {"Authorization": "secret"}):
                 with self.subTest(headers=headers):
-                    response = self.client.get("/openapi/admin/submissions", headers=headers)
+                    response = self.client.get("/admin/submissions", headers=headers)
                     self.assertEqual(response.status_code, 401)
 
 

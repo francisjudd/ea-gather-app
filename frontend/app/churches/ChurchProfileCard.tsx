@@ -15,7 +15,7 @@ type Church = {
   operatingHours: string
   verified: boolean
   initiatives: string[]
-  distanceMiles?: number
+  distanceMiles?: number | null
 }
 
 function VerifiedBadge() {

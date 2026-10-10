@@ -10,7 +10,9 @@ import admin
 import churches as churches_api
 import mps
 
-# Services preserve the public request path, including /openapi.
+# vercel.json strips the /openapi prefix before forwarding to this service, so
+# routes are defined without it. The frontend always calls same-origin
+# /openapi/... URLs, which vercel.json (prod) and next.config (dev) rewrite.
 app = FastAPI(
     title="Evangelical Alliance Gather API",
     docs_url="/docs",

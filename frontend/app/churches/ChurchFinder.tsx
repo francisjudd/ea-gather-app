@@ -1,208 +1,22 @@
 'use client'
 
-import { useMemo, useState, type FormEvent } from 'react'
+import { useEffect, useMemo, useState, type FormEvent } from 'react'
 import FullNav from '../../components/FullNavigation'
 import BrandLockup from '../../components/BrandLockup'
 import MapView from './MapView'
 import ChurchProfileCard from './ChurchProfileCard'
 import { initiativeTypes } from '../../lib/initiatives'
+import { api, type Church } from '../../lib/api/client'
 import { dayKeys, dayShortLabels, parseChurchHours, type DayKey } from '../../lib/churchHours'
 import { distanceMiles, formatDistance, type LatLng } from '../../lib/geo'
 import styles from './churches.module.css'
 import { PinIcon, SearchIcon } from './icons'
 
-type Church = {
-  id: string
-  name: string
-  address: string
-  place: string
-  lat: number
-  lng: number
-  denomination: string
-  operatingHours: string
-  verified: boolean
-  initiatives: string[]
-}
-
-type ScoredChurch = Church & { distanceMiles?: number }
+type ScoredChurch = Church & { distanceMiles?: number | null }
 
 const DEFAULT_RADIUS_MILES = 15
 
-const churches: Church[] = [
-  {
-    id: 'audacious-salford',
-    name: '!Audacious Church',
-    address: '!Audacious Church, Trinity Way, Salford, M3 7BB',
-    place: 'Salford',
-    lat: 53.483,
-    lng: -2.292,
-    denomination: 'Independent',
-    operatingHours: 'Sun 9am, 11am & 6pm',
-    verified: true,
-    initiatives: ['food-bank', 'warm-space', 'youth', 'community-groups', 'eco-church'],
-  },
-  {
-    id: 'audacious-cardiff',
-    name: '!Audacious Church - Cardiff',
-    address: 'Majestic Hotel, Bute Terrace, Cardiff, CF10 2FL',
-    place: 'Cardiff',
-    lat: 51.475,
-    lng: -3.166,
-    denomination: 'Independent',
-    operatingHours: 'Sun 10am & 6pm',
-    verified: true,
-    initiatives: ['food-bank', 'family-groups', 'youth', 'holiday-clubs'],
-  },
-  {
-    id: 'audacious-chester',
-    name: '!Audacious Church - Chester',
-    address: '4 Sovereign Way, Chester, CH1 4QN',
-    place: 'Chester',
-    lat: 53.19,
-    lng: -2.891,
-    denomination: 'Independent',
-    operatingHours: 'Sun 10:30am',
-    verified: false,
-    initiatives: ['warm-space', 'debt-advice', 'community-groups'],
-  },
-  {
-    id: 'audacious-bury',
-    name: '!Audacious Church - North Manchester',
-    address: 'Vue Cinema Bury, The Rock, Bury, Lancashire, BL9 0YB',
-    place: 'Bury',
-    lat: 53.593,
-    lng: -2.298,
-    denomination: 'Independent',
-    operatingHours: 'Sun 10am & 5pm',
-    verified: true,
-    initiatives: ['food-bank', 'clothing-bank', 'youth', 'street-pastors'],
-  },
-  {
-    id: 'audacious-sheffield',
-    name: '!Audacious Church - Sheffield',
-    address: 'Sandman Signature Sheffield Quays Hotel, Victoria Quays, Sheffield, S4 7YA',
-    place: 'Sheffield',
-    lat: 53.384,
-    lng: -1.47,
-    denomination: 'Independent',
-    operatingHours: 'Sun 10:30am & 6pm',
-    verified: false,
-    initiatives: ['food-bank', 'warm-space', 'mental-health', 'recovery'],
-  },
-  {
-    id: 'audacious-stockport',
-    name: '!Audacious Church - South Manchester',
-    address: 'Seashell Trust, Stanley Road, Cheadle, Stockport, SK8 6RQ',
-    place: 'Stockport',
-    lat: 53.395,
-    lng: -2.213,
-    denomination: 'Independent',
-    operatingHours: 'Sun 10am',
-    verified: true,
-    initiatives: ['family-groups', 'schools', 'older-people', 'eco-church'],
-  },
-  {
-    id: 'three-counties',
-    name: '3 Counties Vineyard',
-    address: 'Haslemere Locality Office, Linchmere Road, Haslemere, Surrey, GU27 3QW',
-    place: 'Haslemere',
-    lat: 51.088,
-    lng: -0.708,
-    denomination: 'Vineyard',
-    operatingHours: 'Sun 10:30am',
-    verified: true,
-    initiatives: ['community-groups', 'family-groups', 'esol'],
-  },
-  {
-    id: '360-life',
-    name: '360 Life Church',
-    address: 'Cale Green Life Centre, 71 Adswood Road, Davenport, Stockport, SK3 8HR',
-    place: 'Stockport',
-    lat: 53.4,
-    lng: -2.16,
-    denomination: 'Independent',
-    operatingHours: 'Sun 10:30am',
-    verified: false,
-    initiatives: ['food-bank', 'debt-advice', 'youth', 'holiday-clubs'],
-  },
-  {
-    id: '3c-community',
-    name: '3c Community Church',
-    address: 'Stockport, Greater Manchester',
-    place: 'Stockport',
-    lat: 53.41,
-    lng: -2.157,
-    denomination: 'Independent',
-    operatingHours: 'Sun 10am',
-    verified: false,
-    initiatives: ['warm-space', 'community-groups', 'older-people'],
-  },
-  {
-    id: 'abbey-chapel',
-    name: 'Abbey Chapel',
-    address: 'United Kingdom',
-    place: 'United Kingdom',
-    lat: 52.5,
-    lng: -1.5,
-    denomination: 'Independent',
-    operatingHours: 'Sun 11am',
-    verified: true,
-    initiatives: ['food-bank', 'clothing-bank', 'prison', 'street-pastors'],
-  },
-]
-
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
-
-// --- Local geocoding for the sample directory -------------------------------
-// The preview has no geocoder API, so we resolve a searched postcode / place
-// to a coordinate using the sample entries themselves. This keeps "near me"
-// and "near a postcode" working without an external API.
-
-const FULL_POSTCODE = /^[A-Z]{1,2}\d[A-Z\d]?\s?\d[A-Z]{2}$/i
-const POSTCODE_AREA = /^[A-Z]{1,2}\d[A-Z]?$/i
-const OUTWARD_CODE = /([A-Z]{1,2}\d[A-Z]?)\s?\d[A-Z]{2}/i
-
-function outwardCode(address: string): string {
-  return address.match(OUTWARD_CODE)?.[1]?.toLocaleUpperCase('en-GB') ?? ''
-}
-
-function average(center: LatLng, points: Church[]): LatLng {
-  const total = points.reduce(
-    (sum, point) => ({ lat: sum.lat + point.lat, lng: sum.lng + point.lng }),
-    { lat: 0, lng: 0 },
-  )
-  return { lat: total.lat / points.length, lng: total.lng / points.length }
-}
-
-/**
- * Resolve a loose query (full postcode, postcode area, or place name) to a
- * coordinate so the directory can return distance-sorted results. Returns null
- * when the query is not a location.
- */
-function resolveCenter(query: string): LatLng | null {
-  const normalized = query.trim().toLocaleUpperCase('en-GB')
-  if (!normalized) return null
-
-  // Full postcode, e.g. "M3 7BB" -> use that church's coordinates.
-  const full = normalized.match(FULL_POSTCODE)
-  if (full) {
-    const exact = churches.find((church) => church.address.toLocaleUpperCase('en-GB').includes(full[0]))
-    if (exact) return { lat: exact.lat, lng: exact.lng }
-  }
-
-  // Postcode area, e.g. "M3" -> average of churches in that area.
-  const area = normalized.match(POSTCODE_AREA)
-  if (area) {
-    const inArea = churches.filter((church) => outwardCode(church.address).startsWith(area[1]))
-    if (inArea.length > 0) return average({ lat: 0, lng: 0 }, inArea)
-  }
-
-  // Place name, e.g. "Stockport" -> average of churches there.
-  const inPlace = churches.filter((church) => church.place.toLocaleUpperCase('en-GB') === normalized)
-  if (inPlace.length > 0) return average({ lat: 0, lng: 0 }, inPlace)
-
-  return null
-}
 
 export default function ChurchFinder() {
   const [query, setQuery] = useState('')
@@ -215,11 +29,33 @@ export default function ChurchFinder() {
   const [locationMessage, setLocationMessage] = useState('')
   const [myCoords, setMyCoords] = useState<LatLng | null>(null)
   const [radius, setRadius] = useState(DEFAULT_RADIUS_MILES)
+  const [churches, setChurches] = useState<Church[]>([])
 
-  const activeCenter = useMemo<LatLng | null>(
-    () => myCoords ?? resolveCenter(submittedQuery),
-    [myCoords, submittedQuery],
-  )
+  // Load the directory from the API. The backend returns distance-sorted results
+  // when lat/lng are supplied, so we refetch when the search center changes.
+  useEffect(() => {
+    let cancelled = false
+    const load = async () => {
+      try {
+        const params: Parameters<typeof api.listChurches>[0] = { limit: 5000 }
+        if (myCoords) {
+          params.lat = myCoords.lat
+          params.lng = myCoords.lng
+          params.radius = radius
+        }
+        const data = await api.listChurches(params)
+        if (!cancelled) setChurches(data)
+      } catch {
+        if (!cancelled) setChurches([])
+      }
+    }
+    void load()
+    return () => {
+      cancelled = true
+    }
+  }, [myCoords, radius])
+
+  const activeCenter = useMemo<LatLng | null>(() => myCoords, [myCoords])
 
   const filteredChurches = useMemo<ScoredChurch[]>(() => {
     const normalizedQuery = submittedQuery.trim().toLocaleLowerCase('en-GB')
@@ -238,8 +74,8 @@ export default function ChurchFinder() {
       return matchesQuery && matchesLetter && matchesInitiatives && matchesDays
     })
 
-    // When a search center is known (browser location or a postcode/place query)
-    // return nearest-first results within the chosen radius.
+    // When a search center is known (browser location) return nearest-first
+    // results within the chosen radius.
     if (activeCenter) {
       return base
         .map((church) => ({
@@ -251,7 +87,7 @@ export default function ChurchFinder() {
     }
 
     return base
-  }, [letter, selectedInitiatives, selectedDays, submittedQuery, activeCenter, radius])
+  }, [letter, selectedInitiatives, selectedDays, submittedQuery, activeCenter, radius, churches])
 
   function submitSearch(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -259,7 +95,7 @@ export default function ChurchFinder() {
     setMyCoords(null)
     setSelectedChurch('')
     setLocationMessage('')
-    if (view === 'map' && resolveCenter(query)) setView('list')
+    if (view === 'map') setView('list')
   }
 
   function viewAllChurches() {

@@ -4,7 +4,7 @@
  */
 
 export interface paths {
-    "/openapi/churches": {
+    "/churches": {
         parameters: {
             query?: never;
             header?: never;
@@ -12,20 +12,20 @@ export interface paths {
             cookie?: never;
         };
         /** List Churches */
-        get: operations["list_churches_openapi_churches_get"];
+        get: operations["list_churches_churches_get"];
         put?: never;
         /**
          * Submit Church
          * @description Submit a church for review. It appears in the directory only after an admin approves it.
          */
-        post: operations["submit_church_openapi_churches_post"];
+        post: operations["submit_church_churches_post"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/openapi/churches/{church_id}": {
+    "/churches/{church_id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -33,7 +33,7 @@ export interface paths {
             cookie?: never;
         };
         /** Get Church */
-        get: operations["get_church_openapi_churches__church_id__get"];
+        get: operations["get_church_churches__church_id__get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -42,7 +42,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/openapi/initiatives": {
+    "/initiatives": {
         parameters: {
             query?: never;
             header?: never;
@@ -50,7 +50,7 @@ export interface paths {
             cookie?: never;
         };
         /** List Initiatives */
-        get: operations["list_initiatives_openapi_initiatives_get"];
+        get: operations["list_initiatives_initiatives_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -59,7 +59,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/openapi/geocode": {
+    "/geocode": {
         parameters: {
             query?: never;
             header?: never;
@@ -67,7 +67,7 @@ export interface paths {
             cookie?: never;
         };
         /** Geocode Query */
-        get: operations["geocode_query_openapi_geocode_get"];
+        get: operations["geocode_query_geocode_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -76,7 +76,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/openapi/mp/lookup": {
+    "/mp/lookup": {
         parameters: {
             query?: never;
             header?: never;
@@ -84,7 +84,7 @@ export interface paths {
             cookie?: never;
         };
         /** Lookup Mp */
-        get: operations["lookup_mp_openapi_mp_lookup_get"];
+        get: operations["lookup_mp_mp_lookup_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -93,7 +93,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/openapi/admin/submissions": {
+    "/admin/submissions": {
         parameters: {
             query?: never;
             header?: never;
@@ -101,7 +101,7 @@ export interface paths {
             cookie?: never;
         };
         /** List Submissions */
-        get: operations["list_submissions_openapi_admin_submissions_get"];
+        get: operations["list_submissions_admin_submissions_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -110,7 +110,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/openapi/admin/submissions/{submission_id}": {
+    "/admin/submissions/{submission_id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -124,41 +124,7 @@ export interface paths {
         options?: never;
         head?: never;
         /** Update Submission */
-        patch: operations["update_submission_openapi_admin_submissions__submission_id__patch"];
-        trace?: never;
-    };
-    "/openapi/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Root */
-        get: operations["root_openapi__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/openapi": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Root */
-        get: operations["root_openapi_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
+        patch: operations["update_submission_admin_submissions__submission_id__patch"];
         trace?: never;
     };
     "/": {
@@ -176,41 +142,6 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
-        trace?: never;
-    };
-    "/churches": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** List Churches */
-        get: operations["list_churches_churches_get"];
-        put?: never;
-        /** Create Church */
-        post: operations["create_church_churches_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/churches/{church_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Update Church Status */
-        patch: operations["update_church_status_churches__church_id__patch"];
         trace?: never;
     };
 }
@@ -250,49 +181,8 @@ export interface components {
             /** Distancemiles */
             distanceMiles?: number | null;
         };
-        /** ChurchStatusUpdate */
-        ChurchStatusUpdate: {
-            /** Status */
-            status: string;
-        };
         /** ChurchSubmission */
-        "ChurchSubmission-Input": {
-            /** Name */
-            name: string;
-            /**
-             * Denomination
-             * @default
-             */
-            denomination: string;
-            /** Address */
-            address: string;
-            /**
-             * Place
-             * @default
-             */
-            place: string;
-            /**
-             * Postcode
-             * @default
-             */
-            postcode: string;
-            /**
-             * Operatinghours
-             * @default
-             */
-            operatingHours: string;
-            /** Contactname */
-            contactName: string;
-            /** Contactemail */
-            contactEmail: string;
-            /**
-             * Initiatives
-             * @default []
-             */
-            initiatives: string[];
-        };
-        /** ChurchSubmission */
-        "ChurchSubmission-Output": {
+        ChurchSubmission: {
             /** Id */
             id: string;
             /** Name */
@@ -421,7 +311,7 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    list_churches_openapi_churches_get: {
+    list_churches_churches_get: {
         parameters: {
             query?: {
                 /** @description Text match on name, address or constituency */
@@ -462,7 +352,7 @@ export interface operations {
             };
         };
     };
-    submit_church_openapi_churches_post: {
+    submit_church_churches_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -481,7 +371,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ChurchSubmission-Output"];
+                    "application/json": components["schemas"]["ChurchSubmission"];
                 };
             };
             /** @description Validation Error */
@@ -495,7 +385,7 @@ export interface operations {
             };
         };
     };
-    get_church_openapi_churches__church_id__get: {
+    get_church_churches__church_id__get: {
         parameters: {
             query?: never;
             header?: never;
@@ -526,7 +416,7 @@ export interface operations {
             };
         };
     };
-    list_initiatives_openapi_initiatives_get: {
+    list_initiatives_initiatives_get: {
         parameters: {
             query?: never;
             header?: never;
@@ -546,7 +436,7 @@ export interface operations {
             };
         };
     };
-    geocode_query_openapi_geocode_get: {
+    geocode_query_geocode_get: {
         parameters: {
             query: {
                 /** @description Postcode, postcode area or place name */
@@ -578,7 +468,7 @@ export interface operations {
             };
         };
     };
-    lookup_mp_openapi_mp_lookup_get: {
+    lookup_mp_mp_lookup_get: {
         parameters: {
             query: {
                 postcode: string;
@@ -609,7 +499,7 @@ export interface operations {
             };
         };
     };
-    list_submissions_openapi_admin_submissions_get: {
+    list_submissions_admin_submissions_get: {
         parameters: {
             query?: {
                 status?: "pending" | "approved" | "rejected";
@@ -628,7 +518,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ChurchSubmission-Output"][];
+                    "application/json": components["schemas"]["ChurchSubmission"][];
                 };
             };
             /** @description Validation Error */
@@ -642,7 +532,7 @@ export interface operations {
             };
         };
     };
-    update_submission_openapi_admin_submissions__submission_id__patch: {
+    update_submission_admin_submissions__submission_id__patch: {
         parameters: {
             query?: never;
             header?: {
@@ -665,7 +555,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ChurchSubmission-Output"];
+                    "application/json": components["schemas"]["ChurchSubmission"];
                 };
             };
             /** @description Validation Error */
@@ -675,46 +565,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    root_openapi__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-        };
-    };
-    root_openapi_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
                 };
             };
         };
@@ -735,105 +585,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": unknown;
-                };
-            };
-        };
-    };
-    list_churches_churches_get: {
-        parameters: {
-            query?: {
-                status?: string | null;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    create_church_churches_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ChurchSubmission-Input"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    update_church_status_churches__church_id__patch: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                church_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ChurchStatusUpdate"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

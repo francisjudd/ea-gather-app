@@ -1,23 +1,13 @@
-// Sample church-directory data shared by the finder (/churches) and the individual
-// church profile view (/churches/[id]). Mirrors the sample-data approach used in
-// app/churches and app/your-area: a small, realistic dataset so the UI can be
-// previewed without a live backend. Replace these constants with API data once a
-// church directory feed exists (see backend/openapi.yaml).
+// Church-directory data shared by the finder (/churches) and the individual
+// church profile view (/churches/[id]). The backend (/openapi/churches) is the
+// source of truth; the profile extras (talking points, story, activities) are
+// derived from the directory record so the page renders without hand-authored
+// content.
 
 import { openDaysOf, type DayKey } from '../../lib/churchHours'
+import { api, type Church as ApiChurch } from '../../lib/api/client'
 
-export type Church = {
-  id: string
-  name: string
-  address: string
-  place: string
-  lat: number
-  lng: number
-  denomination: string
-  operatingHours: string
-  verified: boolean
-  initiatives: string[]
-}
+export type Church = ApiChurch
 
 // The category palette extends the brand guidelines (see app/brand.css, section 4).
 // These ids map onto the global .chip[data-cat="..."] colour tokens.
@@ -31,128 +21,7 @@ export const categoryLabels: Record<CategoryId, string> = {
   environment: 'Community & wider social action',
 }
 
-export const churches: Church[] = [
-  {
-    id: 'audacious-salford',
-    name: '!Audacious Church',
-    address: '!Audacious Church, Trinity Way, Salford, M3 7BB',
-    place: 'Salford',
-    lat: 53.483,
-    lng: -2.292,
-    denomination: 'Independent',
-    operatingHours: 'Sun 9am, 11am & 6pm',
-    verified: true,
-    initiatives: ['food-bank', 'warm-space', 'youth', 'community-groups', 'eco-church'],
-  },
-  {
-    id: 'audacious-cardiff',
-    name: '!Audacious Church - Cardiff',
-    address: 'Majestic Hotel, Bute Terrace, Cardiff, CF10 2FL',
-    place: 'Cardiff',
-    lat: 51.475,
-    lng: -3.166,
-    denomination: 'Independent',
-    operatingHours: 'Sun 10am & 6pm',
-    verified: true,
-    initiatives: ['food-bank', 'family-groups', 'youth', 'holiday-clubs'],
-  },
-  {
-    id: 'audacious-chester',
-    name: '!Audacious Church - Chester',
-    address: '4 Sovereign Way, Chester, CH1 4QN',
-    place: 'Chester',
-    lat: 53.19,
-    lng: -2.891,
-    denomination: 'Independent',
-    operatingHours: 'Sun 10:30am',
-    verified: false,
-    initiatives: ['warm-space', 'debt-advice', 'community-groups'],
-  },
-  {
-    id: 'audacious-bury',
-    name: '!Audacious Church - North Manchester',
-    address: 'Vue Cinema Bury, The Rock, Bury, Lancashire, BL9 0YB',
-    place: 'Bury',
-    lat: 53.593,
-    lng: -2.298,
-    denomination: 'Independent',
-    operatingHours: 'Sun 10am & 5pm',
-    verified: true,
-    initiatives: ['food-bank', 'clothing-bank', 'youth', 'street-pastors'],
-  },
-  {
-    id: 'audacious-sheffield',
-    name: '!Audacious Church - Sheffield',
-    address: 'Sandman Signature Sheffield Quays Hotel, Victoria Quays, Sheffield, S4 7YA',
-    place: 'Sheffield',
-    lat: 53.384,
-    lng: -1.47,
-    denomination: 'Independent',
-    operatingHours: 'Sun 10:30am & 6pm',
-    verified: false,
-    initiatives: ['food-bank', 'warm-space', 'mental-health', 'recovery'],
-  },
-  {
-    id: 'audacious-stockport',
-    name: '!Audacious Church - South Manchester',
-    address: 'Seashell Trust, Stanley Road, Cheadle, Stockport, SK8 6RQ',
-    place: 'Stockport',
-    lat: 53.395,
-    lng: -2.213,
-    denomination: 'Independent',
-    operatingHours: 'Sun 10am',
-    verified: true,
-    initiatives: ['family-groups', 'schools', 'older-people', 'eco-church'],
-  },
-  {
-    id: 'three-counties',
-    name: '3 Counties Vineyard',
-    address: 'Haslemere Locality Office, Linchmere Road, Haslemere, Surrey, GU27 3QW',
-    place: 'Haslemere',
-    lat: 51.088,
-    lng: -0.708,
-    denomination: 'Vineyard',
-    operatingHours: 'Sun 10:30am',
-    verified: true,
-    initiatives: ['community-groups', 'family-groups', 'esol'],
-  },
-  {
-    id: '360-life',
-    name: '360 Life Church',
-    address: 'Cale Green Life Centre, 71 Adswood Road, Davenport, Stockport, SK3 8HR',
-    place: 'Stockport',
-    lat: 53.4,
-    lng: -2.16,
-    denomination: 'Independent',
-    operatingHours: 'Sun 10:30am',
-    verified: false,
-    initiatives: ['food-bank', 'debt-advice', 'youth', 'holiday-clubs'],
-  },
-  {
-    id: '3c-community',
-    name: '3c Community Church',
-    address: 'Stockport, Greater Manchester',
-    place: 'Stockport',
-    lat: 53.41,
-    lng: -2.157,
-    denomination: 'Independent',
-    operatingHours: 'Sun 10am',
-    verified: false,
-    initiatives: ['warm-space', 'community-groups', 'older-people'],
-  },
-  {
-    id: 'abbey-chapel',
-    name: 'Abbey Chapel',
-    address: 'United Kingdom',
-    place: 'United Kingdom',
-    lat: 52.5,
-    lng: -1.5,
-    denomination: 'Independent',
-    operatingHours: 'Sun 11am',
-    verified: true,
-    initiatives: ['food-bank', 'clothing-bank', 'prison', 'street-pastors'],
-  },
-]
+export const churches: Church[] = []
 
 // --- Rich profile view -------------------------------------------------------
 // A church's "impact profile". The directory Church holds only the fields the
@@ -214,22 +83,19 @@ export type ChurchProfile = Church & ChurchProfileExtras & {
 // Defaults for a single activity, keyed by the directory initiative id. Used to
 // build a meaningful profile for any church that has not had rich data authored.
 const activityDefaults: Record<string, { title: string; category: CategoryId }> = {
-  'food-bank': { title: 'Food bank & pantry', category: 'practical' },
-  'warm-space': { title: 'Warm space & community lounge', category: 'practical' },
-  'debt-advice': { title: 'Debt advice & financial wellbeing', category: 'practical' },
-  'clothing-bank': { title: 'Clothing & baby bank', category: 'practical' },
-  'family-groups': { title: 'Parent / toddler & family groups', category: 'youth' },
-  youth: { title: 'Youth clubs & mentoring', category: 'youth' },
-  'holiday-clubs': { title: 'Holiday clubs & school-holiday meals', category: 'youth' },
-  schools: { title: 'Schools work & chaplaincy', category: 'youth' },
-  'older-people': { title: "Older people's lunches & visits", category: 'wellbeing' },
-  'mental-health': { title: 'Mental health support group', category: 'wellbeing' },
-  esol: { title: 'ESOL classes & refugee support', category: 'vulnerable' },
-  recovery: { title: 'Recovery & addictions support', category: 'vulnerable' },
-  prison: { title: 'Prison visiting & chaplaincy', category: 'vulnerable' },
-  'street-pastors': { title: 'Street pastors & outreach', category: 'vulnerable' },
-  'community-groups': { title: 'Hosting community groups', category: 'practical' },
-  'eco-church': { title: 'Environmental / Eco Church work', category: 'environment' },
+  foodbanks: { title: 'Food bank & pantry', category: 'practical' },
+  'warm-spaces': { title: 'Warm space & community lounge', category: 'practical' },
+  'debt-help': { title: 'Debt advice & financial wellbeing', category: 'practical' },
+  'charity-shop': { title: 'Charity shop', category: 'practical' },
+  'employment-service': { title: 'Employment service', category: 'practical' },
+  'job-clubs': { title: 'Job clubs', category: 'practical' },
+  'life-skills': { title: 'Life skills', category: 'practical' },
+  'make-lunch': { title: 'Make Lunch', category: 'practical' },
+  centre: { title: 'Community centre', category: 'practical' },
+  'early-intervention': { title: 'Early intervention', category: 'youth' },
+  'homelessness-service': { title: 'Homelessness service', category: 'vulnerable' },
+  'older-people-service': { title: "Older people's service", category: 'wellbeing' },
+  'salvation-army-church': { title: 'Salvation Army church', category: 'practical' },
 }
 
 // A light fallback story so un-authored churches still read as a real page.
@@ -279,11 +145,8 @@ function buildFallbackActivities(initiatives: string[]): ChurchActivity[] {
 
 // Merge a directory record with authored extras, filling any missing field from a
 // reasonable default so the profile page always renders.
-export function getChurchById(id: string): ChurchProfile | undefined {
-  const church = churches.find((entry) => entry.id === id)
-  if (!church) return undefined
-
-  const extras = churchProfiles[id]
+export function toChurchProfile(church: Church): ChurchProfile {
+  const extras = churchProfiles[church.id]
   const activities = extras?.activities ?? buildFallbackActivities(church.initiatives)
   const attendance = extras?.attendance ?? null
 
@@ -298,7 +161,7 @@ export function getChurchById(id: string): ChurchProfile | undefined {
     activities,
     attendance,
     daysOpenPerWeek,
-    constituency: extras?.constituency ?? church.place,
+    constituency: extras?.constituency ?? church.constituency ?? church.place,
     reachPerWeek:
       extras?.reachPerWeek ?? activities.reduce((sum, activity) => sum + activity.reach, 0),
     volunteerHoursYear: extras?.volunteerHoursYear ?? ((attendance ?? 0) + 1) * 40,
@@ -315,8 +178,22 @@ export function getChurchById(id: string): ChurchProfile | undefined {
   }
 }
 
-export function getChurchIds(): string[] {
-  return churches.map((church) => church.id)
+export async function getChurchById(id: string): Promise<ChurchProfile | undefined> {
+  try {
+    const church = await api.getChurch(id)
+    return toChurchProfile(church)
+  } catch {
+    return undefined
+  }
+}
+
+export async function getChurchIds(): Promise<string[]> {
+  try {
+    const churches = await api.listChurches({ limit: 5000 })
+    return churches.map((church) => church.id)
+  } catch {
+    return []
+  }
 }
 
 // Rich, hand-authored impact profiles keyed by church id. Where a church is not
