@@ -179,6 +179,41 @@ There is no checked-in infrastructure-as-code, CI workflow, repeatable
 migration runner, or automatic database seeding. Do not treat a successful
 Vercel build as proof that Supabase has been initialized.
 
+Use organization-owned accounts rather than an individual maintainer's
+personal accounts wherever possible. Enable MFA, add at least two trusted
+administrators, and confirm billing authority before creating paid resources.
+Console wording can change, but the settings and values below are the ones
+this app expects.
+
+### 0. Create or obtain the provider accounts
+
+Complete these account and access steps before creating infrastructure:
+
+1. **Supabase:** sign in or create an account at
+   [supabase.com/dashboard](https://supabase.com/dashboard). Accept the
+   organization invitation or create/select the organization that will own
+   the database. Confirm an organization owner can manage projects, billing,
+   database credentials, and backups.
+2. **Vercel:** sign in or create an account at
+   [vercel.com/signup](https://vercel.com/signup). Choose the organization/team
+   that owns this app (create a team if needed), invite the maintainers, and
+   connect the organization’s GitHub account with permission to access
+   `francisjudd/ea-gather-app` (or the current repository location). Confirm
+   the team plan supports the Vercel Services configuration in `vercel.json`.
+3. **Google Cloud (optional, for maps):** sign in at
+   [console.cloud.google.com](https://console.cloud.google.com/). Use or
+   create an organization-owned Cloud project and make sure a billing
+   administrator is available. Google Maps requires a billing-enabled
+   project. The map key is created in this Cloud project, not in Google Maps
+   Platform’s consumer website.
+4. **Domain/DNS (optional):** obtain access to the organization’s registrar
+   and DNS provider, and agree on the canonical hostname (for example,
+   `www.example.org`) before adding it to Vercel.
+5. Keep account recovery information, billing ownership, and administrator
+   contacts in the organization’s approved records. Do not put credentials,
+   API keys, database URLs, recovery codes, or token values in this README or
+   a commit.
+
 ### 1. Prepare and validate the repository
 
 1. Confirm the intended production branch (the current README assumes `main`)
@@ -206,15 +241,19 @@ Vercel build as proof that Supabase has been initialized.
 
 ### 2. Create and seed the Supabase project
 
-1. In Supabase, create a project in the organization that will own production.
-   Choose a region close to the Vercel deployment, set a strong unique database
-   password, and retain the project reference and recovery details in the
-   organization’s approved secret store.
-2. Wait until the database is available. In the project’s **Connect** panel,
-   select the transaction pooler connection details. Use the exact host,
-   username, database, password, and SSL parameters Supabase supplies; the
-   pooler hostname/username format depends on the project and must not be
-   guessed. Use port `6543`.
+1. In the Supabase dashboard, select the correct organization, choose **New
+   project**, enter an identifiable project name, and choose a strong,
+   unique database password. Select the region nearest the Vercel production
+   region and confirm the project’s plan, compute, and backup terms before
+   creating it. Save the database password in the approved secret manager;
+   Supabase will not show a forgotten password in plaintext.
+2. Wait for project provisioning to finish. Open the project and use
+   **Connect** to select the **Transaction pooler** connection string/details.
+   Use the exact host, username, database, password, and SSL parameters
+   Supabase supplies; the pooler hostname/username format depends on the
+   project and must not be guessed. The transaction pooler uses port `6543`.
+   Do not use a Supabase `anon`/publishable key as the database password or
+   `DATABASE_URL`.
 3. Before applying scripts, verify that `DATABASE_URL` points to the intended
    new project. Follow [Initialize and seed Supabase](#initialize-and-seed-supabase)
    exactly once, in order: combined database import, MP import, then church
@@ -232,19 +271,24 @@ Vercel build as proof that Supabase has been initialized.
 
 ### 3. Create and configure Vercel
 
-1. Confirm that the Vercel account/team supports the Vercel Services feature
-   used by the root `vercel.json`. Create a Vercel project and link it to this
-   repository and production branch. If Services are unavailable for the
-   account, stop: replacing this topology with separately deployed services
-   requires changing and verifying the routing configuration, not just
-   changing a dashboard setting.
-2. In **Project Settings → Build and Deployment**, set the project Root
-   Directory to the repository root (clear any `frontend` setting). The
-   repository’s `vercel.json` declares the `frontend/` Next.js and `backend/`
-   FastAPI service roots. Remove conflicting project-level install, build, or
-   output overrides; use Node.js 22.13 or newer.
-3. Add `DATABASE_URL` and a strong `ADMIN_TOKEN` to the FastAPI `openapi`
-   service’s server environment variables for both Preview and Production.
+1. In the Vercel dashboard, switch to the intended team and choose **Add New
+   → Project**. If prompted, install/authorize the Vercel Git integration for
+   the organization and grant access to this repository; then import
+   `francisjudd/ea-gather-app` (or its current repository). Select the
+   production branch, normally `main`.
+2. Before deploying, confirm that the team supports the Vercel Services
+   feature used by the root `vercel.json`. Set the project Root Directory to
+   the repository root (clear any `frontend` setting). The checked-in
+   `vercel.json` defines the `frontend/` Next.js and `backend/` FastAPI
+   services. Remove conflicting project-level install, build, or output
+   overrides and use Node.js 22.13 or newer. If Services are unavailable for
+   the account, stop: using two independent projects requires changing and
+   verifying the routing setup rather than just changing a dashboard field.
+3. In the Vercel project’s environment-variable settings, add `DATABASE_URL`
+   and a strong `ADMIN_TOKEN` to the FastAPI `openapi` service for Preview
+   and Production. If the Services UI offers service scoping, scope these
+   variables to `openapi`; otherwise use the project-level server environment
+   variables as supported by the project’s Services configuration.
    `DATABASE_URL` must be the Supabase transaction-pooler URL on port `6543`.
    Store and distribute the admin token through the team’s approved secret
    manager. Do not use a browser/public Supabase key in place of
@@ -272,18 +316,61 @@ Vercel build as proof that Supabase has been initialized.
 The church and constituency directories still work as text/list/card views
 without Google Maps. To enable maps:
 
-1. In Google Cloud, create/select the organization-owned project, enable
-   billing if required, and enable the Maps JavaScript API.
-2. Create a browser API key restricted to the Maps JavaScript API and HTTP
-   referrers. Allow only the production/custom domain and the Vercel Preview
-   host patterns needed by the team; avoid an unrestricted key.
-3. Set `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` in Vercel for Preview and Production.
-   This is a browser-visible, referrer-restricted key, not a secret. Redeploy
-   both environments after setting it. For local development, put it in
-   `frontend/.env.local`; never commit that file.
-4. Verify map load, pins, and interaction on an allowed origin. If this
-   integration is not provisioned, verify the cards/list fallback and record
-   that maps are intentionally disabled.
+1. In the [Google Cloud Console](https://console.cloud.google.com/), select
+   the organization-owned project created for this app (or create one via the
+   project selector → **New Project**). Confirm the correct project name is
+   selected in the top bar before changing APIs or credentials.
+2. Link a billing account: open **Billing**, link the project to the
+   organization’s billing account, and confirm that billing is active. Set
+   budget notifications/quotas according to the organization’s policy; budget
+   alerts notify but do not cap usage.
+3. Open **APIs & Services → Library**, search for **Maps JavaScript API**, open
+   its page, and choose **Enable**. This is the Maps API used by
+   `@googlemaps/js-api-loader` in this application. No Google Maps server-side
+   key or Supabase key is needed for the map. See Google’s
+   [Maps JavaScript API key setup guide](https://developers.google.com/maps/documentation/javascript/get-api-key)
+   if the Console flow changes.
+4. Open **APIs & Services → Credentials → Create Credentials → API key**.
+   Give the key a recognizable name (for example, `EA Gather frontend
+   browser key`) so maintainers can rotate it later.
+5. Immediately restrict the key. Open its edit screen, set **Application
+   restrictions** to **Websites** (HTTP referrers), then add only the origins
+   where the map will run. For a custom production domain, allow the exact
+   domain and its required subdomains using Google’s referrer pattern format
+   (for example, `https://example.org/*` and `https://www.example.org/*`).
+   Add the project’s stable Vercel Preview domain only if Preview maps are
+   required. Avoid allowing all `*.vercel.app` sites: that grants use from
+   unrelated Vercel projects. For local development, use a separate
+   development key restricted to `http://localhost:3000/*`; do not broaden
+   the production key just to make local maps work.
+6. Under **API restrictions**, select **Restrict key** and allow only **Maps
+   JavaScript API**. Save the restrictions, copy the key once, and store it
+   with the team’s approved configuration records. This key is visible in
+   browser requests because it is prefixed `NEXT_PUBLIC_`; referrer/API
+   restrictions and usage monitoring are its protection, not secrecy.
+7. In Vercel, open the project’s **Settings → Environment Variables** and add
+   `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` with the key value to the **frontend**
+   service/environment(s) that should render maps. Use the Vercel service
+   scope if available; if the current Services UI exposes only project-level
+   variables, configure the variable at project level and document that both
+   services can read it. Enable it for Preview only if the configured key
+   allows the Preview hostname. Add it to Production for the production
+   domain. Redeploy after saving because `NEXT_PUBLIC_*` values are embedded
+   into the frontend build.
+8. For local development, put a development-restricted key in
+   `frontend/.env.local`:
+
+   ```dotenv
+   NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=<development-browser-key>
+   ```
+
+   Keep this file untracked. Restart the Next.js dev server after changing
+   this value.
+9. Verify an allowed deployed origin: open `/churches`, select map view, and
+   verify tiles and markers load. Open a constituency detail page and verify
+   the map view there too. Check the browser console and Google Cloud API
+   metrics for referrer/restriction errors. If maps are not provisioned,
+   verify that list/cards still work and record that maps are disabled.
 
 ### 5. Attach the production domain and canonical URL
 
