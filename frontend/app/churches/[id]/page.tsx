@@ -6,7 +6,6 @@ import TalkingPoints from '../../../components/TalkingPoints'
 
 import {
   getChurchById,
-  getChurchIds,
   categoryLabels,
   type CategoryId,
   type ChurchActivity,
@@ -93,11 +92,6 @@ type Props = {
   params: Promise<{ id: string }>
 }
 
-export async function generateStaticParams() {
-  const ids = await getChurchIds()
-  return ids.map((id) => ({ id }))
-}
-
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params
   const church = await getChurchById(id)
@@ -170,7 +164,7 @@ const points: string[] = items.map(({ label, figure, text }) => `${figure} ${lab
     <div className={styles.shell}>
       <FullNav />
 
-      <main>
+      <main id="main-content" tabIndex={-1}>
         {/* Hero band */}
         <section className={styles.hero}>
           <div className={styles.wrap}>
@@ -351,4 +345,3 @@ const points: string[] = items.map(({ label, figure, text }) => `${figure} ${lab
     </div>
   )
 }
-

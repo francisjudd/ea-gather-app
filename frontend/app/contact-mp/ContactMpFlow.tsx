@@ -8,6 +8,7 @@ import { isMailtoTooLong, buildLetterMailto, renderLetterFallback, type LetterIn
 import type { components } from '@/lib/api/schema'
 import FullNav from '../../components/FullNavigation'
 import SiteFooter from '../../components/SiteFooter'
+import { SpinnerIcon } from '../../components/LoadingSpinner'
 import { activities, toLetterInput, type Draft } from '@/lib/messaging/draft'
 
 import { flowSteps, type StepSlug } from './steps'
@@ -292,7 +293,7 @@ export default function ContactMpFlow({ step }: { step: string }) {
   }
 
   return (
-    <main className="app-shell">
+    <main id="main-content" className="app-shell" tabIndex={-1}>
       <FullNav />
 
       <div className="flow-layout">
@@ -350,6 +351,7 @@ export default function ContactMpFlow({ step }: { step: string }) {
                   </p>
                 )}
                 <button className="button button-primary" type="submit" disabled={findingMp}>
+                  {findingMp && <SpinnerIcon />}
                   {findingMp ? 'Finding your MP…' : <>Find my MP <span aria-hidden="true">→</span></>}
                 </button>
               </form>

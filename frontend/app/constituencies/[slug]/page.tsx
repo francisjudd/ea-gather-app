@@ -5,11 +5,9 @@ import ConstituencyView from '../ConstituencyView'
 
 type Params = { params: Promise<{ slug: string }> }
 
-export const dynamicParams = false
-
-export async function generateStaticParams() {
-  return (await constituencies.list()).map(({ slug }) => ({ slug }))
-}
+// Data is fetched at runtime from the API, so pages are rendered on demand
+// rather than pre-generated at build time.
+export const dynamic = 'force-dynamic'
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const detail = await constituencies.get((await params).slug)

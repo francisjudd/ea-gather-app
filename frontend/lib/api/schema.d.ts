@@ -127,6 +127,64 @@ export interface paths {
         patch: operations["update_submission_openapi_admin_submissions__submission_id__patch"];
         trace?: never;
     };
+    "/openapi/areas": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Areas */
+        get: operations["list_areas_openapi_areas_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/openapi/areas/details": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Area Details
+         * @description Return every constituency with its full detail in one call.
+         *
+         *     The frontend's /services page needs the services for many constituencies at
+         *     once; fetching them one-by-one would be hundreds of round trips. This bulk
+         *     endpoint lets it load everything in a single request.
+         */
+        get: operations["list_area_details_openapi_areas_details_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/openapi/areas/{slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Area */
+        get: operations["get_area_openapi_areas__slug__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/": {
         parameters: {
             query?: never;
@@ -257,6 +315,101 @@ export interface components {
             contactEmail: string;
             /** Initiatives */
             initiatives?: string[];
+        };
+        /** ConstituencyChurch */
+        ConstituencyChurch: {
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            /** Denomination */
+            denomination: string | null;
+            /** Address */
+            address: string | null;
+            /** Postcode */
+            postcode: string | null;
+            /** Lat */
+            lat: number | null;
+            /** Lng */
+            lng: number | null;
+            /** Website */
+            website: string | null;
+            /** Phone */
+            phone: string | null;
+            /** Programmes */
+            programmes: components["schemas"]["ConstituencyProgramme"][];
+        };
+        /** ConstituencyDetail */
+        ConstituencyDetail: {
+            /** Slug */
+            slug: string;
+            /** Name */
+            name: string;
+            /** Code */
+            code: string | null;
+            /** Churchcount */
+            churchCount: number;
+            /** Servicecount */
+            serviceCount: number;
+            mp: components["schemas"]["ConstituencyMp"] | null;
+            /** Churches */
+            churches: components["schemas"]["ConstituencyChurch"][];
+            /** Services */
+            services: components["schemas"]["ConstituencyService"][];
+            /** Servicesbycategory */
+            servicesByCategory: {
+                [key: string]: number;
+            };
+        };
+        /** ConstituencyMp */
+        ConstituencyMp: {
+            /** Name */
+            name: string;
+            /** Party */
+            party: string | null;
+            /** Email */
+            email: string | null;
+        };
+        /** ConstituencyProgramme */
+        ConstituencyProgramme: {
+            /** Name */
+            name: string;
+            /** Category */
+            category: string;
+        };
+        /** ConstituencyService */
+        ConstituencyService: {
+            /** Id */
+            id: string;
+            /** Category */
+            category: string;
+            /** Name */
+            name: string;
+            /** Address */
+            address: string | null;
+            /** Postcode */
+            postcode: string | null;
+            /** Lat */
+            lat: number | null;
+            /** Lng */
+            lng: number | null;
+            /** Website */
+            website: string | null;
+            /** Phone */
+            phone: string | null;
+        };
+        /** ConstituencySummary */
+        ConstituencySummary: {
+            /** Slug */
+            slug: string;
+            /** Name */
+            name: string;
+            /** Code */
+            code: string | null;
+            /** Churchcount */
+            churchCount: number;
+            /** Servicecount */
+            serviceCount: number;
         };
         /** GeocodeResult */
         GeocodeResult: {
@@ -564,6 +717,77 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ChurchSubmission"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_areas_openapi_areas_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConstituencySummary"][];
+                };
+            };
+        };
+    };
+    list_area_details_openapi_areas_details_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConstituencyDetail"][];
+                };
+            };
+        };
+    };
+    get_area_openapi_areas__slug__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConstituencyDetail"];
                 };
             };
             /** @description Validation Error */

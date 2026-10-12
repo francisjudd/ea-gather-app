@@ -4,6 +4,7 @@ import { useEffect, useState, type FormEvent } from 'react'
 import Link from 'next/link'
 import FullNav from '../../components/FullNavigation'
 import BrandLockup from '../../components/BrandLockup'
+import { SpinnerIcon } from '../../components/LoadingSpinner'
 import styles from './demand.module.css'
 
 type ParishDashboard = {
@@ -110,7 +111,7 @@ export default function DemandSide() {
     <div className={styles.page}>
       <FullNav />
 
-      <main className={styles.main}>
+      <main id="main-content" className={styles.main} tabIndex={-1}>
         <section className={styles.searchSection} aria-labelledby="page-title">
           <p className={styles.eyebrow}>COMMUNITY NEED</p>
           <h1 id="page-title">The demand side</h1>
@@ -148,7 +149,7 @@ export default function DemandSide() {
             />
 
             <button className={styles.searchButton} type="submit" disabled={loading}>
-              <SearchIcon />
+              {loading ? <SpinnerIcon /> : <SearchIcon />}
               <span>{loading ? 'Searching…' : 'Search'}</span>
             </button>
           </form>
@@ -169,7 +170,7 @@ export default function DemandSide() {
           <section className={styles.resultsPanel} aria-label="Parish dashboard results">
             <div className={styles.resultsHeader}>
               <span className={styles.resultCount} aria-live="polite">
-                {loading ? 'Searching…' : `${results.length} ${results.length === 1 ? 'dashboard' : 'dashboards'}`}
+                {loading ? <><SpinnerIcon /> Searching…</> : `${results.length} ${results.length === 1 ? 'dashboard' : 'dashboards'}`}
               </span>
             </div>
 

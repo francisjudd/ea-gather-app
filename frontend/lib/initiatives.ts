@@ -1,8 +1,8 @@
 // Shared initiative taxonomy used across the church directory, submit form,
 // and admin review view. The backend (/openapi/initiatives) is the source of
 // truth; it returns the categories stored in the database. The static list below
-// mirrors that response so server components can render without a fetch, and
-// `loadInitiatives()` lets client components refresh it from the API.
+// is a fallback so components can render without a fetch, and `loadInitiatives()`
+// lets them refresh it from the API.
 
 import { api } from './api/client'
 
@@ -30,9 +30,11 @@ export const initiativeTypes: Initiative[] = [
 
 export type InitiativeId = (typeof initiativeTypes)[number]['id']
 
-export const initiativeLabels: Record<string, string> = Object.fromEntries(
-  initiativeTypes.map((initiative) => [initiative.id, initiative.label]),
-)
+export function toInitiativeLabels(initiatives: Initiative[]): Record<string, string> {
+  return Object.fromEntries(initiatives.map((initiative) => [initiative.id, initiative.label]))
+}
+
+export const initiativeLabels: Record<string, string> = toInitiativeLabels(initiativeTypes)
 
 /** Fetch the initiative taxonomy from the API, falling back to the static list. */
 export async function loadInitiatives(): Promise<Initiative[]> {

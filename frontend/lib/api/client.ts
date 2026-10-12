@@ -1,21 +1,32 @@
 // Typed client for the Evangelical Alliance Gather API.
 //
-// The frontend always calls same-origin `/openapi/...` URLs. In production
-// vercel.json rewrites `/openapi/:path*` to the FastAPI service (stripping the
-// prefix); in development next.config.ts does the same. This module is the single
-// place that knows the URL shapes, so components never build URLs by hand.
+// The frontend always calls same-origin `/openapi/...` URLs. Vercel routes
+// those paths to FastAPI and local Next.js development proxies them to uvicorn.
+// This module is the single place that knows the URL shapes.
 
 import type { components } from './schema'
 
 type Church = components['schemas']['Church']
 type ChurchSubmission = components['schemas']['ChurchSubmission']
 type ChurchSubmissionIn = components['schemas']['ChurchSubmissionIn']
+type ConstituencyDetail = components['schemas']['ConstituencyDetail']
+type ConstituencySummary = components['schemas']['ConstituencySummary']
 type GeocodeResult = components['schemas']['GeocodeResult']
 type Initiative = components['schemas']['Initiative']
 type Mp = components['schemas']['Mp']
 type SubmissionUpdate = components['schemas']['SubmissionUpdate']
 
-export type { Church, ChurchSubmission, ChurchSubmissionIn, GeocodeResult, Initiative, Mp, SubmissionUpdate }
+export type {
+  Church,
+  ChurchSubmission,
+  ChurchSubmissionIn,
+  ConstituencyDetail,
+  ConstituencySummary,
+  GeocodeResult,
+  Initiative,
+  Mp,
+  SubmissionUpdate,
+}
 
 export type ListChurchesParams = {
   q?: string
@@ -39,16 +50,17 @@ export class ApiError extends Error {
   }
 }
 
-// Server-side fetches (server components, generateStaticParams, route handlers)
-// run on the Node server where the `/openapi` rewrite does not apply, so they
-// must target the backend directly. Client-side fetches use same-origin
-// `/openapi/...` URLs, which vercel.json (prod) and next.config.ts (dev) rewrite.
-const devBackendUrl = process.env.BACKEND_URL ?? 'http://127.0.0.1:8000'
+// Server-side rendering bypasses the browser's same-origin request. On Vercel,
+// use this deployment's URL so its /openapi rewrite selects the matching API
+// service (including Preview deployments). Locally, use uvicorn; BACKEND_URL
+// remains available for a separately hosted development API.
+const backendBaseUrl = process.env.BACKEND_URL
+  ?? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://127.0.0.1:8000')
 
 function resolveUrl(path: string): string {
   if (typeof window === 'undefined') {
     // Server: hit the backend directly, preserving the `/openapi` prefix.
-    return `${devBackendUrl}${path}`
+    return `${backendBaseUrl}${path}`
   }
   return path
 }
@@ -97,6 +109,18 @@ export const api = {
 
   listInitiatives(): Promise<Initiative[]> {
     return request<Initiative[]>('/openapi/initiatives')
+  },
+
+  listConstituencies(): Promise<ConstituencySummary[]> {
+    return request<ConstituencySummary[]>('/openapi/areas')
+  },
+
+  listConstituencyDetails(): Promise<ConstituencyDetail[]> {
+    return request<ConstituencyDetail[]>('/openapi/areas/details')
+  },
+
+  getConstituency(slug: string): Promise<ConstituencyDetail> {
+    return request<ConstituencyDetail>(`/openapi/areas/${encodeURIComponent(slug)}`)
   },
 
   geocode(q: string): Promise<GeocodeResult> {

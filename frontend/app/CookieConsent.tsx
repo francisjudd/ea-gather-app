@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useSyncExternalStore } from 'react'
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import Link from 'next/link'
 
 type Consent = {
@@ -73,6 +73,62 @@ export default function CookieConsent() {
   const [showPreferences, setShowPreferences] = useState(false)
   const [selectedConsent, setSelectedConsent] = useState(DEFAULT_CONSENT)
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null)
+  const dialogRef = useRef<HTMLDivElement>(null)
+  const returnFocusRef = useRef<HTMLElement | null>(null)
+
+  useEffect(() => {
+    if (current) {
+      returnFocusRef.current?.focus()
+      returnFocusRef.current = null
+      return
+    }
+
+    const dialog = dialogRef.current
+    if (!dialog) return
+    const activeDialog = dialog
+
+    if (!returnFocusRef.current && document.activeElement instanceof HTMLElement && !activeDialog.contains(document.activeElement)) {
+      returnFocusRef.current = document.activeElement
+    }
+
+    const focusable = () =>
+      Array.from(
+        activeDialog.querySelectorAll<HTMLElement>(
+          'a[href], button:not(:disabled), input:not(:disabled), [tabindex]:not([tabindex="-1"])',
+        ),
+      )
+    const controls = focusable()
+    const initialTarget = showPreferences
+      ? activeDialog.querySelector<HTMLElement>('.cookie-consent__close')
+      : controls[0]
+    initialTarget?.focus()
+
+    function keepFocusInDialog(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        event.preventDefault()
+        if (showPreferences) setShowPreferences(false)
+        return
+      }
+      if (event.key !== 'Tab') return
+
+      const items = focusable()
+      const first = items[0]
+      const last = items[items.length - 1]
+      if (!first || !last) {
+        event.preventDefault()
+        activeDialog.focus()
+      } else if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault()
+        last.focus()
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault()
+        first.focus()
+      }
+    }
+
+    document.addEventListener('keydown', keepFocusInDialog)
+    return () => document.removeEventListener('keydown', keepFocusInDialog)
+  }, [current, showPreferences])
 
   if (current) return null
 
@@ -87,6 +143,7 @@ export default function CookieConsent() {
 
   return (
     <div
+      ref={dialogRef}
       className="cookie-consent"
       role="dialog"
       aria-modal="true"

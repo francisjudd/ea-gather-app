@@ -4,8 +4,9 @@ import { useState, type FormEvent } from 'react'
 import Link from 'next/link'
 import FullNav from '../../components/FullNavigation'
 import { submitChurch } from '../../lib/churchStore'
-import { initiativeTypes } from '../../lib/initiatives'
+import { useInitiatives } from '../../lib/useInitiatives'
 import SiteFooter from '../../components/SiteFooter'
+import { SpinnerIcon } from '../../components/LoadingSpinner'
 
 type FormState = {
   name: string
@@ -74,6 +75,7 @@ export default function SubmitChurchForm() {
   const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const initiatives = useInitiatives()
 
   const onChange = (name: keyof FormState, value: string) => {
     setForm((previous) => ({ ...previous, [name]: value }))
@@ -108,7 +110,7 @@ export default function SubmitChurchForm() {
   }
 
   return (
-    <main className="app-shell">
+    <main id="main-content" className="app-shell" tabIndex={-1}>
       <FullNav />
 
       <div className="flow-layout">
@@ -172,7 +174,7 @@ export default function SubmitChurchForm() {
 
                 <div className="section-rule"><span>COMMUNITY INITIATIVES</span></div>
                 <div className="activity-list">
-                  {initiativeTypes.map((initiative) => {
+                  {initiatives.map((initiative) => {
                     const checked = form.initiatives.includes(initiative.id)
                     return (
                       <div className={`activity-item ${checked ? 'activity-selected' : ''}`} key={initiative.id}>
@@ -197,7 +199,8 @@ export default function SubmitChurchForm() {
                 <div className="action-row action-row-split">
                   <Link className="button button-quiet" href="/churches">← Back to directory</Link>
                   <button className="button button-primary" type="submit" disabled={submitting}>
-                    {submitting ? 'Submitting…' : 'Submit for review'} <span aria-hidden="true">→</span>
+                    {submitting && <SpinnerIcon />}
+                    {submitting ? 'Submitting…' : <>Submit for review <span aria-hidden="true">→</span></>}
                   </button>
                 </div>
               </form>

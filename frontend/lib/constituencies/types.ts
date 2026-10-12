@@ -1,8 +1,6 @@
-// INTERIM types for the constituency pages.
-// These mirror what we expect the FastAPI backend to return, but the API hasn't
-// landed yet (backend/openapi.yaml has no paths). Once it does, replace these with
-// types derived from lib/api/schema.d.ts and adjust source.ts, the only file that
-// knows where the data comes from.
+// Types for the constituency pages, mirroring the FastAPI backend responses
+// (/openapi/areas and /openapi/areas/{slug}). These match lib/api/schema.d.ts,
+// which is generated from the backend's OpenAPI schema.
 
 export type ConstituencySummary = {
   slug: string

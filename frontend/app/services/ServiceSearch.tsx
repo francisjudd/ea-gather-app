@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Fuse from 'fuse.js'
 import FullNav from '../../components/FullNavigation'
 import BrandLockup from '../../components/BrandLockup'
+import LoadingSpinner, { SpinnerIcon } from '../../components/LoadingSpinner'
 import { distanceMiles, formatDistance, type LatLng } from '../../lib/geo'
 import { slugifyConstituency } from '@/lib/constituencies/slug'
 import type { FeaturedGroup, FeaturedService } from '@/lib/constituencies/featured'
@@ -118,7 +119,8 @@ export default function ServiceSearch({
 
     setResults({ constituency: summary, services, postcode: origin?.postcode ?? null })
     // Wait for the results to render, then scroll to them.
-    window.setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50)
+    const behavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
+    window.setTimeout(() => resultsRef.current?.scrollIntoView({ behavior, block: 'start' }), 50)
   }
 
   async function search(event?: FormEvent) {
@@ -214,8 +216,8 @@ export default function ServiceSearch({
                 aria-controls="service-suggestions"
                 aria-autocomplete="list"
               />
-              <button type="submit" disabled={loading} aria-label="Search">
-                <SearchIcon />
+              <button type="submit" disabled={loading} aria-label={loading ? 'Searching' : 'Search'}>
+                {loading ? <SpinnerIcon /> : <SearchIcon />}
               </button>
 
               {open && suggestions.length > 0 && (
@@ -232,12 +234,12 @@ export default function ServiceSearch({
             </form>
 
             {message && <p className={styles.message} role="alert">{message}</p>}
-            {loading && <p className={styles.message} role="status">Searching…</p>}
+            {loading && <p className={styles.message}><LoadingSpinner label="Searching…" /></p>}
           </div>
         </div>
       </section>
 
-      <main className={`${c.container} ${styles.resultsMain}`}>
+      <main id="main-content" className={`${c.container} ${styles.resultsMain}`} tabIndex={-1}>
         {!results && featuredGroups.length > 0 && (
           <section className={styles.results} aria-labelledby="featured-title">
             <h2 id="featured-title" className={styles.resultsTitle}>Top community outreach programmes</h2>

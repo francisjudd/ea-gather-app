@@ -1,3 +1,6 @@
+'use client'
+
+import { useRef, useState } from 'react'
 import Link from 'next/link'
 
 const navItems = [
@@ -22,21 +25,61 @@ function WandIcon() {
 }
 
 export default function SiteNav() {
+  const [open, setOpen] = useState(false)
+  const toggleRef = useRef<HTMLButtonElement>(null)
+
   return (
-    <nav className="site-nav" aria-label="Primary">
-      {navItems.map((item) => (
-        <Link className="site-nav-link" href={item.href} key={item.href}>
-          {item.label}
-        </Link>
-      ))}
-      <span className="site-nav-buttons">
-        {navButtons.map((item) => (
-          <Link className={`site-nav-button site-nav-button--${item.variant}`} href={item.href} key={item.href}>
-            {item.wand && <WandIcon />}
+    <>
+      <button
+        ref={toggleRef}
+        className="site-nav-toggle"
+        type="button"
+        aria-expanded={open}
+        aria-controls="primary-navigation"
+        onClick={() => setOpen((wasOpen) => !wasOpen)}
+        onKeyDown={(event) => {
+          if (event.key === 'Escape' && open) {
+            setOpen(false)
+            toggleRef.current?.focus()
+          }
+        }}
+      >
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
+          <path d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+        {open ? 'Close menu' : 'Menu'}
+      </button>
+      <nav
+        id="primary-navigation"
+        className="site-nav"
+        aria-label="Primary"
+        data-open={open}
+        onKeyDown={(event) => {
+          if (event.key === 'Escape' && open) {
+            setOpen(false)
+            toggleRef.current?.focus()
+          }
+        }}
+      >
+        {navItems.map((item) => (
+          <Link className="site-nav-link" href={item.href} key={item.href} onClick={() => setOpen(false)}>
             {item.label}
           </Link>
         ))}
-      </span>
-    </nav>
+        <span className="site-nav-buttons">
+          {navButtons.map((item) => (
+            <Link
+              className={`site-nav-button site-nav-button--${item.variant}`}
+              href={item.href}
+              key={item.href}
+              onClick={() => setOpen(false)}
+            >
+              {item.wand && <WandIcon />}
+              {item.label}
+            </Link>
+          ))}
+        </span>
+      </nav>
+    </>
   )
 }

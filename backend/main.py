@@ -8,6 +8,7 @@ from pydantic import BaseModel
 
 import admin
 import churches as churches_api
+import constituencies as constituencies_api
 import mps
 
 # vercel.json routes /openapi/* to this service, forwarding the full /openapi
@@ -24,6 +25,7 @@ app = FastAPI(
 app.include_router(churches_api.router, prefix='/openapi')
 app.include_router(mps.router, prefix='/openapi')
 app.include_router(admin.router, prefix='/openapi')
+app.include_router(constituencies_api.router, prefix='/openapi')
 
 
 class ChurchSubmission(BaseModel):

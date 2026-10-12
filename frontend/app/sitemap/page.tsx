@@ -11,13 +11,16 @@ export const metadata: Metadata = {
   description: 'Every page on More Than Sunday: tools, constituencies and churches.',
 }
 
+// Constituency and church links are fetched at runtime from the API.
+export const dynamic = 'force-dynamic'
+
 const byName = (a: { name: string }, b: { name: string }) => a.name.localeCompare(b.name, 'en-GB')
 
 export default async function SitemapPage() {
   const [constituencyList, churchList] = await Promise.all([constituencies.list(), getChurchLinks()])
 
   return (
-    <main className="app-shell">
+    <main id="main-content" className="app-shell" tabIndex={-1}>
       <header className="site-header">
         <Link className="brand-lockup" href="/contact-mp" aria-label="More Than Sunday — start again">
           <span className="brand-name">More Than <strong>Sunday</strong></span>

@@ -8,7 +8,7 @@
 // all warm spaces), and within a category the most complete records (website, phone, street
 // address) come first, with a stable hash of the id breaking ties.
 
-import { constituencies } from './source'
+import { api } from '@/lib/api/client'
 import type { ConstituencyService } from './types'
 
 export type FeaturedService = ConstituencyService & {
@@ -59,10 +59,9 @@ const hash = (value: string) => [...value].reduce((total, char) => (total * 31 +
 const postcodeArea = (postcode: string | null) => postcode?.toUpperCase().match(/^([A-Z]{1,2})\d/)?.[1] ?? null
 
 export async function getFeaturedByCity(perPlace = PER_PLACE): Promise<FeaturedGroup[]> {
-  const list = await constituencies.list()
-  const details = (
-    await Promise.all(list.filter((item) => item.serviceCount > 0).map((item) => constituencies.get(item.slug)))
-  ).filter((detail) => detail != null)
+  // Load every constituency's detail in a single request rather than one call per
+  // constituency (the /services page needs services for many places at once).
+  const details = (await api.listConstituencyDetails()).filter((detail) => detail.serviceCount > 0)
 
   return FEATURED_PLACES.map((place) => {
     const inPlace: FeaturedService[] = []

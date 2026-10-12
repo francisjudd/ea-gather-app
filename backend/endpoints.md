@@ -1,80 +1,69 @@
-# FastAPI Endpoints — EA Gathering App
+# Backend API and database
 
-The frontend currently renders from three sources:
+The production application uses a Next.js frontend and a FastAPI service,
+deployed as separate Vercel Services in the same Vercel project. The API
+connects to Supabase Postgres with the server-side `DATABASE_URL`. The
+frontend calls the API at same-origin `/openapi/...` URLs; Vercel routes those
+requests to FastAPI without removing the `/openapi` prefix. In local
+development, `next.config.ts` proxies the same paths to uvicorn.
 
-- **Hardcoded sample data** — `app/churches/ChurchFinder.tsx`, the retired `app/your-area/area-data.ts`
-- **localStorage** — `lib/churchStore.ts`, the contact-MP draft
-- **One Next.js route** — `app/api/parish-dashboards/route.ts`
+The live OpenAPI contract is served at `/openapi/openapi.json`; interactive
+documentation is at `/openapi/docs`. There is no public `/openapi` health
+route. The FastAPI app root (`/`) is a service-local health response, while
+the public root URL (`/`) is served by the frontend.
 
-The endpoints below replace those sources. Status legend: **✅ implemented**,
-**⚠️ partial**, **❌ not implemented**.
+## Implemented API routes
 
-## Church directory — `/churches` (PUB-01)
+All paths below include the `/openapi` prefix used by the public API.
 
-| # | Method | Path | Status | Purpose | Key request params | Response shape |
-|---|--------|------|--------|---------|-------------------|----------------|
-| 1 | `GET` | `/churches` | ⚠️ partial | List/search churches (replaces hardcoded `churches` array) | `q`, `letter`, `initiatives` (CSV), `days` (CSV), `lat`, `lng`, `radius` | `Church[]` |
-| 2 | `GET` | `/churches/{id}` | ❌ | Single church profile card | — | `Church` |
-| 3 | `GET` | `/initiatives` | ❌ | Initiative taxonomy (replaces `lib/initiatives.ts`) | — | `Initiative[]` |
-| 4 | `GET` | `/geocode` | ❌ | Resolve postcode/place → lat/lng (replaces local `resolveCenter`) | `q` | `{ lat, lng }` |
+| Method | Path | Purpose | Parameters / authentication |
+| --- | --- | --- | --- |
+| `GET` | `/openapi/churches` | Search/list churches from Supabase | Optional `q`, `letter`, comma-separated `initiatives`, `lat`, `lng`, `radius` (default 15 miles), and `limit` (default 5000; maximum 5000). `lat` and `lng` must be supplied together. |
+| `GET` | `/openapi/churches/{church_id}` | Get a church by its slug | `church_id` path parameter |
+| `POST` | `/openapi/churches` | Submit a church for admin review | JSON submission body; stored in `church_submissions` |
+| `GET` | `/openapi/initiatives` | List initiative categories | Reads category names from Supabase |
+| `GET` | `/openapi/geocode` | Resolve a full postcode, outcode, or place | Required `q`; checks Supabase and may fall back to postcodes.io |
+| `GET` | `/openapi/mp/lookup` | Resolve a UK postcode to its MP | Required `postcode`; uses postcode and MP tables, with postcodes.io fallback |
+| `GET` | `/openapi/areas` | List constituencies and church/service counts | Reads Supabase |
+| `GET` | `/openapi/areas/details` | Return every constituency with full details | Reads Supabase; must be matched before `/openapi/areas/{slug}` |
+| `GET` | `/openapi/areas/{slug}` | Get one constituency and its church/service details | `slug` path parameter |
+| `GET` | `/openapi/admin/submissions` | List submissions by status | Optional `status` (`pending`, `approved`, or `rejected`); Bearer admin token required |
+| `PATCH` | `/openapi/admin/submissions/{submission_id}` | Update submission status and/or initiatives | JSON patch body; Bearer admin token required |
 
-`Church` = `{ id, name, address, place, lat, lng, denomination, operatingHours, verified, initiatives[], contactFirstName, contactSurname, contactRole, contactEmail }`
+Admin requests must send `Authorization: Bearer <ADMIN_TOKEN>`. If
+`ADMIN_TOKEN` is not configured, the admin endpoints return `503`; an absent
+or incorrect token returns `401`.
 
-> **Status note:** `GET /churches` and `POST /churches` are implemented in
-> `backend/main.py` but are **in-memory** (a Python list), not backed by
-> `data-source/combined.db`. They are also unreachable in production (see the
-> routing note). `GET /churches/{id}`, `/initiatives`, and `/geocode` are not
-> implemented.
+The parish-dashboard search is not a FastAPI endpoint. It remains a Next.js
+route at `/api/parish-dashboards`, which fetches the Church of England
+dashboard site and returns the parsed results.
 
-## Demand side — `/demand`
+## Supabase schema and initial data
 
-| # | Method | Path | Status | Purpose | Key request params | Response shape |
-|---|--------|------|--------|---------|-------------------|----------------|
-| 5 | `GET` | `/parish-dashboards` | ❌ | Diocese list + parish dashboard search (replaces Next.js `/api/parish-dashboards`) | `diocese`, `search` | `{ dioceses: Diocese[], results: ParishDashboard[] }` |
+The database bootstrap scripts are under `backend/scripts/`:
 
-`Diocese` = `{ id, name }` · `ParishDashboard` = `{ diocese, deanery, parish, parishCode, pdfUrl }`
+- `import_combined_db.py` converts `data-source/combined.db` into SQL for
+  `postcodes`, `outcodes`, `categories`, `services`, `churches`, and
+  `church_services`; it also creates indexes, timestamp triggers, reporting
+  views, and enables row-level security.
+- `import_mps.py` converts `data-source/MP Contact List.csv` into the `mps`
+  table and associates constituency codes from `postcodes`.
+- `church_submissions.sql` creates the submission-review table and its
+  timestamp trigger. Run it after `import_combined_db.py`, which creates the
+  `set_updated_at()` trigger function.
 
-## Contact MP — `/contact-mp`
+These are one-time initial bootstrap tools, not repeatable migrations. They
+emit SQL to standard output and are run with `psql`; consult the root
+[`README.md`](../README.md#initialize-and-seed-supabase) for the ordered
+commands and the destructive effect of the `--replace` option. Do not expose
+the database connection string to the browser. Supabase row-level security is
+enabled without public policies; API access is through the trusted server-side
+Postgres connection.
 
-| # | Method | Path | Status | Purpose | Key request params | Response shape |
-|---|--------|------|--------|---------|-------------------|----------------|
-| 6 | `GET` | `/mp/lookup` | ❌ | Postcode → MP details (replaces demo `demoMp` for `DN1 3LN`) | `postcode` | `MP` |
-| 7 | `POST` | `/letters` | ❌ | Submit letter / advocacy-follow-up + monthly-update preferences (currently browser-only) | body | `Letter` |
+`church_submissions` starts empty. Public submissions are written there by
+`POST /openapi/churches`; the admin endpoints review and update those records.
 
-`MP` = `{ name, party, email, constituency }`
-
-## Submit a church — `/submit`
-
-| # | Method | Path | Status | Purpose | Key request params | Response shape |
-|---|--------|------|--------|---------|-------------------|----------------|
-| 8 | `POST` | `/churches` | ⚠️ partial | Submit a church for review (replaces `submitChurch` in `churchStore`) | body | `ChurchSubmission` |
-
-> **Status note:** `POST /churches` is implemented in `backend/main.py` but is
-> **in-memory** and not wired to the frontend — the submit form still writes to
-> localStorage via `lib/churchStore.ts`.
-
-## Your constituency — `/constituencies`
-
-| # | Method | Path | Status | Purpose | Key request params | Response shape |
-|---|--------|------|--------|---------|-------------------|----------------|
-| 9 | `GET` | `/areas` | ❌ | Constituency summary by postcode (replaces `sampleAreas`) | `postcode` | `Area` |
-| 10 | `GET` | `/areas/{constituency}` | ❌ | Specific constituency | — | `Area` |
-
-`Area` = `{ constituency, postcode, mpName, mpEmail, churches: AreaChurch[] }` · `AreaChurch` = `{ id, name, postcode, denomination, attendance, projects: { activityId, reach, frequency }[] }`
-
-## Admin review — `/admin`
-
-| # | Method | Path | Status | Purpose | Key request params | Response shape |
-|---|--------|------|--------|---------|-------------------|----------------|
-| 11 | `GET` | `/admin/submissions` | ❌ | List pending submissions (replaces `getPendingSubmissions`) | — | `ChurchSubmission[]` |
-| 12 | `PATCH` | `/admin/submissions/{id}` | ❌ | Approve/reject or update initiatives (replaces `approveChurch`/`rejectChurch`/`updateSubmissionInitiatives`) | body | `ChurchSubmission` |
-
-`ChurchSubmission` = `{ id, name, denomination, address, place, postcode, operatingHours, contactName, contactEmail, initiatives[], status, submittedAt }`
-
-## Data source notes
-
-- `data-source/combined.db` holds the real data: `postcodes` (postcode → lat/lng + constituency), `churches`, `services` (with `category_id`), `categories`, and `church_services`. Endpoints 1–4 and 9–10 map directly onto these tables.
-- MP lookup (6): `postcodes.constituency` gives the constituency; MP name/party/email come from `data-source/MP Contact List.csv` (columns `FullName`, `Party`, `Constituency`, `ParliamentEmail`).
-- Initiative taxonomy (3): the frontend uses three overlapping taxonomies (`lib/initiatives.ts`, `lib/messaging/draft.ts`, `area-data.ts` `activityCatalog`). The backend should serve one canonical list; the `categories` table is the closest existing source.
-- Letter generation (7): the letter body is currently built client-side with Mustache templates (`lib/messaging`). If moved server-side, `POST /letters` accepts the `LetterInput` shape and returns the rendered letter; otherwise it only needs to persist the follow-up preferences.
-- Geocoding (4): the church directory's `resolveCenter` handles full postcode, postcode area, and place name — the backend can use the `postcodes`/`outcodes` tables.
+The directory's church records and initiative categories come from Supabase.
+Some richer church-profile content (authored stories and impact talking-points)
+is still maintained in the frontend and has generated fallbacks; it is not
+populated by these seed scripts.

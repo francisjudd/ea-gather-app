@@ -8,6 +8,9 @@ export const metadata: Metadata = {
   description: 'Search by postcode or constituency to find food banks, warm spaces, debt help and other community services near you.',
 }
 
+// Constituency list is fetched at runtime from the API.
+export const dynamic = 'force-dynamic'
+
 export default async function ServicesPage() {
   const [list, featuredGroups] = await Promise.all([constituencies.list(), getFeaturedByCity()])
   return <ServiceSearch constituencies={list} featuredGroups={featuredGroups} />
